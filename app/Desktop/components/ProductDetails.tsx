@@ -2,12 +2,12 @@
 "use client";
 
 import { useState } from "react";
-import { FaStar, FaCheckCircle, FaShoppingCart, FaHeart } from "react-icons/fa";
+import { FaStar, FaCheckCircle, FaShoppingCart } from "react-icons/fa";
 
 interface FeatureItem {
   text: string;
-  icon?: string; // Optional icon URL
-  hasCheck?: boolean; // Optional check status
+  icon?: string;
+  hasCheck?: boolean;
 }
 
 interface ProductDetailsProps {
@@ -22,7 +22,7 @@ interface ProductDetailsProps {
     price: number;
     oldPrice?: number;
     sale?: string;
-    features?: FeatureItem[]; // Updated to use FeatureItem interface
+    features?: FeatureItem[];
     sizes?: string[];
     points?: number;
     benefits?: string[];
@@ -52,12 +52,12 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4">
-      <div className="flex flex-col lg:flex-row gap-8">
+    <div className="max-w-7xl mx-auto py-4 px-2 sm:px-4">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         
-        {/* Left Column - Images - Bigger Size */}
+        {/* Left Column - Images - Optimized for screen */}
         <div className="lg:w-2/5">
-          <div className="w-full h-[500px] rounded-lg overflow-hidden mb-4">
+          <div className="w-full h-[45vh] sm:h-[50vh] lg:h-[55vh] rounded-lg overflow-hidden">
             <img
               src={selectedImage}
               alt={product.nameEn}
@@ -66,13 +66,13 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           </div>
 
           {additionalImages.length > 0 && (
-            <div className="flex gap-3 overflow-x-auto pb-2">
+            <div className="flex gap-2 mt-2 sm:mt-3 overflow-x-auto pb-1">
               {[product.img, ...additionalImages].map((image, index) => (
                 <button
                   key={index}
                   onClick={() => handleImageClick(image)}
-                  className={`flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 ${
-                    selectedImage === image ? 'border-[#197B33]' : 'border-gray-300'
+                  className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border ${
+                    selectedImage === image ? 'border-[#197B33] border-2' : 'border-gray-300'
                   }`}
                 >
                   <img
@@ -86,64 +86,67 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           )}
         </div>
 
-        {/* Right Column - Product Info - Adjusted for height */}
+        {/* Right Column - Product Info - Optimized layout */}
         <div className="lg:w-3/5">
           <div className="h-full flex flex-col">
             {/* Top Content */}
-            <div className="flex-grow">
-              <h1 className="text-3xl font-bold text-gray-900 mb-1">{product.nameEn}</h1>
-              <p className="text-lg text-gray-700 mb-2">{product.nameUr}</p>
+            <div className="flex-grow space-y-3 sm:space-y-4">
+              {/* Product Names */}
+              <div>
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{product.nameEn}</h1>
+                <p className="text-sm sm:text-base text-gray-700 mt-1">{product.nameUr}</p>
+              </div>
               
-              {/* Benefits */}
+              {/* Benefits - Compact */}
               {product.benefits && product.benefits.length > 0 && (
-                <div className="text-gray-600 text-sm mb-4 flex flex-wrap items-center gap-x-1">
+                <div className="text-gray-600 text-xs sm:text-sm flex flex-wrap items-center gap-x-1">
                   {product.benefits.map((benefit, index) => (
-                    <span key={index} className="text-sm">
+                    <span key={index} className="text-xs sm:text-sm">
                       {benefit}
                       {index < product.benefits!.length - 1 && (
-                        <span className="mx-2 text-gray-400">|</span>
+                        <span className="mx-1 sm:mx-2 text-gray-400">|</span>
                       )}
                     </span>
                   ))}
                 </div>
               )}
 
-              {/* Rating & Reviews */}
-              <div className="flex items-center gap-6 mb-6">
-                <div className="flex items-center gap-2">
-                  <FaStar className="w-5 h-5 text-yellow-400" />
-                  <span className="font-semibold text-gray-900">{product.rating}</span>
+              {/* Rating & Reviews - Compact */}
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <FaStar className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+                  <span className="font-semibold text-gray-900 text-sm sm:text-base">{product.rating}</span>
                 </div>
                 
-                <div className="flex items-center gap-2">
-                  <FaCheckCircle className="w-5 h-5 text-green-500" />
-                  <span className="text-gray-700 text-sm">{product.reviews} Reviews</span>
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <FaCheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-500" />
+                  <span className="text-gray-700 text-xs sm:text-sm">{product.reviews} Reviews</span>
                 </div>
               </div>
 
-              {/* Price */}
-              <div className="mb-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl font-bold text-gray-900">PKR {product.price}</span>
+              {/* Price - Compact */}
+              <div>
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                  <span className="text-xl sm:text-2xl font-bold text-gray-900">PKR {product.price}</span>
                   {product.oldPrice && (
-                    <span className="text-lg text-gray-500 line-through">PKR {product.oldPrice}</span>
+                    <span className="text-base sm:text-lg text-gray-500 line-through">PKR {product.oldPrice}</span>
                   )}
                   {product.sale && (
-                    <span className="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm font-medium">
+                    <span className="px-2 py-1 sm:px-3 sm:py-1 bg-red-100 text-red-600 rounded-full text-xs sm:text-sm font-medium">
                       {product.sale}
                     </span>
                   )}
                 </div>
               </div>
 
-              {/* Ayurvedic Info Section */}
+              {/* Ayurvedic Info Section - Compact */}
               {product.infoLines && product.infoLines.length > 0 && (
-                <div className="mb-6">
-                  <div className="flex flex-wrap gap-3">
+                <div>
+                  <div className="flex flex-wrap gap-2">
                     {product.infoLines.map((line, index) => (
                       <div 
                         key={index} 
-                        className="text-gray-800 text-sm border border-[#5F5F5F] rounded-lg px-4 py-3 bg-white"
+                        className="text-gray-800 text-xs sm:text-sm border border-[#5F5F5F] rounded-lg px-3 py-2 bg-white"
                       >
                         {line}
                       </div>
@@ -152,10 +155,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 </div>
               )}
 
-              {/* Features - Dynamic with icons */}
+              {/* Features - Grid with better spacing */}
               {product.features && product.features.length > 0 && (
-                <div className="mb-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {product.features.map((feature, index) => {
                       const hasCheck = feature.hasCheck !== undefined 
                         ? feature.hasCheck 
@@ -168,35 +171,34 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                       return (
                         <div 
                           key={index} 
-                          className="rounded-lg p-3 flex items-center gap-3 bg-white hover:bg-gray-50 transition-colors"
+                          className="rounded-lg p-2 flex items-center gap-2 bg-white hover:bg-gray-50 transition-colors"
                         >
-                          {/* Left side - Dynamic Image/Icon */}
-                          <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                          {/* Left side - Icon */}
+                          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
                             {feature.icon ? (
                               <img 
                                 src={feature.icon} 
                                 alt={featureText}
-                                className="w-6 h-6 object-contain"
+                                className="w-5 h-5 object-contain"
                                 onError={(e) => {
-                                  // Fallback if image doesn't exist
                                   const target = e.target as HTMLImageElement;
                                   target.style.display = 'none';
                                   target.parentElement!.innerHTML = hasCheck ? 
-                                    '<div class="text-green-600 font-bold text-lg">✓</div>' : 
-                                    '<div class="text-gray-400 font-bold text-lg">○</div>';
+                                    '<div class="text-green-600 font-bold text-sm sm:text-base">✓</div>' : 
+                                    '<div class="text-gray-400 font-bold text-sm sm:text-base">○</div>';
                                 }}
                               />
                             ) : (
                               hasCheck ? (
-                                <div className="text-green-600 font-bold text-lg">✓</div>
+                                <div className="text-green-600 font-bold text-sm sm:text-base">✓</div>
                               ) : (
-                                <div className="text-gray-400 font-bold text-lg">○</div>
+                                <div className="text-gray-400 font-bold text-sm sm:text-base">○</div>
                               )
                             )}
                           </div>
                           
                           {/* Right side - Text */}
-                          <span className="text-gray-700 text-sm font-medium">
+                          <span className="text-gray-700 text-xs sm:text-sm font-medium flex-1">
                             {featureText}
                           </span>
                         </div>
@@ -206,30 +208,30 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 </div>
               )}
 
-              {/* Pansari Points */}
+              {/* Pansari Points - Compact */}
               {product.points && (
-                <div className="mb-6">
-                  <div className="bg-[#6464641A] rounded-lg p-3 flex items-center justify-between">
-                    <span className="text-gray-800 text-sm">
+                <div>
+                  <div className="bg-[#6464641A] rounded-lg p-2 sm:p-3 flex items-center justify-between">
+                    <span className="text-gray-800 text-xs sm:text-sm">
                       Earn Upto {product.points} Pansari Inn Points On This Purchase
                     </span>
-                    <div className="w-5 h-5 rounded-full bg-[#646464] flex items-center justify-center flex-shrink-0">
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#646464] flex items-center justify-center flex-shrink-0">
                       <span className="text-white text-xs font-bold">!</span>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Size Selection - More compact */}
+              {/* Size Selection - Compact */}
               {product.sizes && product.sizes.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="font-semibold text-gray-900 mb-3">Size</h3>
+                <div>
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base mb-2">Size</h3>
                   <div className="flex flex-wrap gap-2">
                     {product.sizes.map((size) => (
                       <button
                         key={size}
                         onClick={() => setSelectedSize(size)}
-                        className={`px-4 py-2 rounded-full border text-sm font-medium transition-all ${
+                        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border text-xs sm:text-sm font-medium transition-all ${
                           selectedSize === size
                             ? 'bg-[#197B33] text-white border-[#197B33]'
                             : 'bg-white text-gray-700 border-gray-300 hover:border-[#197B33]'
@@ -242,24 +244,24 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 </div>
               )}
 
-              {/* Quantity */}
-              <div className="mb-6">
-                <h3 className="font-semibold text-gray-900 mb-3">Quantity</h3>
-                <div className="flex items-center gap-4">
+              {/* Quantity - Compact */}
+              <div>
+                <h3 className="font-semibold text-gray-900 text-sm sm:text-base mb-2">Quantity</h3>
+                <div className="flex items-center gap-3">
                   <div className="flex items-center border border-gray-300 rounded-lg">
                     <button
                       onClick={decreaseQuantity}
-                      className="px-4 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-3 py-1.5 sm:px-4 sm:py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                       disabled={quantity === 1}
                     >
                       -
                     </button>
-                    <span className="px-4 py-2 border-x border-gray-300 min-w-[60px] text-center font-semibold">
+                    <span className="px-3 py-1.5 sm:px-4 sm:py-2 border-x border-gray-300 min-w-[50px] sm:min-w-[60px] text-center font-semibold text-sm sm:text-base">
                       {quantity}
                     </span>
                     <button
                       onClick={increaseQuantity}
-                      className="px-4 py-2 text-gray-600 hover:bg-gray-100"
+                      className="px-3 py-1.5 sm:px-4 sm:py-2 text-gray-600 hover:bg-gray-100 text-sm"
                     >
                       +
                     </button>
@@ -268,14 +270,14 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             </div>
 
-            {/* Bottom Action Buttons - Fixed at bottom of column */}
-            <div className="mt-auto pt-6 border-t">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button className="flex-1 flex items-center justify-center gap-2 me-bgcolor-g text-white font-semibold py-4 px-6 rounded-full hover:opacity-90 transition-opacity">
-                  <FaShoppingCart />
+            {/* Bottom Action Buttons - Always visible */}
+            <div className="mt-4 sm:mt-6 pt-4 border-t">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button className="flex-1 flex items-center justify-center gap-2 me-bgcolor-g text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-full hover:opacity-90 transition-opacity text-sm sm:text-base">
+                  <FaShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                   Add to cart
                 </button>
-                <button className="flex-1 flex items-center justify-center me-bgcolor-y text-gray-900 font-semibold py-4 px-6 rounded-full hover:opacity-90 transition-opacity">
+                <button className="flex-1 flex items-center justify-center me-bgcolor-y text-gray-900 font-semibold py-3 sm:py-4 px-4 sm:px-6 rounded-full hover:opacity-90 transition-opacity text-sm sm:text-base">
                   Buy it now
                 </button>
               </div>
