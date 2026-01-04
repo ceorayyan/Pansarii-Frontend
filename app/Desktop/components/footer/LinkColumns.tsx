@@ -1,5 +1,3 @@
-// components/footer/LinkColumns.tsx
-
 interface LinkColumnsProps {
   textStyle: React.CSSProperties;
   buttonColor: string;
@@ -22,18 +20,18 @@ const linkGroups = [
 
 export default function LinkColumns({ textStyle, buttonColor }: LinkColumnsProps) {
   return (
-    <div className="md:w-1/3 flex flex-col sm:flex-row justify-between gap-8">
+    <div className="md:w-1/3 flex flex-col sm:flex-row justify-between gap-6">
       {linkGroups.map((group) => (
         <div key={group.title}>
-          <h4 className="text-lg font-semibold mb-4" style={{ fontFamily: 'Poppins' }}>
+          <h4 className="text-sm font-semibold mb-3 whitespace-nowrap" style={{ fontFamily: 'Poppins' }}>
             {group.title}
           </h4>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {group.links.map((link) => (
               <li key={link}>
                 <a 
                   href="#" 
-                  style={textStyle} 
+                  style={{ ...textStyle, fontSize: '14px' }} 
                   className={`hover:text-[#197B33]`}
                 >
                   {link}

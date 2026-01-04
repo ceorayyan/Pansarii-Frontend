@@ -8,7 +8,7 @@ export default function ProductCard({ product }) {
 
   return (
     <div 
-      className="w-full sm:w-[260px] md:w-[280px] lg:w-[296px] rounded-[18px] overflow-hidden flex flex-col bg-white cursor-pointer transition-all duration-300"
+      className="w-full rounded-[18px] overflow-hidden flex flex-col bg-white cursor-pointer transition-all duration-300 h-full"
       style={{ 
         border: isHovered ? '2px solid #197B33' : '2px solid #E5E7EB'
       }}
@@ -16,8 +16,8 @@ export default function ProductCard({ product }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       
-      {/* Image Section */}
-      <div className="relative w-full h-[240px]">
+      {/* Image Section with bottom border */}
+      <div className="relative w-full h-[200px] border-b border-gray-200">
         <img
           src={product.img}
           alt={product.nameEn}
@@ -32,39 +32,43 @@ export default function ProductCard({ product }) {
         )}
       </div>
 
-      {/* Product Details */}
-      <div className="flex-1 bg-[#F3F3F3] p-4 flex flex-col justify-between">
+      {/* Product Details - All content centered */}
+      <div className="flex-1 bg-white p-4 flex flex-col justify-between items-center">
         
-        {/* Text Content */}
-        <div>
-          <p className="text-[17px] font-medium truncate">{product.nameEn}</p>
-          <p className="text-[17px] font-medium truncate">{product.nameUr}</p>
-          <p className="text-sm text-[#197B33] truncate">{product.description}</p>
+        {/* Text Content - Centered */}
+        <div className="w-full text-center">
+          <p className="text-[17px] font-medium truncate text-center">{product.nameEn}</p>
+          <p className="text-[17px] font-medium truncate text-center">{product.nameUr}</p>
+          <p className="text-sm text-[#197B33] truncate text-center">{product.description}</p>
 
-          {/* Rating & Reviews */}
-          <div className="flex items-center gap-4 mt-1 text-sm font-medium flex-wrap">
+          {/* Rating & Reviews - Centered */}
+          <div className="flex items-center justify-center gap-4 mt-1 text-sm font-medium flex-wrap">
             <div className="flex items-center gap-1 text-yellow-400">
               <FaStar /> <span>{product.rating}</span>
-            </div>
+            </div>|
             <div className="flex items-center gap-1 text-green-600">
               <FaCheckCircle /> <span>{product.reviews} Reviews</span>
             </div>
           </div>
 
-          {/* Price */}
-          <div className="flex items-center gap-2 mt-2 flex-wrap">
+          {/* Price - Centered */}
+          <div className="flex items-center justify-center gap-2 mt-2 flex-wrap">
             <p className="text-[17px] font-bold">PKR {product.price}</p>
             {product.oldPrice && (
               <p className="text-sm text-gray-500 line-through">PKR {product.oldPrice}</p>
             )}
           </div>
         </div>
+       
 
-        {/* Quick Add Button - Remains unchanged */}
-        <button className="w-full sm:w-auto h-[50px] mt-3 rounded-[57px] border border-gray-300 bg-[#197B33] text-white flex items-center justify-between px-6 font-medium">
-          Quick Add
-          <FaShoppingCart />
-        </button>
+
+        {/* Quick Add Button - Centered with icon on right */}
+        <div className="w-full flex justify-center">
+          <button className="w-[100%] h-[50px] mt-3 rounded-[57px] border border-gray-300 bg-[#50B46B] text-white flex items-center font-medium hover:bg-[#146128] transition-colors">
+            <span className="flex-1 text-center">Quick Add</span>
+            <FaShoppingCart className="mr-6" />
+          </button>
+        </div>
       </div>
     </div>
   );
