@@ -23,7 +23,14 @@ export default function LinkColumns({ textStyle, buttonColor }: LinkColumnsProps
     <div className="md:w-1/3 flex flex-col sm:flex-row justify-between gap-6">
       {linkGroups.map((group) => (
         <div key={group.title}>
-          <h4 className="text-sm font-semibold mb-3 whitespace-nowrap" style={{ fontFamily: 'Poppins' }}>
+          <h4 
+            className="text-sm font-bold mb-3 whitespace-nowrap" 
+            style={{ 
+              fontFamily: 'Poppins',
+              letterSpacing: '0.4px',
+              textTransform: 'uppercase'
+            }}
+          >
             {group.title}
           </h4>
           <ul className="space-y-1">
@@ -31,8 +38,14 @@ export default function LinkColumns({ textStyle, buttonColor }: LinkColumnsProps
               <li key={link}>
                 <a 
                   href="#" 
-                  style={{ ...textStyle, fontSize: '14px' }} 
-                  className={`hover:text-[#197B33]`}
+                  style={{ 
+                    ...textStyle, 
+                    fontSize: '14px',
+                    letterSpacing: '0.1px',
+                    fontWeight: 400,
+                    lineHeight: '1.3'
+                  }} 
+                  className="hover:text-[#197B33] transition-colors duration-200"
                 >
                   {link}
                 </a>

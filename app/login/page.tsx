@@ -1,7 +1,3 @@
-// ============================================
-// LOGIN PAGE - app/login/page.tsx
-// ============================================
-
 "use client";
 
 import { useState } from "react";
@@ -17,9 +13,31 @@ import {
   FaLeaf
 } from "react-icons/fa";
 
+// JSON structure for login request
+interface LoginRequest {
+  email: string;
+  password: string;
+  rememberMe?: boolean;
+}
+
+// JSON structure for login response
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    user: {
+      id: string;
+      email: string;
+      name: string;
+    };
+    token: string;
+  };
+  error?: string;
+}
+
 export default function LoginPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LoginRequest>({
     email: "",
     password: "",
     rememberMe: false
@@ -34,7 +52,7 @@ export default function LoginPage() {
       ...prev,
       [id]: type === "checkbox" ? checked : value
     }));
-    setError(""); // Clear error on input change
+    setError("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,16 +60,47 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
+      });
+
+      const data: LoginResponse = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      if (data.success && data.data) {
+        // Store token in localStorage or cookies
+        localStorage.setItem('auth_token', data.data.token);
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+        
+        // Store rememberMe preference
+        if (formData.rememberMe) {
+          localStorage.setItem('rememberMe', 'true');
+        }
+
+        // Redirect to home or dashboard
+        router.push("/");
+      } else {
+        setError(data.error || 'Login failed');
+      }
+    } catch (error: any) {
+      setError(error.message || 'An error occurred during login');
+    } finally {
       setIsLoading(false);
-      // On success, redirect to home or dashboard
-      router.push("/");
-      
-      // On error (example):
-      // setError("Invalid email or password");
-    }, 1500);
+    }
   };
+
+  // Rest of the component remains the same...
 
   const handleSocialLogin = (provider: string) => {
     console.log(`Login with ${provider}`);

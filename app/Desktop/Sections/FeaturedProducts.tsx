@@ -129,9 +129,9 @@ export default function FeaturedProducts() {
   }, []);
 
   return (
-    <section className="mt-8 font-poppins mx-[4%]">
+    <section className="mt-8 font-poppins mx-[4%] my-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">
+        <h2 className="text-2xl font-semibold my-4 mb-4">
           Featured <span className="text-green-700">Products</span>
         </h2>
         <div className="flex gap-2">

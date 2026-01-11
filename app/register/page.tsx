@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -14,12 +13,40 @@ import {
   FaGoogle,
   FaFacebook,
   FaLeaf,
-  FaCheckCircle
+  FaCheckCircle,
+  FaExclamationTriangle
 } from "react-icons/fa";
+
+// JSON structure for register request
+interface RegisterRequest {
+  fullName: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+  agreeToTerms: boolean;
+}
+
+// JSON structure for register response
+interface RegisterResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    user: {
+      id: string;
+      fullName: string;
+      email: string;
+      phone: string;
+      createdAt: string;
+    };
+    token: string;
+  };
+  error?: string;
+}
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterRequest>({
     fullName: "",
     email: "",
     phone: "",
@@ -31,6 +58,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked } = e.target;
@@ -39,14 +67,18 @@ export default function RegisterPage() {
       [id]: type === "checkbox" ? checked : value
     }));
     // Clear error for this field
-    setErrors(prev => ({ ...prev, [id]: "" }));
+    if (errors[id]) {
+      setErrors(prev => ({ ...prev, [id]: "" }));
+    }
   };
 
-  const validateForm = () => {
+  const validateForm = (): boolean => {
     const newErrors: {[key: string]: string} = {};
 
     if (!formData.fullName.trim()) {
       newErrors.fullName = "Full name is required";
+    } else if (formData.fullName.trim().length < 2) {
+      newErrors.fullName = "Full name must be at least 2 characters";
     }
 
     if (!formData.email.trim()) {
@@ -57,15 +89,23 @@ export default function RegisterPage() {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
+    } else if (!/^[\+]?[1-9][\d]{0,15}$/.test(formData.phone.replace(/\D/g, ''))) {
+      newErrors.phone = "Phone number is invalid";
     }
 
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(formData.password)) {
+      newErrors.password = "Password must contain both uppercase and lowercase letters";
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one number";
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
@@ -79,45 +119,134 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSuccessMessage("");
     
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
+    setErrors({});
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullName: formData.fullName.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          agreeToTerms: formData.agreeToTerms
+        }),
+      });
+
+      const data: RegisterResponse = await response.json();
+
+      if (!response.ok) {
+        // Handle specific field errors from API
+        if (response.status === 409) {
+          setErrors({ email: "Email already exists. Please use a different email or login." });
+        } else if (response.status === 400) {
+          // Handle validation errors from server
+          if (data.error?.includes("email")) {
+            setErrors({ email: data.error });
+          } else if (data.error?.includes("password")) {
+            setErrors({ password: data.error });
+          } else {
+            setErrors({ submit: data.error || "Validation failed" });
+          }
+        } else {
+          setErrors({ submit: data.error || "Registration failed. Please try again." });
+        }
+        return;
+      }
+
+      if (data.success) {
+        // Show success message
+        setSuccessMessage("Account created successfully! Redirecting to login...");
+        
+        // Reset form
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
+          agreeToTerms: false
+        });
+
+        // Redirect to login page after 2 seconds
+        setTimeout(() => {
+          router.push("/login?message=Registration successful! Please login.");
+        }, 2000);
+      }
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      setErrors({ 
+        submit: error.message || "Network error. Please check your connection and try again." 
+      });
+    } finally {
       setIsLoading(false);
-      // On success, redirect to login or home
-      router.push("/login");
-      
-      // On error (example):
-      // setErrors({ email: "Email already exists" });
-    }, 1500);
+    }
   };
 
   const handleSocialSignup = (provider: string) => {
     console.log(`Sign up with ${provider}`);
     // Implement social signup logic
+    // This would typically redirect to OAuth provider
+    // window.location.href = `/api/auth/${provider}`;
   };
 
   const passwordStrength = (password: string) => {
-    if (!password) return { strength: 0, label: "" };
+    if (!password) return { strength: 0, label: "", color: "bg-gray-200" };
     
     let strength = 0;
-    if (password.length >= 8) strength++;
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-    if (/\d/.test(password)) strength++;
-    if (/[@$!%*?&#]/.test(password)) strength++;
+    const checks = [
+      password.length >= 8,
+      /[a-z]/.test(password) && /[A-Z]/.test(password),
+      /\d/.test(password),
+      /[@$!%*?&#]/.test(password)
+    ];
+    
+    strength = checks.filter(Boolean).length;
 
     const labels = ["", "Weak", "Fair", "Good", "Strong"];
     const colors = ["", "bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-green-500"];
     
-    return { strength, label: labels[strength], color: colors[strength] };
+    return { 
+      strength, 
+      label: labels[strength], 
+      color: colors[strength],
+      checks
+    };
   };
 
   const pwdStrength = passwordStrength(formData.password);
+
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-digit characters
+    const cleaned = value.replace(/\D/g, '');
+    
+    // Format based on length
+    if (cleaned.length <= 3) {
+      return cleaned;
+    } else if (cleaned.length <= 6) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`;
+    } else if (cleaned.length <= 10) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+    } else {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+    }
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setFormData(prev => ({ ...prev, phone: formatted }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -135,11 +264,31 @@ export default function RegisterPage() {
 
         {/* Register Form Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 text-sm flex items-center">
+                <FaCheckCircle className="mr-2" />
+                {successMessage}
+              </p>
+            </div>
+          )}
+
+          {/* Submit Error Message */}
+          {errors.submit && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 text-sm flex items-center">
+                <FaExclamationTriangle className="mr-2" />
+                {errors.submit}
+              </p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Full Name Field */}
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name
+                Full Name *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -155,6 +304,7 @@ export default function RegisterPage() {
                   className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#197B33] focus:border-transparent outline-none transition-all ${
                     errors.fullName ? "border-red-500" : "border-gray-300"
                   }`}
+                  disabled={isLoading}
                 />
               </div>
               {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
@@ -163,7 +313,7 @@ export default function RegisterPage() {
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+                Email Address *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -179,6 +329,7 @@ export default function RegisterPage() {
                   className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#197B33] focus:border-transparent outline-none transition-all ${
                     errors.email ? "border-red-500" : "border-gray-300"
                   }`}
+                  disabled={isLoading}
                 />
               </div>
               {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
@@ -187,7 +338,7 @@ export default function RegisterPage() {
             {/* Phone Field */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
+                Phone Number *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -198,11 +349,12 @@ export default function RegisterPage() {
                   type="tel"
                   required
                   value={formData.phone}
-                  onChange={handleInputChange}
-                  placeholder="+92 300 1234567"
+                  onChange={handlePhoneChange}
+                  placeholder="(123) 456-7890"
                   className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-[#197B33] focus:border-transparent outline-none transition-all ${
                     errors.phone ? "border-red-500" : "border-gray-300"
                   }`}
+                  disabled={isLoading}
                 />
               </div>
               {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
@@ -211,7 +363,7 @@ export default function RegisterPage() {
             {/* Password Field */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+                Password *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -227,11 +379,13 @@ export default function RegisterPage() {
                   className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-[#197B33] focus:border-transparent outline-none transition-all ${
                     errors.password ? "border-red-500" : "border-gray-300"
                   }`}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  disabled={isLoading}
                 >
                   {showPassword ? (
                     <FaEyeSlash className="text-gray-400 hover:text-gray-600" />
@@ -242,22 +396,49 @@ export default function RegisterPage() {
               </div>
               {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
               
+              {/* Password Requirements */}
+              <div className="mt-2 space-y-1">
+                <p className="text-xs text-gray-600">Password must contain:</p>
+                <ul className="text-xs text-gray-600 space-y-1 ml-2">
+                  <li className={`flex items-center ${formData.password.length >= 8 ? 'text-green-600' : ''}`}>
+                    <span className="mr-1">•</span> At least 8 characters
+                  </li>
+                  <li className={`flex items-center ${/(?=.*[a-z])(?=.*[A-Z])/.test(formData.password) ? 'text-green-600' : ''}`}>
+                    <span className="mr-1">•</span> Uppercase and lowercase letters
+                  </li>
+                  <li className={`flex items-center ${/\d/.test(formData.password) ? 'text-green-600' : ''}`}>
+                    <span className="mr-1">•</span> At least one number
+                  </li>
+                  <li className={`flex items-center ${/[@$!%*?&#]/.test(formData.password) ? 'text-green-600' : ''}`}>
+                    <span className="mr-1">•</span> Special character (optional)
+                  </li>
+                </ul>
+              </div>
+
               {/* Password Strength Indicator */}
               {formData.password && (
-                <div className="mt-2">
-                  <div className="flex gap-1 mb-1">
+                <div className="mt-3">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs text-gray-600">Password strength:</span>
+                    <span className={`text-xs font-medium ${
+                      pwdStrength.strength === 4 ? 'text-green-600' :
+                      pwdStrength.strength === 3 ? 'text-yellow-600' :
+                      pwdStrength.strength === 2 ? 'text-orange-600' :
+                      'text-red-600'
+                    }`}>
+                      {pwdStrength.label}
+                    </span>
+                  </div>
+                  <div className="flex gap-1 mb-2">
                     {[1, 2, 3, 4].map((level) => (
                       <div
                         key={level}
-                        className={`h-1 flex-1 rounded ${
+                        className={`h-2 flex-1 rounded ${
                           level <= pwdStrength.strength ? pwdStrength.color : "bg-gray-200"
                         }`}
                       ></div>
                     ))}
                   </div>
-                  {pwdStrength.label && (
-                    <p className="text-xs text-gray-600">Password strength: {pwdStrength.label}</p>
-                  )}
                 </div>
               )}
             </div>
@@ -265,7 +446,7 @@ export default function RegisterPage() {
             {/* Confirm Password Field */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
+                Confirm Password *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -281,11 +462,13 @@ export default function RegisterPage() {
                   className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-[#197B33] focus:border-transparent outline-none transition-all ${
                     errors.confirmPassword ? "border-red-500" : "border-gray-300"
                   }`}
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  disabled={isLoading}
                 >
                   {showConfirmPassword ? (
                     <FaEyeSlash className="text-gray-400 hover:text-gray-600" />
@@ -295,44 +478,49 @@ export default function RegisterPage() {
                 </button>
               </div>
               {errors.confirmPassword && <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>}
+              {formData.confirmPassword && formData.password === formData.confirmPassword && (
+                <p className="mt-1 text-sm text-green-600">✓ Passwords match</p>
+              )}
             </div>
 
             {/* Terms and Conditions */}
-            <div>
+            <div className="pt-2">
               <div className="flex items-start">
                 <input
                   id="agreeToTerms"
                   type="checkbox"
                   checked={formData.agreeToTerms}
                   onChange={handleInputChange}
-                  className={`h-4 w-4 text-[#197B33] focus:ring-[#197B33] border-gray-300 rounded mt-1 ${
+                  className={`h-5 w-5 text-[#197B33] focus:ring-[#197B33] border-gray-300 rounded mt-0.5 ${
                     errors.agreeToTerms ? "border-red-500" : ""
                   }`}
+                  disabled={isLoading}
                 />
-                <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-700">
+                <label htmlFor="agreeToTerms" className="ml-3 block text-sm text-gray-700">
                   I agree to the{" "}
-                  <Link href="/terms" className="text-[#197B33] hover:text-[#156529]">
+                  <Link href="/terms" className="text-[#197B33] hover:text-[#156529] font-medium" target="_blank">
                     Terms and Conditions
                   </Link>{" "}
                   and{" "}
-                  <Link href="/privacy" className="text-[#197B33] hover:text-[#156529]">
+                  <Link href="/privacy" className="text-[#197B33] hover:text-[#156529] font-medium" target="_blank">
                     Privacy Policy
                   </Link>
+                  {" "}*
                 </label>
               </div>
-              {errors.agreeToTerms && <p className="mt-1 text-sm text-red-600">{errors.agreeToTerms}</p>}
+              {errors.agreeToTerms && <p className="mt-1 ml-8 text-sm text-red-600">{errors.agreeToTerms}</p>}
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#197B33] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#156529] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              className="w-full bg-[#197B33] text-white py-3 px-6 rounded-lg font-semibold hover:bg-[#156529] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-md hover:shadow-lg"
             >
               {isLoading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
-                  Creating account...
+                  Creating Account...
                 </>
               ) : (
                 <>
@@ -341,6 +529,11 @@ export default function RegisterPage() {
                 </>
               )}
             </button>
+
+            {/* Required Fields Note */}
+            <p className="text-xs text-gray-500 text-center mt-2">
+              * Required fields
+            </p>
           </form>
 
           {/* Divider */}
@@ -357,14 +550,16 @@ export default function RegisterPage() {
           <div className="mt-6 grid grid-cols-2 gap-4">
             <button
               onClick={() => handleSocialSignup("google")}
-              className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-300 rounded-lg hover:border-[#197B33] hover:bg-gray-50 transition-all"
+              disabled={isLoading}
+              className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-300 rounded-lg hover:border-[#197B33] hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaGoogle className="text-red-500" />
               <span className="text-sm font-medium">Google</span>
             </button>
             <button
               onClick={() => handleSocialSignup("facebook")}
-              className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-300 rounded-lg hover:border-[#197B33] hover:bg-gray-50 transition-all"
+              disabled={isLoading}
+              className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-gray-300 rounded-lg hover:border-[#197B33] hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <FaFacebook className="text-blue-600" />
               <span className="text-sm font-medium">Facebook</span>
@@ -374,17 +569,29 @@ export default function RegisterPage() {
           {/* Sign In Link */}
           <p className="mt-6 text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <Link href="/login" className="font-medium text-[#197B33] hover:text-[#156529]">
-              Sign in
+            <Link 
+              href="/login" 
+              className="font-medium text-[#197B33] hover:text-[#156529] hover:underline"
+            >
+              Sign in here
             </Link>
           </p>
         </div>
 
         {/* Back to Home */}
         <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-gray-600 hover:text-[#197B33]">
+          <Link 
+            href="/" 
+            className="inline-flex items-center text-sm text-gray-600 hover:text-[#197B33] hover:underline"
+          >
             ← Back to Home
           </Link>
+        </div>
+
+        {/* Additional Info */}
+        <div className="mt-8 text-center text-xs text-gray-500">
+          <p>By creating an account, you agree to our terms and privacy policy.</p>
+          <p className="mt-1">Need help? <Link href="/contact" className="text-[#197B33] hover:underline">Contact Support</Link></p>
         </div>
       </div>
     </div>

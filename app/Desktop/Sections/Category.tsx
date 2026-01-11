@@ -35,7 +35,7 @@ export default function Category() {
   return (
     <div className="p-4 mx-[4%]">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold">
+        <h1 className="text-2xl font-semibold my-5 mb-5">
           Shop By <span className="text-green-700">Category</span>
         </h1>
       </div>

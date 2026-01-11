@@ -1,4 +1,6 @@
 import "./globals.css";
+import Sidebar from "@/app/Desktop/components/Sidebar"
+import Navbar from "@/app/Desktop/components/navbar"
 
 export const metadata = {
   title: "Pansari Inn",
@@ -38,8 +40,10 @@ export default function RootLayout({
           }}
         />
       </head>
+      <Navbar/>
       <body className="bg-white text-black font-poppins ">
         {children}
+        
       </body>
     </html>
   );
