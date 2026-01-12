@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import Footer from "../../../Desktop/Sections/Footer";
+import Footer from "../../Desktop/Sections/Footer";
 import { 
   FaCalendar, 
   FaClock,

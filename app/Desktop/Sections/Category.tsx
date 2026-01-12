@@ -4,6 +4,16 @@ export default function Category() {
   const cards = [];
   const CategoryImage = '/images/category.png';
   
+  // Different background colors for each card
+  const bgColors = [
+    '#FFEBEE', // Red
+    '#F3E5F5', // Purple
+    '#E8EAF6', // Indigo
+    '#E3F2FD', // Blue
+    '#E8F5E9', // Green
+    '#FFF3E0', // Orange
+  ];
+  
   for (let i = 0; i < 6; i++) {
     cards.push(
       <div
@@ -11,18 +21,22 @@ export default function Category() {
         className="flex flex-col items-center w-full"
       >
         <div
-          className="w-full aspect-[191/201] bg-[#F3F3F3] mb-2 flex items-center justify-center"
+          className="w-full aspect-[191/201] mb-2 flex items-center justify-center"
           style={{
             borderTopLeftRadius: "113px",
             borderTopRightRadius: "113px",
+            backgroundColor: bgColors[i], // Dynamic background color
           }}
         >
           <Image
             src={CategoryImage}
             alt="Category"
-            width={100}
-            height={100}
-            className="object-contain mr-5"
+            width={170} // Increased from 100 to 130
+            height={120} // Increased from 100 to 130
+            className="object-contain mr-7 mt-6"
+            style={{ 
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' // Adds clarity
+            }}
           />
         </div>
         <div className="w-full h-[50px] bg-white shadow-[0_4px_13.3px_0_rgba(0,0,0,0.24)] flex items-center justify-center rounded text-[16px] font-medium">

@@ -22,8 +22,16 @@ export default function SolutionBar() {
     const el = sliderRef.current;
     if (!el) return;
 
+    // Scroll by exactly one card width including gap
+    const containerWidth = el.clientWidth;
+    const cardsToShow = 5;
+    const gap = 16; // 1rem in pixels
+    const totalGapWidth = gap * (cardsToShow - 1); // 4 gaps
+    const cardWidth = (containerWidth - totalGapWidth) / cardsToShow;
+    const scrollAmount = cardWidth + gap;
+    
     el.scrollBy({
-      left: direction === "right" ? 200 : -200, // Smaller scroll amount for smaller cards
+      left: direction === "right" ? scrollAmount : -scrollAmount,
       behavior: "smooth",
     });
   };
@@ -35,10 +43,15 @@ export default function SolutionBar() {
     checkScroll();
     el.addEventListener("scroll", checkScroll);
 
-    return () => el.removeEventListener("scroll", checkScroll);
+    // Also check on resize
+    window.addEventListener('resize', checkScroll);
+
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener('resize', checkScroll);
+    };
   }, []);
 
-  // Card data to reduce repetition
   const cards = [
     { title: "Skin care products", offset: false },
     { title: "Hair care products", offset: true },
@@ -75,8 +88,11 @@ export default function SolutionBar() {
       {/* Cards Container */}
       <div
         ref={sliderRef}
-        className="slide flex gap-3 overflow-x-auto scroll-smooth no-scrollbar pb-4"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        className="slide flex overflow-x-auto scroll-smooth no-scrollbar pb-4"
+        style={{ 
+          scrollbarWidth: 'none', 
+          msOverflowStyle: 'none',
+        }}
       >
         {cards.map((card, index) => (
           <div
@@ -85,8 +101,12 @@ export default function SolutionBar() {
               card.offset ? 'mt-8' : ''
             }`}
             style={{
-              width: '180px', // Smaller width
-              height: '230px', // Smaller height
+              // Exact calculation for 5 cards: 20% width minus gap adjustment
+              // Total gaps for 5 cards = 4 gaps = 4rem = 64px
+              // Each card: (100% / 5) - (total gaps / 5)
+              width: 'calc(19% - 12.8px)',
+              marginRight: index === cards.length - 1 ? '0' : '16px', // No margin on last card
+              height: '270px',
               backgroundImage: `url(${pic})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
