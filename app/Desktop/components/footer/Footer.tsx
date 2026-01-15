@@ -83,7 +83,7 @@ export default function Footer() {
 </div>
       
       {/* Main Footer */}
-      <footer className="bg-white text-gray-900 px-6 sm:px-12 pt-5">
+      <footer className="bg-white text-gray-900 px-6 sm:px-12 pt-10">
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-12 md:gap-8">
           <ContactInfo textStyle={textStyle} buttonColor={buttonColor}/>
           <LinkColumns textStyle={textStyle} buttonColor={buttonColor}/>

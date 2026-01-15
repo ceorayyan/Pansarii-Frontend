@@ -1,3 +1,4 @@
+// Desktop/components/footer/ContactInfo.tsx
 import Image from 'next/image';
 import { FaFacebook, FaTwitter, FaYoutube, FaInstagram } from 'react-icons/fa';
 
@@ -22,22 +23,22 @@ interface ContactInfoProps {
 const defaultSocialMedia: SocialMediaItem[] = [
   { 
     name: 'Facebook', 
-    icon: <FaFacebook className="w-5 h-5" />,
+    icon: <FaFacebook className="w-4 h-4" />,
     url: 'https://facebook.com'
   },
   { 
     name: 'X', 
-    icon: <FaTwitter className="w-5 h-5" />,
+    icon: <FaTwitter className="w-4 h-4" />,
     url: 'https://twitter.com'
   },
   { 
     name: 'YouTube', 
-    icon: <FaYoutube className="w-5 h-5" />,
+    icon: <FaYoutube className="w-4 h-4" />,
     url: 'https://youtube.com'
   },
   { 
     name: 'Instagram', 
-    icon: <FaInstagram className="w-5 h-5" />,
+    icon: <FaInstagram className="w-4 h-4" />,
     url: 'https://instagram.com'
   }
 ];
@@ -50,41 +51,38 @@ export default function ContactInfo({
   socialMedia = defaultSocialMedia,
   logoUrl = '/images/logo.png',
   logoAlt = 'Logo',
-  logoWidth = 130,
-  logoHeight = 40
+  logoWidth = 100,
+  logoHeight = 32
 }: ContactInfoProps) {
   
   return (
-    <div className="md:w-1/3 flex flex-col items-start">
+    <div className="md:w-1/6 flex flex-col items-start">
       <Image 
         src={logoUrl} 
         alt={logoAlt} 
         width={logoWidth} 
         height={logoHeight} 
-        className="mb-3" 
+        className="mb-2" 
       />
-      <p style={{ ...textStyle, fontSize: '14px' }} className="mb-1">
-        Email: <a 
+      <p style={{ ...textStyle, fontSize: '12px' }} className="mb-1">
+        <a 
           href={`mailto:${email}`} 
-          style={{ color: buttonColor, fontSize: '14px' }}
+          style={{ color: buttonColor, fontSize: '12px' }}
           className="hover:opacity-80 transition-opacity"
         >
           {email}
         </a>
       </p>
-      <p style={{ ...textStyle, fontSize: '14px' }} className="mb-3">
-        Phone: <a 
+      <p style={{ ...textStyle, fontSize: '12px' }} className="mb-2">
+        <a 
           href={`tel:${phone}`} 
-          style={{ color: buttonColor, fontSize: '14px' }}
+          style={{ color: buttonColor, fontSize: '12px' }}
           className="hover:opacity-80 transition-opacity"
         >
           {phone}
         </a>
       </p>
-      <p style={{ ...textStyle, fontWeight: 600, fontSize: '14px' }} className="mb-2">
-        Follow Our Social Media!
-      </p>
-      <div className="flex gap-4">
+      <div className="flex gap-3 mt-2">
         {socialMedia && socialMedia.length > 0 ? (
           socialMedia.map((platform) => (
             <a
@@ -100,7 +98,7 @@ export default function ContactInfo({
             </a>
           ))
         ) : (
-          <p style={{ ...textStyle, fontSize: '12px' }}>No social media links available</p>
+          <p style={{ ...textStyle, fontSize: '11px' }}>No social media links available</p>
         )}
       </div>
     </div>

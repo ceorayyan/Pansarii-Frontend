@@ -52,14 +52,7 @@ export default function BeautyCorner() {
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute text-center w-full" style={{ top: "51px" }}>
-          <h1 className="font-poppins font-semibold text-[62px] me-color-g">
-            Beauty Corner
-          </h1>
-          <h2 className="font-['Richardson Script DEMO'] text-[148px] leading-none">
-            Products
-          </h2>
-        </div>
+      
       </section>
 
       {/* Content Section with 4% margins */}

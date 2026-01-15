@@ -1,3 +1,5 @@
+
+// Desktop/components/footer/Newsletter.tsx
 interface NewsletterProps {
   textStyle: React.CSSProperties;
   buttonColor: string;
@@ -5,53 +7,51 @@ interface NewsletterProps {
 
 export default function Newsletter({ textStyle, buttonColor }: NewsletterProps) {
   return (
-    <div className="md:w-1/3 flex flex-col">
+    <div className="md:w-1/4 flex flex-col">
       <h3 
-        className="text-base font-bold mb-3 whitespace-nowrap" 
+        className="text-sm font-bold mb-2" 
         style={{ 
           fontFamily: 'Poppins',
-          letterSpacing: '0.5px',
+          letterSpacing: '0.4px',
           textTransform: 'uppercase'
         }}
       >
-        Join Our Mailing List
+        Newsletter
       </h3>
       <p 
         style={{ 
           ...textStyle, 
-          fontSize: '14px',
-          lineHeight: '1.4',
+          fontSize: '12px',
+          lineHeight: '1.5',
           letterSpacing: '0.1px',
           fontWeight: 400 
         }} 
         className="mb-3"
       >
-        Find out all about our latest offers, new products, and the science of Ayurveda in our newsletters!
+        Get updates on new products and exclusive offers!
       </p>
-      <form className="flex flex-col sm:flex-row gap-2">
+      <form className="flex flex-col gap-2">
         <input
           type="email"
           placeholder="Enter your email"
-          className="p-2 rounded text-gray-900 flex-1 w-full sm:w-auto text-sm"
+          className="p-2 rounded text-gray-900 w-full text-xs"
           style={{ 
             backgroundColor: '#D9D9D9A6', 
             ...textStyle, 
-            fontSize: '14px',
+            fontSize: '12px',
             letterSpacing: '0.1px',
             fontWeight: 400 
           }}
         />
         <button
           type="submit"
-          className="text-white mt-2 sm:mt-0 hover:opacity-90 transition-opacity font-semibold"
+          className="text-white hover:opacity-90 transition-opacity font-semibold w-full"
           style={{
-            width: '100%',
-            maxWidth: '311px',
-            height: '42px',
-            borderRadius: '37px',
+            height: '36px',
+            borderRadius: '30px',
             fontFamily: 'Poppins',
             fontWeight: 600,
-            fontSize: '14px',
+            fontSize: '12px',
             lineHeight: '100%',
             backgroundColor: buttonColor,
             letterSpacing: '0.2px'
