@@ -204,13 +204,13 @@ export default async function ServerHeader() {
                   className="w-full px-6 py-3 pr-12 border-2 border-gray-200 rounded-full focus:outline-none focus:border-green-700 transition"
                   aria-label="Search products"
                 />
-                <button 
+                {/* <button 
                   type="submit" 
                   className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-green-700 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition"
                   aria-label="Search"
                 >
-                  <SearchIcon />
-                </button>
+                 
+                </button> */}
               </form>
             </div>
 
