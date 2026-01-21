@@ -61,7 +61,7 @@ export default function ScrollableReviews() {
   // Setup horizontal scrolling with touch - FIXED VERSION
   useEffect(() => {
     const setupScrolling = (element: HTMLDivElement) => {
-      if (!element) return;
+      if (!element) return () => {}; // Return empty cleanup function
 
       let isDown = false;
       let startX: number;
@@ -204,8 +204,8 @@ export default function ScrollableReviews() {
             {/* First Row */}
             <div className="mb-6 sm:mb-8 md:mb-10">
               <h3 className="text-lg sm:text-xl font-medium mb-4 text-center">
-  Customer Reviews
-</h3>
+                Customer Reviews
+              </h3>
               <div 
                 ref={firstRowRef}
                 className="flex gap-4 sm:gap-6 md:gap-8 overflow-x-auto scrollbar-hide pb-4 relative"

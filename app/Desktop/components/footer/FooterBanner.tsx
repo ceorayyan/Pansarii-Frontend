@@ -1,5 +1,3 @@
-'use client';
-
 import { FaArrowRight } from 'react-icons/fa';
 
 interface FooterBannerProps {
@@ -7,16 +5,11 @@ interface FooterBannerProps {
 }
 
 const FooterBanner = ({ className = '' }: FooterBannerProps) => {
-  const handleShopNow = () => {
-    console.log('Navigating to shop...');
-    // Add your navigation logic here
-  };
-
   return (
     <div className={`relative w-full min-h-[400px] flex items-center justify-center ${className}`}>
       {/* Background Image */}
       <div 
-        className="absolute inset-0 w-full h-full bg-cover "
+        className="absolute inset-0 w-full h-full bg-cover"
         style={{
           backgroundImage: 'url(/images/whisk.png)',
           filter: 'brightness(0.4) contrast(1.1) saturate(0.8)',
@@ -38,31 +31,31 @@ const FooterBanner = ({ className = '' }: FooterBannerProps) => {
           Each product is made using time-tested ingredients and expert knowledge, helping you choose the right remedy for your everyday needs.
         </p>
         
-        {/* Shop Now Button */}
-        <button
-          onClick={handleShopNow}
-          className="me-bgcolor-y flex items-center justify-center gap-4 font-bold text-white uppercase tracking-wide 
-                   mx-auto rounded-[50px] hover:opacity-90 transition-opacity duration-300"
-          style={{
-            width: '175px',
-            height: '59px',
-            paddingTop: '16px',
-            paddingRight: '24px',
-            paddingBottom: '16px',
-            paddingLeft: '24px',
-            gap: '16px',
-            border: 'none',
-            outline: 'none'
-          }}
-          aria-label="Shop Now"
-        >
-          <span className="text-sm">Shop Now</span>
-          <FaArrowRight className="w-4 h-4" />
-        </button>
+        {/* Shop Now Button - Using a form instead of button with onClick */}
+        <form action="/shop" method="get">
+          <button
+            type="submit"
+            className="me-bgcolor-y flex items-center justify-center gap-4 font-bold text-white uppercase tracking-wide 
+                     mx-auto rounded-[50px] hover:opacity-90 transition-opacity duration-300"
+            style={{
+              width: '175px',
+              height: '59px',
+              paddingTop: '16px',
+              paddingRight: '24px',
+              paddingBottom: '16px',
+              paddingLeft: '24px',
+              gap: '16px',
+              border: 'none',
+              outline: 'none'
+            }}
+            aria-label="Shop Now"
+          >
+            <span className="text-sm">Shop Now</span>
+            <FaArrowRight className="w-4 h-4" />
+          </button>
+        </form>
       </div>
-      
     </div>
-    
   );
 };
 

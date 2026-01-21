@@ -1,20 +1,40 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, KeyboardEvent as ReactKeyboardEvent } from "react";
 import { FaStar, FaCheckCircle, FaShoppingCart, FaTimes, FaBolt, FaSearchPlus } from "react-icons/fa";
 import { AiOutlineShopping } from "react-icons/ai";
 
+interface Product {
+  id?: string | number;
+  img: string;
+  nameEn: string;
+  nameUr: string;
+  description?: string;
+  rating: number;
+  reviews: number;
+  price: number;
+  oldPrice?: number | null; // Accept null
+  sale?: string | null; // Accept null
+  additionalImages?: string[];
+  sizes?: string[];
+  benefits?: string[];
+  features?: (string | { text: string; hasCheck?: boolean })[];
+  infoLines?: string[];
+  points?: number;
+  [key: string]: any;
+}
+
 interface ProductDetailsModalProps {
-  product: any;
+  product: Product;
   onClose: () => void;
 }
 
 export default function ProductDetailsModal({ product, onClose }: ProductDetailsModalProps) {
-  const [selectedImage, setSelectedImage] = useState(product.img);
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || '15ml');
-  const [quantity, setQuantity] = useState(1);
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
+  const [selectedImage, setSelectedImage] = useState<string>(product.img);
+  const [selectedSize, setSelectedSize] = useState<string>(product.sizes?.[0] || '15ml');
+  const [quantity, setQuantity] = useState<number>(1);
+  const [isZoomed, setIsZoomed] = useState<boolean>(false);
+  const [zoomPosition, setZoomPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const imageRef = useRef<HTMLDivElement>(null);
 
   // Prevent body scroll when modal is open
@@ -36,17 +56,17 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
 
   const additionalImages = product.additionalImages || [];
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (): void => {
     console.log('Added to cart:', { product, quantity, selectedSize });
     onClose();
   };
 
-  const handleBuyNow = () => {
+  const handleBuyNow = (): void => {
     console.log('Buy now:', { product, quantity, selectedSize });
     onClose();
   };
 
-  const handleImageHover = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleImageHover = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (!isZoomed || !imageRef.current) return;
 
     const { left, top, width, height } = imageRef.current.getBoundingClientRect();
@@ -70,6 +90,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
         <button
           onClick={onClose}
           className="absolute top-3 right-3 z-20 w-8 h-8 flex items-center justify-center bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
+          aria-label="Close modal"
         >
           <FaTimes className="w-4 h-4 text-gray-700" />
         </button>
@@ -124,6 +145,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
                         ? 'border-[#197B33] border-2' 
                         : 'border-gray-200 hover:border-gray-400'
                     }`}
+                    aria-label={`View image ${index + 1}`}
                   >
                     <img
                       src={image}
@@ -139,14 +161,14 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
           {/* Right Column - Product Info */}
           <div className="lg:w-3/5 p-4 lg:p-6 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 2rem)' }}>
             <div className="space-y-4">
-              {/* Header */}
+              {/* Header - Fix sale check */}
               <div>
                 <div className="flex items-start justify-between">
                   <div>
                     <h1 className="text-xl font-bold text-gray-900">{product.nameEn}</h1>
                     <p className="text-gray-600 text-sm mt-1">{product.nameUr}</p>
                   </div>
-                  {product.sale && (
+                  {product.sale && product.sale !== null && product.sale !== undefined && (
                     <span className="px-2 py-1 bg-red-100 text-red-600 rounded text-xs font-semibold">
                       {product.sale}
                     </span>
@@ -170,12 +192,12 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
                 </div>
               </div>
 
-              {/* Price */}
+              {/* Price - Fixed to handle null properly */}
               <div className="flex items-center gap-2">
                 <span className="text-2xl font-bold text-gray-900">
                   PKR {product.price.toLocaleString()}
                 </span>
-                {product.oldPrice && (
+                {product.oldPrice !== null && product.oldPrice !== undefined && (
                   <span className="text-gray-500 line-through text-sm">
                     PKR {product.oldPrice.toLocaleString()}
                   </span>
@@ -273,6 +295,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
                       <button
                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
                         className="px-3 py-2 text-gray-600 hover:bg-gray-100 font-bold"
+                        aria-label="Decrease quantity"
                       >
                         −
                       </button>
@@ -282,6 +305,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
                       <button
                         onClick={() => setQuantity(q => q + 1)}
                         className="px-3 py-2 text-gray-600 hover:bg-gray-100 font-bold"
+                        aria-label="Increase quantity"
                       >
                         +
                       </button>

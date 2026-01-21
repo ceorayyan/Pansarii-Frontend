@@ -1,6 +1,8 @@
 import "./globals.css";
 import Sidebar from "@/app/Desktop/components/Sidebar"
 import Navbar from "@/app/Desktop/components/navbar"
+import Footer from "@/app/Desktop/components/footer"
+
 
 export const metadata = {
   title: "Pansari Inn",
@@ -43,8 +45,9 @@ export default function RootLayout({
       <Navbar/>
       <body className="bg-white text-black font-poppins ">
         {children}
-        
       </body>
+        <Footer/>
+
     </html>
   );
 }

@@ -1,94 +1,113 @@
 "use client";
-import { useRef } from 'react';
+import { useRef, MouseEvent } from 'react';
 import VideoProductCard from '@components/VideoProductCard';
 
+// Match the interface expected by VideoProductCard
+interface VideoProduct {
+  id: string | number;
+  topImage: string;
+  productImage: string;
+  video: string;
+  nameEn: string;
+  nameUr: string;
+  views?: string; // Changed from number | string to string (optional)
+  sale?: string;
+  price: number | string;
+  oldPrice?: number | string;
+}
+
 export default function VideoProducts() {
-  const carouselRef = useRef(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   // Define image and video constants
   const skincareImg = '/images/Skincare.png';
   const productImg = '/images/product.png';
-  const productVideo = '/videos/product-video.mp4'; // Add your video path here
+  const productVideo = '/videos/product-video.mp4';
 
-  const videoProducts = [
+  const videoProducts: VideoProduct[] = [
     { 
-      topImage: skincareImg,        // Image for top section
-      productImage: productImg,     // Image for thumbnail
-      video: productVideo,          // Video for playing
+      id: 1,
+      topImage: skincareImg,
+      productImage: productImg,
+      video: productVideo,
       nameEn: 'Orange Oil', 
       nameUr: 'نارنجی کا تیل', 
-      views: 860, 
+      views: '860', // Convert to string
       sale: '20% OFF', 
       price: 1149, 
       oldPrice: 1299 
     },
     { 
+      id: 2,
       topImage: skincareImg,
       productImage: productImg,
       video: productVideo,
       nameEn: 'Green Oil', 
       nameUr: 'سبز تیل', 
-      views: 920, 
+      views: '920', // Convert to string
       sale: '15% OFF', 
       price: 999, 
       oldPrice: 1200 
     },
     { 
+      id: 3,
       topImage: skincareImg,
       productImage: productImg,
       video: productVideo,
       nameEn: 'Black Oil', 
       nameUr: 'کالی تیل', 
-      views: 780, 
+      views: '780', // Convert to string
       sale: '10% OFF', 
       price: 1099, 
       oldPrice: 1299 
     },
     { 
+      id: 4,
       topImage: skincareImg,
       productImage: productImg,
       video: productVideo,
       nameEn: 'Chamomile Oil', 
       nameUr: 'کملی تیل', 
-      views: 650, 
+      views: '650', // Convert to string
       sale: '25% OFF', 
       price: 899, 
       oldPrice: 1199 
     },
     { 
+      id: 5,
       topImage: skincareImg,
       productImage: productImg,
       video: productVideo,
       nameEn: 'Lavender Oil', 
       nameUr: 'لیونڈر تیل', 
-      views: 500, 
+      views: '500', // Convert to string
       sale: '30% OFF', 
       price: 1249, 
       oldPrice: 1499 
     },
-    // Add more products as needed...
   ];
 
   let isDown = false;
-  let startX;
-  let scrollLeft;
+  let startX: number;
+  let scrollLeft: number;
 
-  const onMouseDown = (e) => {
+  const onMouseDown = (e: MouseEvent<HTMLDivElement>): void => {
+    if (!carouselRef.current) return;
     isDown = true;
     startX = e.pageX - carouselRef.current.offsetLeft;
     scrollLeft = carouselRef.current.scrollLeft;
   };
 
-  const onMouseLeave = () => {
+  const onMouseLeave = (): void => {
     isDown = false;
   };
 
-  const onMouseUp = () => {
+  const onMouseUp = (): void => {
     isDown = false;
   };
 
-  const onMouseMove = (e) => {
-    if (!isDown) return;
+  const onMouseMove = (e: MouseEvent<HTMLDivElement>): void => {
+    if (!isDown || !carouselRef.current) return;
     e.preventDefault();
     const x = e.pageX - carouselRef.current.offsetLeft;
     const walk = (x - startX) * 2;
@@ -112,8 +131,8 @@ export default function VideoProducts() {
         onMouseMove={onMouseMove}
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {videoProducts.map((product, index) => (
-          <div key={index} className="flex-shrink-0">
+        {videoProducts.map((product) => (
+          <div key={product.id} className="flex-shrink-0">
             <VideoProductCard product={product} />
           </div>
         ))}

@@ -1,8 +1,25 @@
 import React, { useRef, useEffect } from 'react';
 import { FaHeart, FaShareAlt } from 'react-icons/fa';
 
-export default function VideoProductCard2({ product }) {
-  const videoRef = useRef(null);
+interface VideoProduct {
+  video: string;
+  topImage: string;
+  productImage?: string; // Optional for this component
+  nameEn?: string; // Optional for this component
+  nameUr?: string; // Optional for this component
+  price?: number | string; // Optional for this component
+  oldPrice?: number | string;
+  sale?: string;
+  views?: string;
+  [key: string]: any;
+}
+
+interface VideoProductCard2Props {
+  product: VideoProduct;
+}
+
+export default function VideoProductCard2({ product }: VideoProductCard2Props) {
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const playVideo = async () => {
@@ -44,8 +61,8 @@ export default function VideoProductCard2({ product }) {
         src={product.topImage}
         alt="Product"
         className="absolute inset-0 w-full h-full object-cover opacity-0 hover:opacity-100 transition-opacity"
-        onError={(e) => {
-          e.target.style.opacity = '1';
+        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+          e.currentTarget.style.opacity = '1';
         }}
       />
 
@@ -62,14 +79,20 @@ export default function VideoProductCard2({ product }) {
 
       {/* Bottom-right icons: Share & Heart */}
       <div className="absolute bottom-2 right-2 flex gap-1.5 sm:gap-2">
-        <button className="p-1 sm:p-1.5 rounded bg-white/20 text-white 
-                          hover:bg-white/30 transition-colors 
-                          active:scale-95">
+        <button 
+          className="p-1 sm:p-1.5 rounded bg-white/20 text-white 
+                    hover:bg-white/30 transition-colors 
+                    active:scale-95"
+          aria-label="Share"
+        >
           <FaShareAlt className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         </button>
-        <button className="p-1 sm:p-1.5 rounded bg-white/20 text-white 
-                          hover:bg-white/30 transition-colors 
-                          active:scale-95">
+        <button 
+          className="p-1 sm:p-1.5 rounded bg-white/20 text-white 
+                    hover:bg-white/30 transition-colors 
+                    active:scale-95"
+          aria-label="Add to favorites"
+        >
           <FaHeart className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         </button>
       </div>

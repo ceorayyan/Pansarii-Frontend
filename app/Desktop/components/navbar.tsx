@@ -1,9 +1,83 @@
-// components/ServerHeader.tsx
+// components/navbar.tsx
 import Link from 'next/link';
 import Image from 'next/image';
 import { headers } from 'next/headers';
+import SearchBarWrapper from './navbar/SearchBarWrapper';
 
-// Icons as Server Components (SVG strings or JSX)
+// 🔽 MOCK PRODUCTS DATA 🔽
+const mockProducts = [
+  {
+    id: '1',
+    name: 'Pure Honey - 100% Natural',
+    slug: 'pure-honey-natural',
+    price: 1200,
+    salePrice: 999,
+    image: '/products/honey.jpg',
+    category: 'Honey & Natural Sweeteners',
+    rating: 4.8,
+    isBestSeller: true,
+    description: 'Pure, unprocessed honey from Himalayan flowers'
+  },
+  {
+    id: '2',
+    name: 'Herbal Green Tea',
+    slug: 'herbal-green-tea',
+    price: 500,
+    image: '/products/green-tea.jpg',
+    category: 'Tea & Beverages',
+    rating: 4.5,
+    isBestSeller: false,
+    description: 'Antioxidant-rich green tea with herbs'
+  },
+  {
+    id: '3',
+    name: 'Extra Virgin Coconut Oil',
+    slug: 'coconut-oil-virgin',
+    price: 800,
+    salePrice: 699,
+    image: '/products/coconut-oil.jpg',
+    category: 'Oils & Ghee',
+    rating: 4.7,
+    isBestSeller: true,
+    description: 'Cold-pressed virgin coconut oil for cooking & hair'
+  },
+  {
+    id: '4',
+    name: 'Organic Turmeric Powder',
+    slug: 'turmeric-powder-organic',
+    price: 300,
+    image: '/products/turmeric.jpg',
+    category: 'Herbs & Spices',
+    rating: 4.6,
+    isBestSeller: false,
+    description: 'Pure turmeric powder for cooking and health'
+  },
+  {
+    id: '5',
+    name: 'Aloe Vera Gel',
+    slug: 'aloe-vera-gel',
+    price: 600,
+    image: '/products/aloe-vera.jpg',
+    category: 'Beauty & Skincare',
+    rating: 4.4,
+    isBestSeller: false,
+    description: '100% pure aloe vera gel for skin & hair'
+  },
+  {
+    id: '6',
+    name: 'Desi Ghee (Pure)',
+    slug: 'desi-ghee-pure',
+    price: 1500,
+    salePrice: 1299,
+    image: '/products/ghee.jpg',
+    category: 'Oils & Ghee',
+    rating: 4.9,
+    isBestSeller: true,
+    description: 'Traditional homemade desi ghee'
+  },
+];
+
+// SVG icons as server components
 const FacebookIcon = () => (
   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
     <path fillRule="evenodd" d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clipRule="evenodd" />
@@ -53,15 +127,27 @@ const TruckIcon = () => (
   </svg>
 );
 
-const SearchIcon = () => (
+const MenuIcon = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
   </svg>
 );
 
-const BarsIcon = () => (
+const LeafIcon = () => (
+  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+    <path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" />
+  </svg>
+);
+
+const GiftIcon = () => (
   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+  </svg>
+);
+
+const ChevronDownIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
   </svg>
 );
 
@@ -86,22 +172,36 @@ const navLinks = [
   { name: 'Blog', href: '/blog' },
 ];
 
-// Cart data (could be fetched from database in real app)
-const cartData = {
-  count: 3,
-  items: [],
-};
+// Fetch cart data on server
+async function getCartData() {
+  // Use mock products for cart items
+  const cartItems = [
+    mockProducts[0], // Pure Honey
+    mockProducts[2], // Coconut Oil
+    mockProducts[5], // Desi Ghee
+  ].map(product => ({
+    id: product.id,
+    name: product.name,
+    quantity: Math.floor(Math.random() * 3) + 1,
+    price: product.salePrice || product.price,
+  }));
 
-// Dynamic logo
-const logoImg = '/images/logo.png';
+  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-export default async function ServerHeader() {
-  // Get current path for active link highlighting
+  return {
+    count,
+    items: cartItems,
+    total,
+  };
+}
+
+export default async function Navbar() {
   const headersList = await headers();
   const pathname = headersList.get('x-invoke-path') || '/';
   
-  // Fetch cart data from API in real app
-  // const cartData = await fetchCartData();
+  // Fetch cart data on server
+  const cartData = await getCartData();
   
   const isActive = (path: string) => {
     if (path === '/' && pathname === '/') return true;
@@ -121,7 +221,7 @@ export default async function ServerHeader() {
                 href="https://facebook.com/pansariin.pk" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="hover:opacity-80 transition"
+                className="hover:opacity-80 transition hover:scale-110"
                 aria-label="Facebook"
               >
                 <FacebookIcon />
@@ -130,7 +230,7 @@ export default async function ServerHeader() {
                 href="https://instagram.com/pansariin.pk" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="hover:opacity-80 transition"
+                className="hover:opacity-80 transition hover:scale-110"
                 aria-label="Instagram"
               >
                 <InstagramIcon />
@@ -139,7 +239,7 @@ export default async function ServerHeader() {
                 href="https://twitter.com/pansariin" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="hover:opacity-80 transition"
+                className="hover:opacity-80 transition hover:scale-110"
                 aria-label="Twitter"
               >
                 <TwitterIcon />
@@ -148,7 +248,7 @@ export default async function ServerHeader() {
                 href="https://youtube.com/pansariin" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="hover:opacity-80 transition"
+                className="hover:opacity-80 transition hover:scale-110"
                 aria-label="YouTube"
               >
                 <YoutubeIcon />
@@ -157,7 +257,10 @@ export default async function ServerHeader() {
 
             {/* Center - Text */}
             <div className="hidden md:block">
-              <p className="text-sm font-semibold">100% Ayurvedic & Herbal Products</p>
+              <p className="text-sm font-semibold flex items-center gap-2">
+                <LeafIcon />
+                100% Ayurvedic & Herbal Products
+              </p>
             </div>
 
             {/* Right - WhatsApp */}
@@ -165,7 +268,7 @@ export default async function ServerHeader() {
               href="https://wa.me/923001234567" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 hover:opacity-80 transition"
+              className="flex items-center gap-2 hover:opacity-80 transition group"
               aria-label="WhatsApp"
             >
               <WhatsAppIcon />
@@ -180,78 +283,79 @@ export default async function ServerHeader() {
         {/* Upper Navbar */}
         <div className="mx-[4%] py-4">
           <div className="flex items-center justify-between gap-6">
-            {/* Left - Logo */}
+            {/* Logo */}
             <Link href="/" className="flex-shrink-0" aria-label="Pansariin.pk Home">
-              <div className="relative w-48 h-12">
-                <Image
-                  src={logoImg}
-                  alt="Pansariin.pk Logo"
-                  fill
-                  className="object-contain"
-                  priority
-                  sizes="192px"
-                />
-              </div>
+       
+<div className="relative w-48 h-12">
+  <Image
+    src="/images/logo.png"
+    alt="Pansariin.pk Logo"
+    fill
+    className="object-contain"
+    priority
+    sizes="192px"
+    // Remove the onError handler
+  />
+</div>
             </Link>
 
-            {/* Center - Search Bar */}
-            <div className="flex-1 max-w-2xl hidden md:block">
-              <form action="/search" method="GET" className="relative">
-                <input
-                  type="search"
-                  name="q"
-                  placeholder="Search for products..."
-                  className="w-full px-6 py-3 pr-12 border-2 border-gray-200 rounded-full focus:outline-none focus:border-green-700 transition"
-                  aria-label="Search products"
-                />
-                {/* <button 
-                  type="submit" 
-                  className="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 bg-green-700 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition"
-                  aria-label="Search"
-                >
-                 
-                </button> */}
-              </form>
+            {/* Desktop Search Bar */}
+            <div className="flex-1 max-w-2xl hidden lg:block">
+              <SearchBarWrapper 
+                placeholder="Search for products..."
+                variant="desktop"
+                mockProducts={mockProducts}
+                className="w-full"
+              />
             </div>
 
             {/* Right - Cart, Sign In, Track Order */}
             <div className="flex items-center gap-4">
-              {/* Cart */}
+              {/* Track Order */}
               <Link 
-                href="/cart" 
-                className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 transition relative group"
-                aria-label="Shopping Cart"
+                href="/track-order" 
+                className="hidden xl:flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 transition group"
+                aria-label="Track Order"
               >
-                <ShoppingCartIcon />
-                <span className="hidden lg:block text-sm font-medium text-gray-700">Cart</span>
-                {cartData.count > 0 && (
-                  <span 
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-green-700 text-white text-xs rounded-full flex items-center justify-center font-bold"
-                    aria-label={`${cartData.count} items in cart`}
-                  >
-                    {cartData.count}
-                  </span>
-                )}
+                <TruckIcon />
+                <span className="text-sm font-medium text-gray-700 group-hover:text-green-700 transition">Track Order</span>
               </Link>
 
               {/* Sign In */}
               <Link 
                 href="/login" 
-                className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 transition"
+                className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 transition group"
                 aria-label="Sign In"
               >
                 <UserIcon />
-                <span className="hidden lg:block text-sm font-medium text-gray-700">Sign In</span>
+                <span className="hidden lg:block text-sm font-medium text-gray-700 group-hover:text-green-700 transition">Sign In</span>
               </Link>
 
-              {/* Track Order */}
+              {/* Cart */}
               <Link 
-                href="/track-order" 
-                className="hidden xl:flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 transition"
-                aria-label="Track Order"
+                href="/cart" 
+                className="flex items-center gap-2 px-4 py-2 rounded-full hover:bg-gray-100 transition group relative"
+                aria-label="Shopping Cart"
               >
-                <TruckIcon />
-                <span className="text-sm font-medium text-gray-700">Track Order</span>
+                <div className="relative">
+                  <ShoppingCartIcon />
+                  {cartData.count > 0 && (
+                    <span 
+                      className="absolute -top-2 -right-2 w-5 h-5 bg-green-700 text-white text-xs rounded-full flex items-center justify-center font-bold"
+                      aria-label={`${cartData.count} items in cart`}
+                    >
+                      {cartData.count > 9 ? '9+' : cartData.count}
+                    </span>
+                  )}
+                </div>
+                <div className="hidden lg:flex flex-col items-start">
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-green-700 transition">Cart</span>
+                  {cartData.items.length > 0 && (
+                    <span className="text-xs text-gray-500">
+                      PKR {cartData.total.toLocaleString()}
+                    </span>
+                  )}
+                </div>
               </Link>
             </div>
           </div>
@@ -265,11 +369,12 @@ export default async function ServerHeader() {
               <div className="group relative">
                 <Link 
                   href="/categories" 
-                  className="flex items-center gap-3 px-6 py-2.5 bg-green-700 text-white rounded-full hover:bg-green-600 transition font-medium"
+                  className="flex items-center gap-3 px-6 py-2.5 bg-green-700 text-white rounded-full hover:bg-green-600 transition font-medium group"
                   aria-label="Browse Categories"
                 >
-                  <BarsIcon />
+                  <MenuIcon />
                   <span>Categories</span>
+                  <ChevronDownIcon />
                 </Link>
                 
                 {/* Categories Dropdown - Hidden until hover on desktop */}
@@ -278,11 +383,20 @@ export default async function ServerHeader() {
                     <Link 
                       key={category.slug}
                       href={`/shop?category=${category.slug}`}
-                      className="block px-6 py-3 hover:bg-gray-100 transition text-gray-700 font-medium"
+                      className="flex items-center gap-3 px-6 py-3 hover:bg-gray-100 transition text-gray-700 font-medium group"
                     >
-                      {category.name}
+                      <LeafIcon />
+                      <span>{category.name}</span>
                     </Link>
                   ))}
+                  <div className="border-t pt-2 mt-2">
+                    <Link 
+                      href="/categories"
+                      className="flex items-center justify-center gap-2 px-6 py-2 text-sm font-semibold text-green-700 hover:text-green-800 hover:bg-green-50 transition"
+                    >
+                      View All Categories
+                    </Link>
+                  </div>
                 </div>
               </div>
 
@@ -307,9 +421,10 @@ export default async function ServerHeader() {
               {/* Right - Become Affiliate Button */}
               <Link 
                 href="/affiliate" 
-                className="hidden lg:block px-6 py-2.5 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition font-semibold text-sm shadow-md hover:shadow-lg"
+                className="hidden lg:flex items-center gap-2 px-6 py-2.5 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition font-semibold text-sm shadow-md hover:shadow-lg group"
                 aria-label="Become an Affiliate"
               >
+                <GiftIcon />
                 Become an Affiliate
               </Link>
             </div>
@@ -318,26 +433,16 @@ export default async function ServerHeader() {
       </div>
 
       {/* Mobile Search Bar */}
-      <div className="md:hidden bg-white border-b px-4 py-3">
-        <form action="/search" method="GET" className="relative">
-          <input
-            type="search"
-            name="q"
-            placeholder="Search for products..."
-            className="w-full px-4 py-2.5 pr-10 border-2 border-gray-200 rounded-full focus:outline-none focus:border-green-700 transition text-sm"
-            aria-label="Search products"
-          />
-          <button 
-            type="submit" 
-            className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 bg-green-700 rounded-full flex items-center justify-center text-white hover:bg-green-600 transition"
-            aria-label="Search"
-          >
-            <SearchIcon />
-          </button>
-        </form>
+      <div className="lg:hidden bg-white border-b px-4 py-3">
+        <SearchBarWrapper 
+          placeholder="Search for products..."
+          variant="mobile"
+          mockProducts={mockProducts}
+          className="w-full"
+        />
       </div>
 
-      {/* Mobile Navigation (Simple version) */}
+      {/* Simple Mobile Navigation */}
       <div className="lg:hidden bg-white border-t">
         <div className="mx-[4%] py-2">
           <nav className="flex items-center justify-around" aria-label="Mobile navigation">
@@ -358,7 +463,23 @@ export default async function ServerHeader() {
           </nav>
         </div>
       </div>
+
+      {/* Announcement Bar */}
+      <div className="bg-green-50 border-b border-green-100">
+        <div className="mx-[4%] py-2">
+          <div className="flex items-center justify-center gap-4 text-sm">
+            <div className="flex items-center gap-2 text-green-700">
+              <TruckIcon />
+              <span>Free shipping on orders over PKR 2000</span>
+            </div>
+            <span className="hidden md:inline text-gray-400">•</span>
+            <div className="hidden md:flex items-center gap-2 text-green-700">
+              <GiftIcon />
+              <span>Earn rewards on every purchase</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
   );
 }
-

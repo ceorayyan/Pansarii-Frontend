@@ -1,4 +1,11 @@
-export default function BackwardArrow({ onClick, disabled }) {
+import React from 'react';
+
+interface BackwardArrowProps {
+  onClick: () => void;
+  disabled: boolean;
+}
+
+export default function BackwardArrow({ onClick, disabled }: BackwardArrowProps) {
   return (
     <button
       onClick={onClick}

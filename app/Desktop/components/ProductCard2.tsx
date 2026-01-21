@@ -1,14 +1,39 @@
-// Desktop/components/ProductCard2.tsx
 "use client";
 
 import { useState } from "react";
 import ProductDetailsModal from "./ProductDetailsModal";
 
-export default function ProductCard2({ product }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+// EXACT SAME interface as ProductCard
+interface Product {
+  id?: string | number;
+  img: string;
+  nameEn: string;
+  nameUr: string;
+  description?: string;
+  rating: number;
+  reviews: number;
+  price: number;
+  oldPrice?: number | null; // Must match exactly
+  sale?: string | null; // Add null here too
+  additionalImages?: string[];
+  sizes?: string[];
+  benefits?: string[];
+  features?: (string | { text: string; hasCheck?: boolean })[];
+  infoLines?: string[];
+  points?: number;
+  hoverimg: string;
+  [key: string]: any;
+}
 
-  const handleAddToCart = (e) => {
+interface ProductCard2Props {
+  product: Product;
+}
+
+export default function ProductCard2({ product }: ProductCard2Props) {
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsModalOpen(true);
@@ -105,11 +130,11 @@ export default function ProductCard2({ product }) {
             </div>
           </div>
 
-          {/* Price */}
+          {/* Price - Fixed to handle null properly */}
           <div className="w-full">
             <div className="flex items-center justify-center gap-2">
               <p className="text-[17px] font-bold">PKR {product.price}</p>
-              {product.oldPrice && (
+              {product.oldPrice !== null && product.oldPrice !== undefined && (
                 <p className="text-sm text-gray-500 line-through">PKR {product.oldPrice}</p>
               )}
             </div>

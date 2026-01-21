@@ -1,4 +1,11 @@
-export default function ForwardArrow({ onClick, disabled }) {
+import React from 'react';
+
+interface ForwardArrowProps {
+  onClick: () => void;
+  disabled: boolean;
+}
+
+export default function ForwardArrow({ onClick, disabled }: ForwardArrowProps) {
   return (
     <button
       onClick={onClick}

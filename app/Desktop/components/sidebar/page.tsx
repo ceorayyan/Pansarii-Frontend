@@ -2,15 +2,39 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { AiOutlineClose, AiOutlineShoppingCart, AiOutlineHeart, AiOutlinePlus, AiOutlineMinus, AiOutlineDelete } from 'react-icons/ai';
+import { 
+  AiOutlineClose, 
+  AiOutlineShoppingCart, 
+  AiOutlineHeart, 
+  AiOutlinePlus, 
+  AiOutlineMinus, 
+  AiOutlineDelete 
+} from 'react-icons/ai';
+
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  slug: string;
+}
+
+interface WishlistItem {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+  slug: string;
+}
 
 const PansariinnSidebar = () => {
   const router = useRouter();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('cart');
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<'cart' | 'wishlist'>('cart');
   
-  // Sample cart data - replace with your actual data source (Context/Redux/Zustand)
-  const [cartItems, setCartItems] = useState([
+  // Sample cart data
+  const [cartItems, setCartItems] = useState<CartItem[]>([
     {
       id: 1,
       name: 'Basmati Rice Premium',
@@ -30,7 +54,7 @@ const PansariinnSidebar = () => {
   ]);
   
   // Sample wishlist data
-  const [wishlistItems, setWishlistItems] = useState([
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([
     {
       id: 3,
       name: 'Organic Turmeric',
@@ -47,7 +71,7 @@ const PansariinnSidebar = () => {
     }
   ]);
 
-  const updateQuantity = (id, change) => {
+  const updateQuantity = (id: number, change: number): void => {
     setCartItems(cartItems.map(item => 
       item.id === id 
         ? { ...item, quantity: Math.max(1, item.quantity + change) }
@@ -55,27 +79,31 @@ const PansariinnSidebar = () => {
     ));
   };
 
-  const removeFromCart = (id) => {
+  const removeFromCart = (id: number): void => {
     setCartItems(cartItems.filter(item => item.id !== id));
   };
 
-  const removeFromWishlist = (id) => {
+  const removeFromWishlist = (id: number): void => {
     setWishlistItems(wishlistItems.filter(item => item.id !== id));
   };
 
-  const moveToCart = (item) => {
-    setCartItems([...cartItems, { ...item, quantity: 1 }]);
+  const moveToCart = (item: WishlistItem): void => {
+    const cartItem: CartItem = {
+      ...item,
+      quantity: 1
+    };
+    setCartItems([...cartItems, cartItem]);
     removeFromWishlist(item.id);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = (): void => {
     setIsSidebarOpen(false);
-    router.push('/pages/checkout'); // Adjust path as needed
+    router.push('/pages/checkout');
   };
 
-  const goToProductDetails = (slug) => {
+  const goToProductDetails = (slug: string): void => {
     setIsSidebarOpen(false);
-    router.push(`/pages/productdetails?slug=${slug}`); // or `/pages/productdetails/${slug}` if using dynamic routes
+    router.push(`/pages/productdetails?slug=${slug}`);
   };
 
   const cartTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);

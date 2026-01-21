@@ -1,15 +1,32 @@
-// Desktop/components/ProductCard.tsx
 "use client";
 
 import { FaStar, FaCheckCircle, FaShoppingCart } from "react-icons/fa";
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
 import ProductDetailsModal from "./ProductDetailsModal";
 
-export default function ProductCard({ product }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface Product {
+  id?: string | number;
+  img: string;
+  nameEn: string;
+  nameUr: string;
+  description: string;
+  rating: number;
+  reviews: number;
+  price: number;
+  oldPrice?: number | null; // CHANGE: Add | null here
+  sale?: string | null; // CHANGE: Add | null here
+  [key: string]: any;
+}
 
-  const handleQuickAdd = (e) => {
+interface ProductCardProps {
+  product: Product;
+}
+
+export default function ProductCard({ product }: ProductCardProps) {
+  const [isHovered, setIsHovered] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const handleQuickAdd = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsModalOpen(true);
@@ -34,8 +51,8 @@ export default function ProductCard({ product }) {
             className="w-full h-full object-cover"
           />
 
-          {/* Sale Badge */}
-          {product.sale && (
+          {/* Sale Badge - Check for null/undefined */}
+          {product.sale && product.sale !== null && product.sale !== undefined && (
             <div className="absolute top-3 right-3 w-[68px] h-[23px] rounded-[60px] bg-[#F83A3A] text-white text-xs flex items-center justify-center font-medium">
               {product.sale}
             </div>
@@ -61,10 +78,10 @@ export default function ProductCard({ product }) {
               </div>
             </div>
 
-            {/* Price - Centered */}
+            {/* Price - Centered with null check */}
             <div className="flex items-center justify-center gap-2 mt-2 flex-wrap">
               <p className="text-[17px] font-bold">PKR {product.price}</p>
-              {product.oldPrice && (
+              {product.oldPrice !== null && product.oldPrice !== undefined && (
                 <p className="text-sm text-gray-500 line-through">PKR {product.oldPrice}</p>
               )}
             </div>

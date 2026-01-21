@@ -1,8 +1,25 @@
 import React, { useRef, useEffect } from 'react';
 import { FaHeart, FaShareAlt } from 'react-icons/fa';
 
-export default function VideoProductCard({ product }) {
-  const videoRef = useRef(null);
+interface VideoProduct {
+  video: string;
+  topImage: string;
+  productImage: string;
+  nameEn: string;
+  nameUr: string;
+  price: number | string;
+  oldPrice?: number | string;
+  sale?: string;
+  views?: string;
+  [key: string]: any;
+}
+
+interface VideoProductCardProps {
+  product: VideoProduct;
+}
+
+export default function VideoProductCard({ product }: VideoProductCardProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     // Try to autoplay video when component mounts
@@ -44,8 +61,8 @@ export default function VideoProductCard({ product }) {
           src={product.topImage}
           alt="Product"
           className="absolute inset-0 w-full h-full object-cover opacity-0 hover:opacity-100 transition-opacity"
-          onError={(e) => {
-            e.target.style.opacity = '1'; // Show image if video fails
+          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+            e.currentTarget.style.opacity = '1'; // Show image if video fails
           }}
         />
 
@@ -58,10 +75,16 @@ export default function VideoProductCard({ product }) {
 
         {/* Bottom-right icons: Share & Heart */}
         <div className="absolute bottom-2 right-2 flex gap-2">
-          <button className="p-1 rounded bg-white/20 text-white hover:bg-white/30 transition-colors">
+          <button 
+            className="p-1 rounded bg-white/20 text-white hover:bg-white/30 transition-colors"
+            aria-label="Share"
+          >
             <FaShareAlt size={14} />
           </button>
-          <button className="p-1 rounded bg-white/20 text-white hover:bg-white/30 transition-colors">
+          <button 
+            className="p-1 rounded bg-white/20 text-white hover:bg-white/30 transition-colors"
+            aria-label="Add to favorites"
+          >
             <FaHeart size={14} />
           </button>
         </div>

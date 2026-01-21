@@ -5,7 +5,7 @@ import BlogCard from "../Desktop/components/BlogCard";
 import ReviewCard from "../Desktop/components/ReviewCard";
 import Footer from "../Desktop/Sections/Footer";
 import { FaCheckCircle, FaLeaf, FaShippingFast, FaShieldAlt, FaGift, FaHeadset, FaMedkit } from "react-icons/fa";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 
 // Data configuration - easy to update
 const pageData = {

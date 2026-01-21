@@ -5,12 +5,14 @@ import { FilterOptions } from '../utils/filterProducts';
 
 interface SearchFilterBarProps {
   onFilterChange: (filters: FilterOptions) => void;
+  onViewModeChange: (mode: 'grid' | 'list') => void;
   productCount?: number;
   categories?: string[];
 }
 
 export default function SearchFilterBar({
   onFilterChange,
+  onViewModeChange,
   productCount = 0,
   categories = [],
 }: SearchFilterBarProps) {
@@ -62,6 +64,11 @@ export default function SearchFilterBar({
 
   const handleSortChange = (sortBy: FilterOptions['sortBy']) => {
     setFilters(prev => ({ ...prev, sortBy }));
+  };
+
+  const handleViewModeChange = (mode: 'grid' | 'list') => {
+    setViewMode(mode);
+    onViewModeChange(mode);
   };
 
   const clearFilters = () => {
@@ -134,11 +141,11 @@ export default function SearchFilterBar({
 
           {/* Right: View Mode and Sort */}
           <div className="flex items-center gap-4 ml-4">
-            {/* View Mode Toggle - No background, no border */}
+            {/* View Mode Toggle - List comes first, Grid second */}
             <div className="flex items-center gap-2">
-              {/* Bullet Points Icon (List View) - Comes first */}
+              {/* List View (Three Lines Icon) */}
               <button
-                onClick={() => setViewMode('list')}
+                onClick={() => handleViewModeChange('list')}
                 className={`p-1.5 ${viewMode === 'list' ? 'text-gray-800' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
                 title="List View"
               >
@@ -147,9 +154,9 @@ export default function SearchFilterBar({
                 </svg>
               </button>
               
-              {/* Four Boxes Icon (Grid View) */}
+              {/* Grid View (Four Boxes Icon) */}
               <button
-                onClick={() => setViewMode('grid')}
+                onClick={() => handleViewModeChange('grid')}
                 className={`p-1.5 ${viewMode === 'grid' ? 'text-gray-800' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
                 title="Grid View"
               >
@@ -177,7 +184,7 @@ export default function SearchFilterBar({
           </div>
         </div>
 
-        {/* Active Filters (appears below the search bar) */}
+        {/* Active Filters */}
         {(filters.searchQuery || filters.categories.length > 0 || filters.showOnSale || filters.minPrice > 0 || filters.maxPrice < 2000) && (
           <div className="mt-2 flex flex-wrap items-center gap-2 px-1">
             <span className="text-xs text-gray-500">Active:</span>
@@ -242,7 +249,7 @@ export default function SearchFilterBar({
           </div>
         )}
 
-        {/* Filter Panel - Dropdown that appears below */}
+        {/* Filter Panel */}
         {isFilterOpen && (
           <div className="absolute top-full left-0 right-0 mt-1 border border-[#E1E3E1] rounded-lg bg-white shadow-lg z-50">
             <div className="p-4">

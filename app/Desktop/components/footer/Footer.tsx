@@ -1,5 +1,3 @@
-'use client';
-
 import ContactInfo from './ContactInfo';
 import LinkColumns from './LinkColumns';
 import Newsletter from './Newsletter';
@@ -16,6 +14,7 @@ export default function Footer() {
   };
 
   const buttonColor = '#197B33';
+  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -23,64 +22,66 @@ export default function Footer() {
       <div className="w-full">
         <FooterBanner />
       </div>
+      
+      {/* Icons Section */}
       <div className="me-bgcolor-g w-full p-6">
-  <div className="flex justify-between items-center">
-    {/* Div 1 */}
-    <div className="flex flex-col items-center flex-1">
-      <div className="mb-2">
-        {/* Replace with your image */}
-        <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-      </div>
-      <div className="text-center text-white px-2">
-        Tell your customers about your shipping offer.
-      </div>
-    </div>
+        <div className="flex justify-between items-center">
+          {/* Div 1 */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="mb-2">
+              {/* Replace with your image */}
+              <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+            </div>
+            <div className="text-center text-white px-2">
+              Tell your customers about your shipping offer.
+            </div>
+          </div>
 
-    {/* Div 2 */}
-    <div className="flex flex-col items-center flex-1">
-      <div className="mb-2">
-        {/* Replace with your image */}
-        <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-      </div>
-      <div className="text-center text-white px-2">
-        Delivering on 11000+ Pincodes
-      </div>
-    </div>
+          {/* Div 2 */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="mb-2">
+              {/* Replace with your image */}
+              <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+            </div>
+            <div className="text-center text-white px-2">
+              Delivering on 11000+ Pincodes
+            </div>
+          </div>
 
-    {/* Div 3 */}
-    <div className="flex flex-col items-center flex-1">
-      <div className="mb-2">
-        {/* Replace with your image */}
-        <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-      </div>
-      <div className="text-center text-white px-2">
-        Tell your customers about your shipping offer.
-      </div>
-    </div>
+          {/* Div 3 */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="mb-2">
+              {/* Replace with your image */}
+              <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+            </div>
+            <div className="text-center text-white px-2">
+              Tell your customers about your shipping offer.
+            </div>
+          </div>
 
-    {/* Div 4 */}
-    <div className="flex flex-col items-center flex-1">
-      <div className="mb-2">
-        {/* Replace with your image */}
-        <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-      </div>
-      <div className="text-center text-white px-2">
-        Tell your customers about your shipping offer.
-      </div>
-    </div>
+          {/* Div 4 */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="mb-2">
+              {/* Replace with your image */}
+              <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+            </div>
+            <div className="text-center text-white px-2">
+              Tell your customers about your shipping offer.
+            </div>
+          </div>
 
-    {/* Div 5 */}
-    <div className="flex flex-col items-center flex-1">
-      <div className="mb-2">
-        {/* Replace with your image */}
-        <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+          {/* Div 5 */}
+          <div className="flex flex-col items-center flex-1">
+            <div className="mb-2">
+              {/* Replace with your image */}
+              <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+            </div>
+            <div className="text-center text-white px-2">
+              Tell your customers about your shipping offer.
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="text-center text-white px-2">
-        Tell your customers about your shipping offer.
-      </div>
-    </div>
-  </div>
-</div>
       
       {/* Main Footer */}
       <footer className="bg-white text-gray-900 px-6 sm:px-12 pt-10">
@@ -91,7 +92,7 @@ export default function Footer() {
         </div>
         <div className="mt-5 p-2 border-t border-gray-300 text-center">
           <p style={textStyle}>
-            ©2019-{new Date().getFullYear()} PansariInn. All rights reserved.
+            ©2019-{currentYear} PansariInn. All rights reserved.
           </p>
         </div>
       </footer>

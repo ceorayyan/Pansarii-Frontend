@@ -1,6 +1,8 @@
+'use client';
+
+import { useState } from 'react';
 import { FilterOptions, Product } from "../../utils/filterProducts";
 import SearchFilterBar from "../../components/SearchFilterBar";
-
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 
@@ -31,6 +33,12 @@ export default function ShopContent({
   productsPerPage,
   onPageChange
 }: ShopContentProps) {
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  const handleViewModeChange = (mode: 'grid' | 'list') => {
+    setViewMode(mode);
+  };
+
   return (
     <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-6">
       {/* Search and Filter Bar */}
@@ -38,6 +46,7 @@ export default function ShopContent({
         onFilterChange={setFilters}
         productCount={filteredProducts.length}
         categories={categories}
+        onViewModeChange={handleViewModeChange}
       />
 
       {/* Results Info */}
@@ -64,7 +73,7 @@ export default function ShopContent({
       </div>
 
       {/* Product Grid */}
-      <ProductGrid products={currentProducts} />
+      <ProductGrid products={currentProducts} viewMode={viewMode} />
 
       {/* No Results State */}
       {filteredProducts.length === 0 && (

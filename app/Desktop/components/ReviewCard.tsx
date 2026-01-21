@@ -1,4 +1,21 @@
-export default function ReviewCard({ review }) {
+import React from 'react';
+
+interface Review {
+  title: string;
+  text: string;
+  name: string;
+  designation: string;
+  img: string;
+  rating?: number;
+}
+
+interface ReviewCardProps {
+  review: Review;
+}
+
+export default function ReviewCard({ review }: ReviewCardProps) {
+  const rating = review.rating || 5.0;
+  
   return (
     <div className="w-[412px] h-[303px] rounded-[21px] border border-gray-300 p-6 flex flex-col justify-between bg-white">
       {/* Review Title */}
@@ -46,7 +63,7 @@ export default function ReviewCard({ review }) {
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.17c.969 0 1.371 1.24.588 1.81l-3.376 2.455a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.376-2.455a1 1 0 00-1.176 0l-3.376 2.455c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.048 9.384c-.783-.57-.38-1.81.588-1.81h4.17a1 1 0 00.95-.69l1.286-3.957z" />
               </svg>
             ))}
-            <span className="ml-1 text-sm font-medium text-gray-700">5.0</span>
+            <span className="ml-1 text-sm font-medium text-gray-700">{rating.toFixed(1)}</span>
           </div>
         </div>
       </div>

@@ -1,10 +1,19 @@
 import BlogCard from "@components/BlogCard";
 
+interface BlogItem {
+  id: string | number;
+  img: string;
+  title: string;
+  content: string;
+  link: string;
+}
+
 export default function Blog() {
   const blogimg = '/images/whisk.png';
   
-  const blogs = [
+  const blogs: BlogItem[] = [
     {
+      id: 1,
       img: blogimg,
       title: "Essential Supplements That Support Busy Lifestyles",
       content:
@@ -12,6 +21,7 @@ export default function Blog() {
       link: "#",
     },
     {
+      id: 2,
       img: blogimg,
       title: "Natural Herbal Remedies for Daily Wellness",
       content:
@@ -19,6 +29,7 @@ export default function Blog() {
       link: "#",
     },
     {
+      id: 3,
       img: blogimg,
       title: "Boost Your Immunity Naturally",
       content:
@@ -43,10 +54,12 @@ export default function Blog() {
       </div>
 
       {/* Blog Cards */}
-      <div className="flex gap-6 overflow-x-auto no-scrollbar py-2" 
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-        {blogs.map((blog, index) => (
-          <BlogCard key={index} blog={blog} />
+      <div 
+        className="flex gap-6 overflow-x-auto no-scrollbar py-2" 
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {blogs.map((blog) => (
+          <BlogCard key={blog.id} blog={blog} />
         ))}
       </div>
     </section>

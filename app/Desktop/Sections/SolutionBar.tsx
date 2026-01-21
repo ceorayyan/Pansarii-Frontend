@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import BackwardArrow from "@components/BackwardArrow";
 import ForwardArrow from "@components/ForwardArrow";
 
 export default function SolutionBar() {
+  const router = useRouter();
   const pic = '/images/Skincare.png';
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -22,11 +24,10 @@ export default function SolutionBar() {
     const el = sliderRef.current;
     if (!el) return;
 
-    // Scroll by exactly one card width including gap
     const containerWidth = el.clientWidth;
     const cardsToShow = 5;
-    const gap = 16; // 1rem in pixels
-    const totalGapWidth = gap * (cardsToShow - 1); // 4 gaps
+    const gap = 16;
+    const totalGapWidth = gap * (cardsToShow - 1);
     const cardWidth = (containerWidth - totalGapWidth) / cardsToShow;
     const scrollAmount = cardWidth + gap;
     
@@ -42,8 +43,6 @@ export default function SolutionBar() {
 
     checkScroll();
     el.addEventListener("scroll", checkScroll);
-
-    // Also check on resize
     window.addEventListener('resize', checkScroll);
 
     return () => {
@@ -53,17 +52,22 @@ export default function SolutionBar() {
   }, []);
 
   const cards = [
-    { title: "Skin care products", offset: false },
-    { title: "Hair care products", offset: true },
-    { title: "Mens health products", offset: false },
-    { title: "Women health products", offset: true },
-    { title: "Weight management products", offset: false },
-    { title: "Natural supplements", offset: true },
-    { title: "Ayurvedic products", offset: false },
-    { title: "Herbal teas", offset: true },
-    { title: "Essential oils", offset: false },
-    { title: "Organic skincare", offset: true },
+    { title: "Skin care products", category: "skincare", offset: false },
+    { title: "Hair care products", category: "haircare", offset: true },
+    { title: "Mens health products", category: "mens-health", offset: false },
+    { title: "Women health products", category: "womens-health", offset: true },
+    { title: "Weight management products", category: "weight-management", offset: false },
+    { title: "Natural supplements", category: "supplements", offset: true },
+    { title: "Ayurvedic products", category: "ayurvedic", offset: false },
+    { title: "Herbal teas", category: "herbal-teas", offset: true },
+    { title: "Essential oils", category: "essential-oils", offset: false },
+    { title: "Organic skincare", category: "organic-skincare", offset: true },
   ];
+
+  const handleCategoryClick = (category: string) => {
+    // Navigate to shop page with category filter
+    router.push(`/shop?category=${category}`);
+  };
 
   return (
     <section className="SolutionBar mx-[4%] my-8">
@@ -97,15 +101,13 @@ export default function SolutionBar() {
         {cards.map((card, index) => (
           <div
             key={index}
-            className={`card-solution relative flex flex-col justify-end shrink-0 rounded-lg p-4 text-white ${
+            onClick={() => handleCategoryClick(card.category)}
+            className={`card-solution relative flex flex-col justify-end shrink-0 rounded-lg p-4 text-white cursor-pointer transition-transform hover:scale-105 ${
               card.offset ? 'mt-8' : ''
             }`}
             style={{
-              // Exact calculation for 5 cards: 20% width minus gap adjustment
-              // Total gaps for 5 cards = 4 gaps = 4rem = 64px
-              // Each card: (100% / 5) - (total gaps / 5)
               width: 'calc(19% - 12.8px)',
-              marginRight: index === cards.length - 1 ? '0' : '16px', // No margin on last card
+              marginRight: index === cards.length - 1 ? '0' : '16px',
               height: '270px',
               backgroundImage: `url(${pic})`,
               backgroundSize: "cover",
