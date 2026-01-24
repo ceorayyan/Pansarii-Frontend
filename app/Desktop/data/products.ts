@@ -1,5 +1,5 @@
 // Mock products data - 50+ products
-const mockProducts = [
+export const  allProducts = [
   {
     id: '1',
     img: '/images/products/apricot-oil.jpg',
@@ -852,7 +852,7 @@ const mockProducts = [
   }
 ];
 
-// Filter to get new arrivals (products marked as isNew: true)
-const newArrivals = mockProducts.filter(product => product.isNew);
-// Filter to get best sellers (products marked as isBestSeller: true)
-const bestSellers = mockProducts.filter(product => product.isBestSeller);
+// // Filter to get new arrivals (products marked as isNew: true)
+const newArrivals = allProducts.filter(product => product.isNew);
+// // Filter to get best sellers (products marked as isBestSeller: true)
+const bestSellers = allProducts.filter(product => product.isBestSeller);

@@ -7,14 +7,15 @@ import ProductDetailsModal from "./ProductDetailsModal";
 interface Product {
   id?: string | number;
   img: string;
+  hoverImg?: string; // ADD: Hover image property
   nameEn: string;
   nameUr: string;
   description: string;
   rating: number;
   reviews: number;
   price: number;
-  oldPrice?: number | null; // CHANGE: Add | null here
-  sale?: string | null; // CHANGE: Add | null here
+  oldPrice?: number | null;
+  sale?: string | null;
   [key: string]: any;
 }
 
@@ -32,6 +33,11 @@ export default function ProductCard({ product }: ProductCardProps) {
     setIsModalOpen(true);
   };
 
+  // Determine which image to display
+  const displayImage = isHovered && product.hoverImg 
+    ? product.hoverImg 
+    : product.img;
+
   return (
     <>
       <div 
@@ -46,9 +52,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Image Section with bottom border */}
         <div className="relative w-full h-[200px] border-b border-gray-200">
           <img
-            src={product.img}
+            src={displayImage} // CHANGE: Use displayImage instead of product.img
             alt={product.nameEn}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-opacity duration-300"
+            style={{ 
+              opacity: isHovered && product.hoverImg ? 1 : 1 
+            }}
           />
 
           {/* Sale Badge - Check for null/undefined */}

@@ -14,7 +14,6 @@ import {
 import { HiOutlineShoppingBag, HiOutlineTag } from 'react-icons/hi';
 import { BsStar } from 'react-icons/bs';
 
-// Export the interfaces
 export interface ProductSuggestion {
   id: string;
   name: string;
@@ -33,9 +32,9 @@ export interface SearchBarProps {
   variant?: 'desktop' | 'mobile';
   onSearch?: (query: string) => void;
   mockProducts?: ProductSuggestion[];
+  initialQuery?: string;
 }
 
-// Debounce hook
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -57,9 +56,10 @@ export default function SearchBar({
   className = "",
   variant = 'desktop',
   onSearch,
-  mockProducts = []
+  mockProducts = [],
+  initialQuery = ''
 }: SearchBarProps) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery);
   const [suggestions, setSuggestions] = useState<ProductSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -68,10 +68,14 @@ export default function SearchBar({
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Debounce the search query
+  useEffect(() => {
+    if (initialQuery) {
+      setQuery(initialQuery);
+    }
+  }, [initialQuery]);
+
   const debouncedQuery = useDebounce(query, 300);
 
-  // Fetch suggestions
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (!debouncedQuery.trim()) {
@@ -81,7 +85,6 @@ export default function SearchBar({
 
       setIsLoading(true);
       try {
-        // Use mock products if provided
         if (mockProducts.length > 0) {
           const filtered = mockProducts.filter(product => 
             product.name.toLowerCase().includes(debouncedQuery.toLowerCase()) ||
@@ -91,7 +94,6 @@ export default function SearchBar({
           setSuggestions(filtered);
           setIsOpen(true);
         } else {
-          // Fallback to API call
           const response = await fetch(
             `/api/search/suggestions?q=${encodeURIComponent(debouncedQuery)}&limit=5`
           );
@@ -112,9 +114,7 @@ export default function SearchBar({
     fetchSuggestions();
   }, [debouncedQuery, mockProducts]);
 
-  // Load recent searches and trending searches
   useEffect(() => {
-    // Load recent searches from localStorage
     const stored = localStorage.getItem('recentSearches');
     if (stored) {
       try {
@@ -124,7 +124,6 @@ export default function SearchBar({
       }
     }
 
-    // Fetch trending searches
     const fetchTrendingSearches = async () => {
       try {
         const response = await fetch('/api/search/trending');
@@ -141,7 +140,6 @@ export default function SearchBar({
     fetchTrendingSearches();
   }, []);
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
@@ -153,11 +151,9 @@ export default function SearchBar({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle search submission
   const handleSearch = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) return;
 
-    // Save to recent searches
     const updatedSearches = [
       searchQuery,
       ...recentSearches.filter(s => s.toLowerCase() !== searchQuery.toLowerCase())
@@ -166,13 +162,12 @@ export default function SearchBar({
     setRecentSearches(updatedSearches);
     localStorage.setItem('recentSearches', JSON.stringify(updatedSearches));
 
-    // Call onSearch callback if provided
     if (onSearch) {
       onSearch(searchQuery);
     }
 
-    // Navigate to search results page
-    window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+    // Redirect to shop page with search query
+    window.location.href = `/shop?search=${encodeURIComponent(searchQuery)}`;
     setIsOpen(false);
   }, [recentSearches, onSearch]);
 
@@ -208,7 +203,6 @@ export default function SearchBar({
     localStorage.removeItem('recentSearches');
   };
 
-  // Format price
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-PK', {
       style: 'currency',
@@ -392,10 +386,9 @@ export default function SearchBar({
                 ))}
               </div>
 
-              {/* View all results */}
               <div className="mt-4 pt-4 border-t">
                 <Link
-                  href={`/search?q=${encodeURIComponent(query)}`}
+                  href={`/shop?search=${encodeURIComponent(query)}`}
                   className="flex items-center justify-center gap-2 w-full py-2.5 text-center text-sm font-semibold text-green-700 hover:text-green-800 hover:bg-green-50 rounded-lg transition"
                   onClick={() => setIsOpen(false)}
                 >

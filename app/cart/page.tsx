@@ -1,58 +1,37 @@
+// app/cart/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { FaTrash, FaShoppingCart, FaHeart } from 'react-icons/fa';
+import { useCart } from '../context/CartContext';
 
-export default function CartPage() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      img: '/images/product.png',
-      nameEn: 'Cold Pressed Almond Oil',
-      nameUr: 'بادام کا تیل',
-      price: 899,
-      quantity: 2,
-      size: '30ml'
-    },
-    {
-      id: 2,
-      img: '/images/product.png',
-      nameEn: 'Organic Coconut Oil',
-      nameUr: 'ناریل کا تیل',
-      price: 749,
-      quantity: 1,
-      size: '50ml'
-    },
-    {
-      id: 3,
-      img: '/images/product.png',
-      nameEn: 'Black Seed Oil',
-      nameUr: 'کلونجی کا تیل',
-      price: 1299,
-      quantity: 1,
-      size: '15ml'
-    }
-  ]);
+function CartContent() {
+  const { cartItems, updateQuantity, removeFromCart, getCartTotal, getCartCount } = useCart();
+  const [mounted, setMounted] = useState(false);
 
-  const updateQuantity = (id: number, change: number) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id 
-        ? { ...item, quantity: Math.max(1, item.quantity + change) }
-        : item
-    ));
-  };
+  // Wait for component to mount before rendering cart
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
+  const shipping = getCartTotal() > 5000 ? 0 : 200;
+  const total = getCartTotal() + shipping;
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = subtotal > 5000 ? 0 : 200;
-  const total = subtotal + shipping;
+  // Show loading state until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading cart...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="mx-[4%] py-4">
@@ -67,7 +46,7 @@ export default function CartPage() {
       <div className="mx-[4%] py-8">
         {cartItems.length === 0 ? (
           // Empty Cart
-          <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+          <div className="bg-white rounded-xl shadow-sm p-12 text-center border border-gray-200">
             <FaShoppingCart className="w-24 h-24 mx-auto text-gray-300 mb-6" />
             <h2 className="text-2xl font-bold text-gray-900 mb-3">Your cart is empty</h2>
             <p className="text-gray-600 mb-6">Add some products to get started!</p>
@@ -82,18 +61,18 @@ export default function CartPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-xl shadow-sm">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
                 {/* Header */}
                 <div className="border-b px-6 py-4">
                   <h1 className="text-2xl font-bold text-gray-900">
-                    Shopping Cart ({cartItems.length} items)
+                    Shopping Cart ({getCartCount()} items)
                   </h1>
                 </div>
 
                 {/* Items */}
                 <div className="divide-y">
                   {cartItems.map((item) => (
-                    <div key={item.id} className="p-6 hover:bg-gray-50 transition">
+                    <div key={`${item.id}-${item.size}`} className="p-6 hover:bg-gray-50 transition">
                       <div className="flex gap-6">
                         {/* Image */}
                         <div className="w-28 h-28 flex-shrink-0">
@@ -101,6 +80,9 @@ export default function CartPage() {
                             src={item.img}
                             alt={item.nameEn}
                             className="w-full h-full object-cover rounded-lg border border-gray-200"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/images/placeholder-product.jpg';
+                            }}
                           />
                         </div>
 
@@ -118,18 +100,18 @@ export default function CartPage() {
                             {/* Quantity */}
                             <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                               <button
-                                onClick={() => updateQuantity(item.id, -1)}
-                                className="px-4 py-2 hover:bg-gray-100 transition"
+                                onClick={() => updateQuantity(item.id, item.size, -1)}
+                                className="px-4 py-2 hover:bg-gray-100 transition text-gray-700"
                                 disabled={item.quantity === 1}
                               >
                                 −
                               </button>
-                              <span className="px-6 py-2 border-x border-gray-300 font-semibold min-w-[60px] text-center">
+                              <span className="px-6 py-2 border-x border-gray-300 font-semibold min-w-[60px] text-center text-gray-900">
                                 {item.quantity}
                               </span>
                               <button
-                                onClick={() => updateQuantity(item.id, 1)}
-                                className="px-4 py-2 hover:bg-gray-100 transition"
+                                onClick={() => updateQuantity(item.id, item.size, 1)}
+                                className="px-4 py-2 hover:bg-gray-100 transition text-gray-700"
                               >
                                 +
                               </button>
@@ -141,7 +123,7 @@ export default function CartPage() {
                                 PKR {(item.price * item.quantity).toLocaleString()}
                               </p>
                               <p className="text-sm text-gray-500">
-                                PKR {item.price} each
+                                PKR {item.price.toLocaleString()} each
                               </p>
                             </div>
                           </div>
@@ -150,7 +132,7 @@ export default function CartPage() {
                         {/* Actions */}
                         <div className="flex flex-col gap-3">
                           <button
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeFromCart(item.id, item.size)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
                             title="Remove"
                           >
@@ -182,14 +164,14 @@ export default function CartPage() {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-xl shadow-sm sticky top-24">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 sticky top-24">
                 <div className="p-6">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
 
                   <div className="space-y-4 mb-6">
                     <div className="flex justify-between text-gray-600">
                       <span>Subtotal</span>
-                      <span className="font-semibold">PKR {subtotal.toLocaleString()}</span>
+                      <span className="font-semibold">PKR {getCartTotal().toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-gray-600">
                       <span>Shipping</span>
@@ -197,9 +179,9 @@ export default function CartPage() {
                         {shipping === 0 ? 'FREE' : `PKR ${shipping}`}
                       </span>
                     </div>
-                    {shipping > 0 && (
+                    {shipping > 0 && getCartTotal() < 5000 && (
                       <p className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg">
-                        Add PKR {(5000 - subtotal).toLocaleString()} more for free shipping!
+                        Add PKR {(5000 - getCartTotal()).toLocaleString()} more for free shipping!
                       </p>
                     )}
                     <div className="border-t pt-4">
@@ -215,7 +197,7 @@ export default function CartPage() {
                     <input
                       type="text"
                       placeholder="Enter promo code"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 mb-3"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 mb-3 text-gray-900"
                     />
                     <button className="w-full py-3 border border-green-700 text-green-700 rounded-lg font-semibold hover:bg-green-50 transition">
                       Apply Code
@@ -225,7 +207,7 @@ export default function CartPage() {
                   {/* Checkout Button */}
                   <Link 
                     href="/checkout"
-                    className="block w-full bg-green-700 text-white text-center py-4 rounded-full font-bold text-lg hover:bg-green-600 transition shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="block w-full bg-green-700 text-white text-center py-4 rounded-full font-bold text-lg hover:bg-green-600 transition shadow-lg hover:shadow-xl"
                   >
                     Proceed to Checkout
                   </Link>
@@ -246,5 +228,20 @@ export default function CartPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function CartPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading cart...</p>
+        </div>
+      </div>
+    }>
+      <CartContent />
+    </Suspense>
   );
 }

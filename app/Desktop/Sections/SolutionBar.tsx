@@ -4,6 +4,14 @@ import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import BackwardArrow from "@components/BackwardArrow";
 import ForwardArrow from "@components/ForwardArrow";
+import { categories } from "@/app/Desktop/data/categories"; // Import from data file
+
+// Define interface locally in this file
+interface Category {
+  title: string;
+  category: string;
+  offset: boolean;
+}
 
 export default function SolutionBar() {
   const router = useRouter();
@@ -51,19 +59,6 @@ export default function SolutionBar() {
     };
   }, []);
 
-  const cards = [
-    { title: "Skin care products", category: "skincare", offset: false },
-    { title: "Hair care products", category: "haircare", offset: true },
-    { title: "Mens health products", category: "mens-health", offset: false },
-    { title: "Women health products", category: "womens-health", offset: true },
-    { title: "Weight management products", category: "weight-management", offset: false },
-    { title: "Natural supplements", category: "supplements", offset: true },
-    { title: "Ayurvedic products", category: "ayurvedic", offset: false },
-    { title: "Herbal teas", category: "herbal-teas", offset: true },
-    { title: "Essential oils", category: "essential-oils", offset: false },
-    { title: "Organic skincare", category: "organic-skincare", offset: true },
-  ];
-
   const handleCategoryClick = (category: string) => {
     // Navigate to shop page with category filter
     router.push(`/shop?category=${category}`);
@@ -71,7 +66,7 @@ export default function SolutionBar() {
 
   return (
     <section className="SolutionBar mx-[4%] my-8">
-      {/* Header */}
+      {/* Header - Your original UI */}
       <div className="top-solutionbar mb-6 flex items-center justify-between">
         <h2 className="text-3xl font-semibold">
           Find your <span className="me-color-y">Solutions</span>
@@ -89,7 +84,7 @@ export default function SolutionBar() {
         </div>
       </div>
 
-      {/* Cards Container */}
+      {/* Cards Container - Your original UI */}
       <div
         ref={sliderRef}
         className="slide flex overflow-x-auto scroll-smooth no-scrollbar pb-4"
@@ -98,7 +93,7 @@ export default function SolutionBar() {
           msOverflowStyle: 'none',
         }}
       >
-        {cards.map((card, index) => (
+        {categories.map((card, index) => (
           <div
             key={index}
             onClick={() => handleCategoryClick(card.category)}
@@ -107,7 +102,7 @@ export default function SolutionBar() {
             }`}
             style={{
               width: 'calc(19% - 12.8px)',
-              marginRight: index === cards.length - 1 ? '0' : '16px',
+              marginRight: index === categories.length - 1 ? '0' : '16px',
               height: '270px',
               backgroundImage: `url(${pic})`,
               backgroundSize: "cover",
