@@ -8,16 +8,17 @@ import ProductCard from "@components/ProductCard";
 export default function BeautyCorner() {
   const beautyCornerImg = '/images/beautycorner.png';
   const productimg = '/images/product.png';
+  const productHoverImg = '/images/product-hover.png'; // ADD: Hover image path
 
   const products = [
-    { img: productimg, nameEn: 'Organic Lavender Essential Oil', nameUr: 'روغن باکان بيد', description: 'Natural DHT Blocker | With Saw...', rating: 4.7, reviews: 406, price: 1149, oldPrice: 1499, sale: '20% OFF' },
-    { img: productimg, nameEn: 'Green Tea Extract', nameUr: 'گرین ٹی کا عرق', description: 'Boosts metabolism...', rating: 4.6, reviews: 320, price: 999 },
-    { img: productimg, nameEn: 'Chamomile Essential Oil', nameUr: 'کیمومائل تیل', description: 'Relaxing & soothing oil...', rating: 4.8, reviews: 210, price: 1199, sale: '15% OFF' },
-    { img: productimg, nameEn: 'Mint Herbal Oil', nameUr: 'پودینے کا تیل', description: 'Refreshing oil...', rating: 4.5, reviews: 180, price: 899 },
-    { img: productimg, nameEn: 'Rosehip Oil', nameUr: 'گلاب ہپ تیل', description: 'Anti-aging...', rating: 4.6, reviews: 220, price: 1099 },
-    { img: productimg, nameEn: 'Argan Oil', nameUr: 'ارگن کا تیل', description: 'Hair & skin care...', rating: 4.7, reviews: 150, price: 1299 },
-    { img: productimg, nameEn: 'Jojoba Oil', nameUr: 'جوجوبا تیل', description: 'Moisturizing...', rating: 4.5, reviews: 180, price: 999 },
-    { img: productimg, nameEn: 'Tea Tree Oil', nameUr: 'ٹی ٹری آئل', description: 'Acne control...', rating: 4.6, reviews: 210, price: 1199 },
+    { img: productimg, hoverImg: productHoverImg, nameEn: 'Organic Lavender Essential Oil', nameUr: 'روغن باکان بيد', description: 'Natural DHT Blocker | With Saw...', rating: 4.7, reviews: 406, price: 1149, oldPrice: 1499, sale: '20% OFF' },
+    { img: productimg, hoverImg: productHoverImg, nameEn: 'Green Tea Extract', nameUr: 'گرین ٹی کا عرق', description: 'Boosts metabolism...', rating: 4.6, reviews: 320, price: 999 },
+    { img: productimg, hoverImg: productHoverImg, nameEn: 'Chamomile Essential Oil', nameUr: 'کیمومائل تیل', description: 'Relaxing & soothing oil...', rating: 4.8, reviews: 210, price: 1199, sale: '15% OFF' },
+    { img: productimg, hoverImg: productHoverImg, nameEn: 'Mint Herbal Oil', nameUr: 'پودینے کا تیل', description: 'Refreshing oil...', rating: 4.5, reviews: 180, price: 899 },
+    { img: productimg, hoverImg: productHoverImg, nameEn: 'Rosehip Oil', nameUr: 'گلاب ہپ تیل', description: 'Anti-aging...', rating: 4.6, reviews: 220, price: 1099 },
+    { img: productimg, hoverImg: productHoverImg, nameEn: 'Argan Oil', nameUr: 'ارگن کا تیل', description: 'Hair & skin care...', rating: 4.7, reviews: 150, price: 1299 },
+    { img: productimg, hoverImg: productHoverImg, nameEn: 'Jojoba Oil', nameUr: 'جوجوبا تیل', description: 'Moisturizing...', rating: 4.5, reviews: 180, price: 999 },
+    { img: productimg, hoverImg: productHoverImg, nameEn: 'Tea Tree Oil', nameUr: 'ٹی ٹری آئل', description: 'Acne control...', rating: 4.6, reviews: 210, price: 1199 },
   ];
 
   const [cardsToShow, setCardsToShow] = useState(4);

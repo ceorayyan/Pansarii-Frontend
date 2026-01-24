@@ -6,15 +6,17 @@ import BackwardArrow from "@components/BackwardArrow";
 
 export default function NewArrivals() {
   const productImage = '/images/product.png';
+  const productHoverImage = '/images/product-hover.png'; // ADD: Hover image path
+  
   const products = [
-    { img: productImage, nameEn: "Organic Lavender Essential Oil", nameUr: "روغن باكان بيد", description: "Natural DHT Blocker | With Saw...", rating: 4.7, reviews: 406, price: 1149, sale: "20% OFF" },
-    { img: productImage, nameEn: "Green Tea Extract", nameUr: "گرین ٹی کا عرق", description: "Boosts metabolism and energy...", rating: 4.6, reviews: 320, price: 999 },
-    { img: productImage, nameEn: "Chamomile Essential Oil", nameUr: "کیمومائل تیل", description: "Relaxing & soothing oil...", rating: 4.8, reviews: 210, price: 1199, sale: "15% OFF" },
-    { img: productImage, nameEn: "Mint Herbal Oil", nameUr: "پودینے کا تیل", description: "Refreshing oil for daily use...", rating: 4.5, reviews: 180, price: 899 },
-    { img: productImage, nameEn: "Organic Lavender Essential Oil", nameUr: "روغن باكان بيد", description: "Natural DHT Blocker | With Saw...", rating: 4.7, reviews: 406, price: 1149, sale: "20% OFF" },
-    { img: productImage, nameEn: "Green Tea Extract", nameUr: "گرین ٹی کا عرق", description: "Boosts metabolism and energy...", rating: 4.6, reviews: 320, price: 999 },
-    { img: productImage, nameEn: "Chamomile Essential Oil", nameUr: "کیمومائل تیل", description: "Relaxing & soothing oil...", rating: 4.8, reviews: 210, price: 1199, sale: "15% OFF" },
-    { img: productImage, nameEn: "Mint Herbal Oil", nameUr: "پودینے کا تیل", description: "Refreshing oil for daily use...", rating: 4.5, reviews: 180, price: 899 },
+    { img: productImage, hoverImg: productHoverImage, nameEn: "Organic Lavender Essential Oil", nameUr: "روغن باكان بيد", description: "Natural DHT Blocker | With Saw...", rating: 4.7, reviews: 406, price: 1149, sale: "20% OFF" },
+    { img: productImage, hoverImg: productHoverImage, nameEn: "Green Tea Extract", nameUr: "گرین ٹی کا عرق", description: "Boosts metabolism and energy...", rating: 4.6, reviews: 320, price: 999 },
+    { img: productImage, hoverImg: productHoverImage, nameEn: "Chamomile Essential Oil", nameUr: "کیمومائل تیل", description: "Relaxing & soothing oil...", rating: 4.8, reviews: 210, price: 1199, sale: "15% OFF" },
+    { img: productImage, hoverImg: productHoverImage, nameEn: "Mint Herbal Oil", nameUr: "پودینے کا تیل", description: "Refreshing oil for daily use...", rating: 4.5, reviews: 180, price: 899 },
+    { img: productImage, hoverImg: productHoverImage, nameEn: "Organic Lavender Essential Oil", nameUr: "روغن باكان بيد", description: "Natural DHT Blocker | With Saw...", rating: 4.7, reviews: 406, price: 1149, sale: "20% OFF" },
+    { img: productImage, hoverImg: productHoverImage, nameEn: "Green Tea Extract", nameUr: "گرین ٹی کا عرق", description: "Boosts metabolism and energy...", rating: 4.6, reviews: 320, price: 999 },
+    { img: productImage, hoverImg: productHoverImage, nameEn: "Chamomile Essential Oil", nameUr: "کیمومائل تیل", description: "Relaxing & soothing oil...", rating: 4.8, reviews: 210, price: 1199, sale: "15% OFF" },
+    { img: productImage, hoverImg: productHoverImage, nameEn: "Mint Herbal Oil", nameUr: "پودینے کا تیل", description: "Refreshing oil for daily use...", rating: 4.5, reviews: 180, price: 899 },
   ];
 
   const sliderRef = useRef<HTMLDivElement | null>(null);

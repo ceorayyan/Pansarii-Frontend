@@ -8,18 +8,19 @@ export default function PansariInn() {
   const banner2Img = '/images/Banner2.png';
   const banner3Img = '/images/Banner3.png';
   const productImg = '/images/product.png'; // Separate image for products
+  const productHoverImg = '/images/product-hover.png'; // ADD: Hover image path
 
   const productsRow = [
-    { img: productImg, nameEn: 'Cold Pressed Almond Oil', nameUr: 'بادام کا تیل', description: 'Pure & Organic Almond Oil', rating: 4.8, reviews: 320, price: 899, oldPrice: 1099, sale: '15% OFF' },
-    { img: productImg, nameEn: 'Organic Coconut Oil', nameUr: 'ناریل کا تیل', description: 'Virgin Coconut Oil for Skin & Hair', rating: 4.7, reviews: 412, price: 749, oldPrice: 999, sale: '25% OFF' },
-    { img: productImg, nameEn: 'Black Seed Oil', nameUr: 'کلونجی کا تیل', description: 'Cold Pressed Black Seed Oil', rating: 4.9, reviews: 220, price: 1299, oldPrice: 1599, sale: '20% OFF' },
-    { img: productImg, nameEn: 'Argan Oil', nameUr: 'ارگن آئل', description: 'Moroccan Argan Oil', rating: 4.6, reviews: 305, price: 1399, oldPrice: 1699, sale: '18% OFF' },
-    { img: productImg, nameEn: 'Sesame Oil', nameUr: 'تل کا تیل', description: 'Cold Pressed Sesame Oil', rating: 4.5, reviews: 180, price: 699, oldPrice: 899, sale: '20% OFF' },
-    { img: productImg, nameEn: 'Mustard Oil', nameUr: 'سرسوں کا تیل', description: 'Organic Mustard Oil', rating: 4.7, reviews: 250, price: 799, oldPrice: 999, sale: '15% OFF' },
-    { img: productImg, nameEn: 'Argan Oil', nameUr: 'ارگن آئل', description: 'Moroccan Argan Oil', rating: 4.6, reviews: 305, price: 1399, oldPrice: 1699, sale: '18% OFF' },
-    { img: productImg, nameEn: 'Sesame Oil', nameUr: 'تل کا تیل', description: 'Cold Pressed Sesame Oil', rating: 4.5, reviews: 180, price: 699, oldPrice: 899, sale: '20% OFF' },
-    { img: productImg, nameEn: 'Argan Oil', nameUr: 'ارگن آئل', description: 'Moroccan Argan Oil', rating: 4.6, reviews: 305, price: 1399, oldPrice: 1699, sale: '18% OFF' },
-    { img: productImg, nameEn: 'Sesame Oil', nameUr: 'تل کا تیل', description: 'Cold Pressed Sesame Oil', rating: 4.5, reviews: 180, price: 699, oldPrice: 899, sale: '20% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Cold Pressed Almond Oil', nameUr: 'بادام کا تیل', description: 'Pure & Organic Almond Oil', rating: 4.8, reviews: 320, price: 899, oldPrice: 1099, sale: '15% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Organic Coconut Oil', nameUr: 'ناریل کا تیل', description: 'Virgin Coconut Oil for Skin & Hair', rating: 4.7, reviews: 412, price: 749, oldPrice: 999, sale: '25% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Black Seed Oil', nameUr: 'کلونجی کا تیل', description: 'Cold Pressed Black Seed Oil', rating: 4.9, reviews: 220, price: 1299, oldPrice: 1599, sale: '20% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Argan Oil', nameUr: 'ارگن آئل', description: 'Moroccan Argan Oil', rating: 4.6, reviews: 305, price: 1399, oldPrice: 1699, sale: '18% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Sesame Oil', nameUr: 'تل کا تیل', description: 'Cold Pressed Sesame Oil', rating: 4.5, reviews: 180, price: 699, oldPrice: 899, sale: '20% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Mustard Oil', nameUr: 'سرسوں کا تیل', description: 'Organic Mustard Oil', rating: 4.7, reviews: 250, price: 799, oldPrice: 999, sale: '15% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Argan Oil', nameUr: 'ارگن آئل', description: 'Moroccan Argan Oil', rating: 4.6, reviews: 305, price: 1399, oldPrice: 1699, sale: '18% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Sesame Oil', nameUr: 'تل کا تیل', description: 'Cold Pressed Sesame Oil', rating: 4.5, reviews: 180, price: 699, oldPrice: 899, sale: '20% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Argan Oil', nameUr: 'ارگن آئل', description: 'Moroccan Argan Oil', rating: 4.6, reviews: 305, price: 1399, oldPrice: 1699, sale: '18% OFF' },
+    { img: productImg, hoverImg: productHoverImg, nameEn: 'Sesame Oil', nameUr: 'تل کا تیل', description: 'Cold Pressed Sesame Oil', rating: 4.5, reviews: 180, price: 699, oldPrice: 899, sale: '20% OFF' },
   ];
 
   const [cardsToShow, setCardsToShow] = useState(4);

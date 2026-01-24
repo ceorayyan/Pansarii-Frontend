@@ -23,22 +23,22 @@ interface ContactInfoProps {
 const defaultSocialMedia: SocialMediaItem[] = [
   { 
     name: 'Facebook', 
-    icon: <FaFacebook className="w-4 h-4" />,
+    icon: <FaFacebook className="w-5 h-5" />, // Increased icon size
     url: 'https://facebook.com'
   },
   { 
     name: 'X', 
-    icon: <FaTwitter className="w-4 h-4" />,
+    icon: <FaTwitter className="w-5 h-5" />, // Increased icon size
     url: 'https://twitter.com'
   },
   { 
     name: 'YouTube', 
-    icon: <FaYoutube className="w-4 h-4" />,
+    icon: <FaYoutube className="w-5 h-5" />, // Increased icon size
     url: 'https://youtube.com'
   },
   { 
     name: 'Instagram', 
-    icon: <FaInstagram className="w-4 h-4" />,
+    icon: <FaInstagram className="w-5 h-5" />, // Increased icon size
     url: 'https://instagram.com'
   }
 ];
@@ -51,8 +51,8 @@ export default function ContactInfo({
   socialMedia = defaultSocialMedia,
   logoUrl = '/images/logo.png',
   logoAlt = 'Logo',
-  logoWidth = 100,
-  logoHeight = 32
+  logoWidth = 150, // INCREASED from 100 to 150
+  logoHeight = 48  // INCREASED from 32 to 48 (maintains aspect ratio)
 }: ContactInfoProps) {
   
   return (
@@ -62,7 +62,8 @@ export default function ContactInfo({
         alt={logoAlt} 
         width={logoWidth} 
         height={logoHeight} 
-        className="mb-2" 
+        className="mb-3" // Increased margin bottom
+        priority // Optional: ensures logo loads quickly
       />
       <p style={{ ...textStyle, fontSize: '12px' }} className="mb-1">
         <a 
@@ -73,7 +74,7 @@ export default function ContactInfo({
           {email}
         </a>
       </p>
-      <p style={{ ...textStyle, fontSize: '12px' }} className="mb-2">
+      <p style={{ ...textStyle, fontSize: '12px' }} className="mb-3"> {/* Increased margin */}
         <a 
           href={`tel:${phone}`} 
           style={{ color: buttonColor, fontSize: '12px' }}
@@ -82,7 +83,7 @@ export default function ContactInfo({
           {phone}
         </a>
       </p>
-      <div className="flex gap-3 mt-2">
+      <div className="flex gap-4 mt-3"> {/* Increased gap and margin */}
         {socialMedia && socialMedia.length > 0 ? (
           socialMedia.map((platform) => (
             <a
@@ -91,7 +92,7 @@ export default function ContactInfo({
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: buttonColor }}
-              className="hover:opacity-80 transition-opacity"
+              className="hover:opacity-80 transition-opacity hover:scale-110 transition-transform duration-200" // Added hover effect
               aria-label={platform.name}
             >
               {platform.icon}

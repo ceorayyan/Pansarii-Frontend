@@ -6,6 +6,10 @@ import Footer from "./Desktop/components/footer";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Add these exports to make ALL pages dynamic
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: "Pansari Inn - Premium Ayurvedic & Herbal Products",
   description: "100% Pure Ayurvedic & Herbal Products. Premium quality natural products for health, beauty, and wellness.",

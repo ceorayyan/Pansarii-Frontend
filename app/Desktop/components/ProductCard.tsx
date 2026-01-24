@@ -52,12 +52,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Image Section with bottom border */}
         <div className="relative w-full h-[200px] border-b border-gray-200">
           <img
-            src={displayImage} // CHANGE: Use displayImage instead of product.img
+            src={displayImage}
             alt={product.nameEn}
-            className="w-full h-full object-cover transition-opacity duration-300"
-            style={{ 
-              opacity: isHovered && product.hoverImg ? 1 : 1 
-            }}
+            className="w-full h-full object-cover transition-all duration-300"
           />
 
           {/* Sale Badge - Check for null/undefined */}

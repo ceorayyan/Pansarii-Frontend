@@ -1,12 +1,51 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { FaLock, FaCreditCard, FaCheckCircle } from 'react-icons/fa';
+import { FaLock, FaCreditCard, FaCheckCircle, FaPhone, FaChevronDown } from 'react-icons/fa';
 
 export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [sameAsShipping, setSameAsShipping] = useState(true);
+  const [phoneNumber, setPhoneNumber] = useState('+92');
+  const [selectedCity, setSelectedCity] = useState('');
+
+  // Pakistani cities data - can be fetched from API in real application
+  const pakistaniCities = [
+    // Punjab
+    { value: 'lahore', label: 'Lahore', province: 'Punjab' },
+    { value: 'faisalabad', label: 'Faisalabad', province: 'Punjab' },
+    { value: 'rawalpindi', label: 'Rawalpindi', province: 'Punjab' },
+    { value: 'multan', label: 'Multan', province: 'Punjab' },
+    { value: 'gujranwala', label: 'Gujranwala', province: 'Punjab' },
+    { value: 'sialkot', label: 'Sialkot', province: 'Punjab' },
+    { value: 'bahawalpur', label: 'Bahawalpur', province: 'Punjab' },
+    { value: 'sargodha', label: 'Sargodha', province: 'Punjab' },
+    
+    // Sindh
+    { value: 'karachi', label: 'Karachi', province: 'Sindh' },
+    { value: 'hyderabad', label: 'Hyderabad', province: 'Sindh' },
+    { value: 'sukkur', label: 'Sukkur', province: 'Sindh' },
+    { value: 'larkana', label: 'Larkana', province: 'Sindh' },
+    { value: 'navabshah', label: 'Nawabshah', province: 'Sindh' },
+    
+    // KPK
+    { value: 'peshawar', label: 'Peshawar', province: 'KPK' },
+    { value: 'mardan', label: 'Mardan', province: 'KPK' },
+    { value: 'abbottabad', label: 'Abbottabad', province: 'KPK' },
+    { value: 'swat', label: 'Swat', province: 'KPK' },
+    { value: 'nowshera', label: 'Nowshera', province: 'KPK' },
+    
+    // Balochistan
+    { value: 'quetta', label: 'Quetta', province: 'Balochistan' },
+    { value: 'gwadar', label: 'Gwadar', province: 'Balochistan' },
+    { value: 'turbat', label: 'Turbat', province: 'Balochistan' },
+    
+    // Islamabad & AJK
+    { value: 'islamabad', label: 'Islamabad', province: 'Islamabad Capital Territory' },
+    { value: 'muzaffarabad', label: 'Muzaffarabad', province: 'Azad Jammu & Kashmir' },
+    { value: 'mirpur', label: 'Mirpur', province: 'Azad Jammu & Kashmir' },
+  ];
 
   const cartItems = [
     {
@@ -30,6 +69,24 @@ export default function CheckoutPage() {
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = 200;
   const total = subtotal + shipping;
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    
+    // Ensure it starts with +92
+    if (!value.startsWith('+92')) {
+      value = '+92 ' + value.replace(/^\+92\s?/, '');
+    }
+    
+    // Format: +92 XXX XXXXXXX
+    const cleaned = value.replace(/\D/g, '').substring(1); // Remove + and non-digits
+    if (cleaned.length > 0) {
+      const formatted = cleaned.replace(/(\d{2})(\d{3})(\d{7})/, '+$1 $2 $3');
+      setPhoneNumber(formatted);
+    } else {
+      setPhoneNumber('+92 ');
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,12 +168,28 @@ export default function CheckoutPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone Number *
                     </label>
-                    <input
-                      type="tel"
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                      placeholder="+92 300 1234567"
-                    />
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <FaPhone className="text-gray-400" />
+                        <span className="ml-2 text-gray-600">PK</span>
+                      </div>
+                      <input
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={handlePhoneChange}
+                        required
+                        className="w-full pl-20 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
+                        placeholder="300 1234567"
+                        pattern="\+92\s\d{3}\s\d{7}"
+                        title="Format: +92 XXX XXXXXXX"
+                      />
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                        <span className="text-xs text-gray-500">🇵🇰</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Format: +92 XXX XXXXXXX (Pakistani number)
+                    </p>
                   </div>
                 </div>
               </div>
@@ -133,7 +206,7 @@ export default function CheckoutPage() {
                       type="text"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                      placeholder="House/Flat no, Street name"
+                      placeholder="House/Flat no, Street name, Area"
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -141,27 +214,67 @@ export default function CheckoutPage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         City *
                       </label>
-                      <input
-                        type="text"
-                        required
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                        placeholder="Karachi"
-                      />
+                      <div className="relative">
+                        <select
+                          value={selectedCity}
+                          onChange={(e) => setSelectedCity(e.target.value)}
+                          required
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700 appearance-none bg-white"
+                        >
+                          <option value="">Select your city</option>
+                          <optgroup label="Punjab">
+                            {pakistaniCities.filter(city => city.province === 'Punjab').map(city => (
+                              <option key={city.value} value={city.value}>
+                                {city.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Sindh">
+                            {pakistaniCities.filter(city => city.province === 'Sindh').map(city => (
+                              <option key={city.value} value={city.value}>
+                                {city.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Khyber Pakhtunkhwa">
+                            {pakistaniCities.filter(city => city.province === 'KPK').map(city => (
+                              <option key={city.value} value={city.value}>
+                                {city.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Balochistan">
+                            {pakistaniCities.filter(city => city.province === 'Balochistan').map(city => (
+                              <option key={city.value} value={city.value}>
+                                {city.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Other">
+                            {pakistaniCities.filter(city => 
+                              city.province === 'Islamabad Capital Territory' || 
+                              city.province === 'Azad Jammu & Kashmir'
+                            ).map(city => (
+                              <option key={city.value} value={city.value}>
+                                {city.label}
+                              </option>
+                            ))}
+                          </optgroup>
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                          <FaChevronDown className="h-4 w-4" />
+                        </div>
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Province *
+                        Area/Sector
                       </label>
-                      <select
-                        required
+                      <input
+                        type="text"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                      >
-                        <option value="">Select Province</option>
-                        <option value="sindh">Sindh</option>
-                        <option value="punjab">Punjab</option>
-                        <option value="kpk">KPK</option>
-                        <option value="balochistan">Balochistan</option>
-                      </select>
+                        placeholder="Gulshan, DHA, etc."
+                      />
                     </div>
                   </div>
                   <div>
@@ -172,6 +285,8 @@ export default function CheckoutPage() {
                       type="text"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                       placeholder="75500"
+                      pattern="\d{5}"
+                      title="5-digit postal code"
                     />
                   </div>
                   <div>
@@ -181,7 +296,7 @@ export default function CheckoutPage() {
                     <textarea
                       rows={3}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                      placeholder="Any specific delivery instructions..."
+                      placeholder="e.g., Call before delivery, Leave at reception, etc."
                     ></textarea>
                   </div>
                 </div>
