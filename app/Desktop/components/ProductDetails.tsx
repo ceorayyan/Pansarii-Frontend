@@ -10,8 +10,13 @@ import {
   FaSearchMinus,
   FaWhatsapp,
   FaHeart,
-  FaRegHeart
+  FaRegHeart,
+  FaBolt,
+  FaTimes
 } from "react-icons/fa";
+import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishList";
+import { toast } from 'react-toastify';
 
 interface FeatureItem {
   text: string;
@@ -36,31 +41,38 @@ interface ProductDetailsProps {
     points?: number;
     benefits?: string[];
     infoLines?: string[];
-    productId?: string;
+    productId?: string | number;
+    category?: string;
   };
 }
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
+  const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
+  
   const [selectedImage, setSelectedImage] = useState(product.img);
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || '15ml');
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
   
-  // Zoom state
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(1.5);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [showZoom, setShowZoom] = useState(false);
-  
+  // Zoom state EXACTLY like modal
+  const [isZoomed, setIsZoomed] = useState<boolean>(false);
+  const [zoomPosition, setZoomPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const imageRef = useRef<HTMLDivElement>(null);
-  const zoomRef = useRef<HTMLDivElement>(null);
-
+  
   const additionalImages = product.additionalImages || [];
+  const productId = product.productId;
+
+  // Check if product is in wishlist
+  useEffect(() => {
+    if (productId) {
+      setIsWishlisted(isInWishlist(productId));
+    }
+  }, [productId, isInWishlist]);
 
   const handleImageClick = (image: string) => {
     setSelectedImage(image);
     setIsZoomed(false);
-    setZoomLevel(1.5);
   };
 
   const increaseQuantity = () => {
@@ -73,220 +85,255 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     }
   };
 
-  // Handle mouse move for zoom effect
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isZoomed || !imageRef.current || !zoomRef.current) return;
-    
-    const rect = imageRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    // Calculate percentage position
-    const percentX = (x / rect.width) * 100;
-    const percentY = (y / rect.height) * 100;
-    
-    // Ensure the position stays within bounds
-    const boundedX = Math.max(0, Math.min(100, percentX));
-    const boundedY = Math.max(0, Math.min(100, percentY));
-    
-    setPosition({ x: boundedX, y: boundedY });
-    
-    // Update zoom lens position
-    if (zoomRef.current) {
-      zoomRef.current.style.backgroundPosition = `${boundedX}% ${boundedY}%`;
-    }
-  };
+  // Image hover for zoom effect EXACTLY like modal
+  const handleImageHover = (e: React.MouseEvent<HTMLDivElement>): void => {
+    if (!isZoomed || !imageRef.current) return;
 
-  const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 0.5, 3));
-    if (!isZoomed) {
-      setIsZoomed(true);
-      setShowZoom(true);
-    }
-  };
+    const { left, top, width, height } = imageRef.current.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
 
-  const handleZoomOut = () => {
-    if (zoomLevel <= 1) {
-      setIsZoomed(false);
-      setShowZoom(false);
-    } else {
-      setZoomLevel(prev => Math.max(prev - 0.5, 1));
-    }
+    setZoomPosition({ x, y });
   };
 
   const toggleZoom = () => {
-    if (isZoomed) {
-      setIsZoomed(false);
-      setShowZoom(false);
-      setZoomLevel(1.5);
-    } else {
-      setIsZoomed(true);
-      setShowZoom(true);
+    setIsZoomed(!isZoomed);
+  };
+
+  // Add to cart functionality
+  const handleAddToCart = () => {
+    if (!productId) {
+      toast.error('Failed to add item to cart!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+      return;
     }
+
+    // Add the product to cart with selected size and quantity
+    for (let i = 0; i < quantity; i++) {
+      addToCart({
+        id: productId,
+        img: selectedImage,
+        nameEn: product.nameEn,
+        nameUr: product.nameUr,
+        price: product.price,
+        size: selectedSize,
+        category: product.category || "Herbal Oils"
+      });
+    }
+
+    // Show success toast
+    toast.success(`Added ${quantity} × ${product.nameEn} (${selectedSize}) to cart!`, {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
+    });
   };
 
-  // Toggle wishlist
-  const toggleWishlist = () => {
-    setIsWishlisted(!isWishlisted);
-    // Here you would typically make an API call to update wishlist on server
-    // For now, we'll just show a toast notification
-    const message = !isWishlisted 
-      ? "Product added to wishlist!" 
-      : "Product removed from wishlist!";
-    
-    // Show a simple alert for now - you can replace with a proper toast notification
-    alert(message);
-    
-    // In a real app, you would use:
-    // toast.success(message);
-  };
+  // Buy now functionality
+  const handleBuyNow = () => {
+    if (!productId) {
+      toast.error('Failed to add item to cart!', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+      return;
+    }
 
-  // WhatsApp share/order function
-  const handleWhatsAppOrder = () => {
-    const productName = encodeURIComponent(product.nameEn);
-    const productPrice = product.price;
-    const selectedSizeText = selectedSize;
-    const quantityText = quantity;
-    
-    // Construct the message
-    const message = `Hello! I would like to order:\n\n` +
-      `Product: ${product.nameEn}\n` +
-      `Price: PKR ${productPrice}\n` +
-      `Size: ${selectedSizeText}\n` +
-      `Quantity: ${quantityText}\n\n` +
-      `Please confirm availability and proceed with my order.`;
-    
-    // WhatsApp API URL
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-    
-    // Open WhatsApp
-    window.open(whatsappUrl, '_blank');
-  };
+    for (let i = 0; i < quantity; i++) {
+      addToCart({
+        id: productId,
+        img: selectedImage,
+        nameEn: product.nameEn,
+        nameUr: product.nameUr,
+        price: product.price,
+        size: selectedSize,
+        category: product.category || "Herbal Oils"
+      });
+    }
 
-  // Close zoom when clicking outside on mobile
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (isZoomed && zoomRef.current && !zoomRef.current.contains(e.target as Node)) {
-        setIsZoomed(false);
-        setShowZoom(false);
+    // Show success toast with redirect message
+    toast.success(
+      <div>
+        <div className="font-semibold">Added to cart! Redirecting...</div>
+        <div className="text-sm opacity-90">{product.nameEn} (×{quantity})</div>
+      </div>, 
+      {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: "light",
       }
-    };
+    );
 
-    if (isZoomed) {
-      document.addEventListener('mousedown', handleClickOutside);
+    setTimeout(() => {
+      window.location.href = '/cart';
+    }, 1600);
+  };
+
+  // Toggle wishlist - Updated to match the improved functionality
+  const handleWishlistToggle = () => {
+    if (!productId) return;
+    
+    if (isWishlisted) {
+      removeFromWishlist(productId);
+      setIsWishlisted(false);
+      
+      toast.info('Removed from wishlist', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+    } else {
+      addToWishlist({
+        id: productId,
+        img: selectedImage,
+        nameEn: product.nameEn,
+        nameUr: product.nameUr,
+        price: product.price,
+        oldPrice: product.oldPrice,
+        rating: product.rating,
+        reviews: product.reviews,
+        inStock: true,
+        category: product.category || "Herbal Oils"
+      });
+      setIsWishlisted(true);
+      
+      toast.success('Added to wishlist!', {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
     }
+  };
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isZoomed]);
+  // WhatsApp order function - Updated styling to outline style
+  const handleWhatsAppOrder = () => {
+    const totalPrice = product.price * quantity;
+    
+    const message = `🌟 *New Order Request* 🌟\n\n` +
+      `*Product:* ${product.nameEn}\n` +
+      `*Price:* PKR ${product.price.toLocaleString()}\n` +
+      `*Size:* ${selectedSize}\n` +
+      `*Quantity:* ${quantity}\n` +
+      `*Total:* PKR ${totalPrice.toLocaleString()}\n\n` +
+      `*Customer Details:*\n` +
+      `Please provide your:\n` +
+      `1. Full Name\n` +
+      `2. Delivery Address\n` +
+      `3. Phone Number\n\n` +
+      `_This order was placed via Pansari Inn website_`;
+    
+    const whatsappUrl = `https://wa.me/923001234567?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
-    <div className="h-screen max-h-screen overflow-hidden">
+    <div className="h-screen max-h-screen overflow-hidden bg-white">
       <div className="h-full max-h-full flex flex-col lg:flex-row gap-2 lg:gap-3 p-2">
         
-        {/* Left Column - Images */}
+        {/* Left Column - Images EXACTLY like before */}
         <div className="lg:w-2/5 h-full flex flex-col relative">
-          {/* Wishlist Button - Top Left */}
+          {/* Wishlist Button - EXACTLY same but with improved styling */}
           <button
-            onClick={toggleWishlist}
-            className="absolute top-2 left-2 z-20 bg-white/90 hover:bg-white p-2 rounded-full shadow-md transition-all hover:scale-110"
+            onClick={handleWishlistToggle}
+            className={`absolute top-2 left-2 z-20 p-2 rounded-full shadow-md transition-all duration-300 hover:scale-110 ${
+              isWishlisted 
+                ? 'bg-red-50 border border-red-200 hover:bg-red-100' 
+                : 'bg-white/90 border border-gray-200 hover:bg-white'
+            }`}
             title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
             {isWishlisted ? (
               <FaHeart className="w-4 h-4 text-red-500" />
             ) : (
-              <FaRegHeart className="w-4 h-4 text-gray-700" />
+              <FaRegHeart className="w-4 h-4 text-gray-600" />
             )}
           </button>
 
-          {/* Zoom Controls - Top Right */}
-          <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
-            <button
-              onClick={toggleZoom}
-              className="bg-white/90 hover:bg-white p-1.5 rounded-full shadow-md transition-all z-20"
-              title={isZoomed ? "Disable zoom" : "Enable zoom"}
-            >
-              {isZoomed ? (
-                <FaSearchMinus className="w-3 h-3 text-gray-700" />
-              ) : (
-                <FaSearchPlus className="w-3 h-3 text-gray-700" />
-              )}
-            </button>
-            
-            {isZoomed && (
-              <div className="flex flex-col bg-white/90 rounded-full shadow-md overflow-hidden">
-                <button
-                  onClick={handleZoomIn}
-                  className="px-1.5 py-1 hover:bg-gray-100 transition-colors"
-                  title="Zoom in"
-                >
-                  <span className="text-xs font-bold text-gray-700">+</span>
-                </button>
-                <button
-                  onClick={handleZoomOut}
-                  className="px-1.5 py-1 hover:bg-gray-100 transition-colors"
-                  title="Zoom out"
-                >
-                  <span className="text-xs font-bold text-gray-700">-</span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Main Image Container */}
-          <div 
-            ref={imageRef}
-            className={`h-[60vh] lg:h-[70vh] rounded-lg overflow-hidden relative cursor-${isZoomed ? 'zoom-in' : 'pointer'}`}
-            onMouseMove={handleMouseMove}
-            onMouseEnter={() => isZoomed && setShowZoom(true)}
-            onMouseLeave={() => isZoomed && setShowZoom(false)}
+          {/* Zoom Toggle Button - EXACTLY like modal */}
+          <button
             onClick={toggleZoom}
+            className="absolute top-2 right-2 z-20 bg-white/90 hover:bg-white p-1.5 rounded-full shadow-md transition-all z-20 border border-gray-200"
+            title={isZoomed ? "Disable zoom" : "Enable zoom"}
           >
-            <img
-              src={selectedImage}
-              alt={product.nameEn}
-              className={`w-full h-full object-cover transition-transform duration-200 ${
-                isZoomed ? 'scale-105' : ''
-              }`}
-            />
-            
-            {/* Zoom Lens Overlay (shows on hover when zoomed) */}
-            {isZoomed && (
-              <>
-                {/* Magnifying Glass Effect - Shows on hover */}
-                {showZoom && (
-                  <div 
-                    ref={zoomRef}
-                    className="absolute inset-0 pointer-events-none z-10"
-                    style={{
-                      backgroundImage: `url(${selectedImage})`,
-                      backgroundSize: `${zoomLevel * 100}%`,
-                      backgroundRepeat: 'no-repeat',
-                      backgroundPosition: `${position.x}% ${position.y}%`,
-                      opacity: 0.9,
-                    }}
-                  />
-                )}
-                
-                {/* Zoom Level Indicator */}
-                <div className="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-[10px]">
-                  {zoomLevel.toFixed(1)}x
-                </div>
-              </>
+            {isZoomed ? (
+              <FaSearchMinus className="w-3 h-3 text-gray-700" />
+            ) : (
+              <FaSearchPlus className="w-3 h-3 text-gray-700" />
             )}
+          </button>
+
+          {/* Main Image Container with Zoom EXACTLY like modal */}
+          <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-50 mb-3">
+            <div 
+              ref={imageRef}
+              className="relative w-full h-full cursor-zoom-in"
+              onMouseEnter={() => setIsZoomed(true)}
+              onMouseLeave={() => setIsZoomed(false)}
+              onMouseMove={handleImageHover}
+            >
+              <img
+                src={selectedImage}
+                alt={product.nameEn}
+                className="w-full h-full object-contain p-4 transition-transform duration-200"
+                style={{
+                  transform: isZoomed ? 'scale(1.5)' : 'scale(1)',
+                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                }}
+              />
+              
+              {/* Zoom Indicator EXACTLY like modal */}
+              <div className="absolute bottom-3 right-3 bg-black/60 text-white p-2 rounded-full">
+                <FaSearchPlus className="w-4 h-4" />
+              </div>
+              
+              {/* Zoom Preview EXACTLY like modal */}
+              {isZoomed && (
+                <div className="absolute top-3 left-3 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                  Zoom Active (2x)
+                </div>
+              )}
+            </div>
           </div>
 
+          {/* Thumbnail Images EXACTLY same */}
           {additionalImages.length > 0 && (
-            <div className="flex gap-1 mt-3 overflow-x-auto pb-1 flex-shrink-0">
+            <div className="flex gap-2 overflow-x-auto">
               {[product.img, ...additionalImages].map((image, index) => (
                 <button
                   key={index}
                   onClick={() => handleImageClick(image)}
-                  className={`flex-shrink-0 w-12 h-12 rounded overflow-hidden border transition-all ${
+                  className={`flex-shrink-0 w-12 h-12 rounded overflow-hidden border ${
                     selectedImage === image 
-                      ? 'border-[#197B33] border-2 scale-105' 
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-[#197B33] border-2' 
+                      : 'border-gray-200 hover:border-gray-400'
                   }`}
                 >
                   <img
@@ -300,16 +347,16 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           )}
         </div>
 
-        {/* Right Column - Product Info */}
+        {/* Right Column - Product Info EXACTLY same styling */}
         <div className="lg:w-3/5 h-full overflow-y-auto">
           <div className="space-y-2">
-            {/* Product Names */}
+            {/* Product Names - EXACTLY same */}
             <div className="mt-2">
               <h1 className="text-lg font-bold text-gray-900 leading-tight">{product.nameEn}</h1>
               <p className="text-xs text-gray-700 mt-0.5">{product.nameUr}</p>
             </div>
             
-            {/* Benefits */}
+            {/* Benefits - EXACTLY same */}
             {product.benefits && product.benefits.length > 0 && (
               <div className="text-gray-600 text-[10px] flex flex-wrap items-center gap-x-1 mt-2">
                 {product.benefits.map((benefit, index) => (
@@ -323,7 +370,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Rating & Reviews */}
+            {/* Rating & Reviews - EXACTLY same */}
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-center gap-1">
                 <FaStar className="w-3 h-3 text-yellow-400" />
@@ -336,12 +383,12 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             </div>
 
-            {/* Price */}
+            {/* Price - EXACTLY same */}
             <div className="mt-2">
               <div className="flex items-center gap-1 flex-wrap">
-                <span className="text-lg font-bold text-gray-900">PKR {product.price}</span>
+                <span className="text-lg font-bold text-gray-900">PKR {product.price.toLocaleString()}</span>
                 {product.oldPrice && (
-                  <span className="text-sm text-gray-500 line-through">PKR {product.oldPrice}</span>
+                  <span className="text-sm text-gray-500 line-through">PKR {product.oldPrice.toLocaleString()}</span>
                 )}
                 {product.sale && (
                   <span className="px-1.5 py-0.5 bg-red-100 text-red-600 rounded-full text-[10px] font-medium">
@@ -351,7 +398,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             </div>
 
-            {/* Ayurvedic Info Section */}
+            {/* Ayurvedic Info Section - EXACTLY same */}
             {product.infoLines && product.infoLines.length > 0 && (
               <div className="mt-2">
                 <div className="flex flex-wrap gap-1">
@@ -367,7 +414,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Features */}
+            {/* Features - EXACTLY same */}
             {product.features && product.features.length > 0 && (
               <div className="mt-2">
                 <div className="grid grid-cols-2 gap-1">
@@ -385,7 +432,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         key={index} 
                         className="rounded p-1 flex items-center gap-1 bg-white hover:bg-gray-50 transition-colors"
                       >
-                        {/* Left side - Icon */}
                         <div className="w-6 h-6 rounded bg-gray-100 flex items-center justify-center flex-shrink-0">
                           {feature.icon ? (
                             <img 
@@ -409,7 +455,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                           )}
                         </div>
                         
-                        {/* Right side - Text */}
                         <span className="text-gray-700 text-[10px] font-medium flex-1 leading-tight">
                           {featureText}
                         </span>
@@ -420,13 +465,16 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Pansari Points */}
+            {/* Pansari Points - EXACTLY same */}
             {product.points && (
               <div className="mt-2">
                 <div className="bg-[#6464641A] rounded p-1.5 flex items-center justify-between">
-                  <span className="text-gray-800 text-[10px]">
-                    Earn Upto {product.points} Pansari Inn Points On This Purchase
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <FaBolt className="w-3 h-3 text-amber-600" />
+                    <span className="text-gray-800 text-[10px]">
+                      Earn {product.points * quantity} Pansari Inn Points
+                    </span>
+                  </div>
                   <div className="w-3 h-3 rounded-full bg-[#646464] flex items-center justify-center flex-shrink-0">
                     <span className="text-white text-[8px] font-bold">!</span>
                   </div>
@@ -434,7 +482,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Size Selection */}
+            {/* Size Selection - EXACTLY same */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="mt-2">
                 <h3 className="font-semibold text-gray-900 text-xs mb-1">Size</h3>
@@ -456,10 +504,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Quantity */}
+            {/* Quantity - EXACTLY same */}
             <div className="mt-2">
               <h3 className="font-semibold text-gray-900 text-xs mb-1">Quantity</h3>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
                 <div className="flex items-center border border-gray-300 rounded">
                   <button
                     onClick={decreaseQuantity}
@@ -478,30 +526,42 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                     +
                   </button>
                 </div>
+                
+                {/* Subtotal Display - EXACTLY same */}
+                <div className="text-xs ml-auto">
+                  <div className="text-gray-700">Subtotal:</div>
+                  <div className="font-bold text-green-700">PKR {(product.price * quantity).toLocaleString()}</div>
+                </div>
               </div>
             </div>
 
-            {/* Action Buttons - Now with WhatsApp */}
+            {/* Action Buttons - Updated with new WhatsApp button styling */}
             <div className="mt-2 pt-2">
-              {/* Primary Buttons Row */}
+              {/* Primary Buttons Row - EXACTLY same */}
               <div className="flex flex-col sm:flex-row gap-1.5 mb-2">
-                <button className="flex-1 flex items-center justify-center gap-1 me-bgcolor-g text-white font-semibold py-2 px-3 rounded-full hover:opacity-90 transition-opacity text-xs">
+                <button 
+                  onClick={handleAddToCart}
+                  className="flex-1 flex items-center justify-center gap-1 me-bgcolor-g text-white font-semibold py-2 px-3 rounded-full hover:opacity-90 transition-opacity text-xs"
+                >
                   <FaShoppingCart className="w-3 h-3" />
                   Add to cart
                 </button>
-                <button className="flex-1 flex items-center justify-center me-bgcolor-y text-gray-900 font-semibold py-2 px-3 rounded-full hover:opacity-90 transition-opacity text-xs">
+                <button 
+                  onClick={handleBuyNow}
+                  className="flex-1 flex items-center justify-center me-bgcolor-y text-gray-900 font-semibold py-2 px-3 rounded-full hover:opacity-90 transition-opacity text-xs"
+                >
                   Buy it now
                 </button>
               </div>
               
-              {/* WhatsApp Button Row */}
+              {/* WhatsApp Button Row - Updated to outline style */}
               <div className="w-full">
                 <button 
                   onClick={handleWhatsAppOrder}
-                  className="w-full flex items-center justify-center gap-2 bg-[#25D366] text-white font-semibold py-2 px-3 rounded-full hover:bg-[#1da851] transition-colors text-xs"
+                  className="w-full flex items-center justify-center gap-2 bg-white border-2 border-[#25D366] text-[#25D366] font-semibold py-2 px-3 rounded-full hover:bg-[#25D366] hover:text-white transition-all duration-300 text-xs group"
                 >
                   <FaWhatsapp className="w-4 h-4" />
-                  Order on WhatsApp
+                  <span>Order on WhatsApp</span>
                 </button>
               </div>
             </div>

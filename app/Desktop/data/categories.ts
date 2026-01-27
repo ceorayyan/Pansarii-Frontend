@@ -99,5 +99,106 @@ export const categories = [
     offset: true,
     productCount: 38,
     color: "#00BCD4"
+  },
+  // NEW CATEGORIES ADDED FROM PRODUCTS DATA
+  {
+    id: "11",
+    title: "Oils & Ghee",
+    category: "oils-ghee",
+    description: "Pure natural oils and traditional ghee",
+    image: "/images/oils-ghee.png",
+    offset: false,
+    productCount: 20,
+    color: "#FFC107"
+  },
+  {
+    id: "12",
+    title: "Herbs & Spices",
+    category: "herbs-spices",
+    description: "Fresh and dried herbs, whole spices",
+    image: "/images/herbs-spices.png",
+    offset: true,
+    productCount: 12,
+    color: "#F44336"
+  },
+  {
+    id: "13",
+    title: "Honey & Sweeteners",
+    category: "honey-sweeteners",
+    description: "Natural honey and healthy sweeteners",
+    image: "/images/honey.png",
+    offset: false,
+    productCount: 7,
+    color: "#FF9800"
+  },
+  {
+    id: "14",
+    title: "Beauty & Skincare",
+    category: "beauty-skincare",
+    description: "Natural beauty and skincare products",
+    image: "/images/beauty.png",
+    offset: true,
+    productCount: 8,
+    color: "#E91E63"
+  },
+  {
+    id: "15",
+    title: "Tea & Beverages",
+    category: "tea-beverages",
+    description: "Herbal teas and healthy beverages",
+    image: "/images/tea.png",
+    offset: false,
+    productCount: 6,
+    color: "#4CAF50"
+  },
+  {
+    id: "16",
+    title: "Carrier Oils",
+    category: "carrier-oils",
+    description: "Base oils for dilution and massage",
+    image: "/images/carrier-oils.png",
+    offset: true,
+    productCount: 15,
+    color: "#8BC34A"
+  },
+  {
+    id: "17",
+    title: "Superfoods",
+    category: "superfoods",
+    description: "Nutrient-rich superfoods and seeds",
+    image: "/images/superfoods.png",
+    offset: false,
+    productCount: 10,
+    color: "#9C27B0"
+  },
+  {
+    id: "18",
+    title: "Traditional Remedies",
+    category: "traditional-remedies",
+    description: "Age-old herbal remedies and formulas",
+    image: "/images/traditional.png",
+    offset: true,
+    productCount: 25,
+    color: "#795548"
+  },
+  {
+    id: "19",
+    title: "Cold Pressed Oils",
+    category: "cold-pressed-oils",
+    description: "Unrefined oils for health and cooking",
+    image: "/images/cold-pressed.png",
+    offset: false,
+    productCount: 18,
+    color: "#FF5722"
+  },
+  {
+    id: "20",
+    title: "Aromatherapy",
+    category: "aromatherapy",
+    description: "Essential oils for therapeutic use",
+    image: "/images/aromatherapy.png",
+    offset: true,
+    productCount: 22,
+    color: "#673AB7"
   }
 ];

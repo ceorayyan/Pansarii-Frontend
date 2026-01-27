@@ -4,6 +4,7 @@
 import { useState, memo } from 'react';
 import { FilterOptions, Product } from "../../utils/filterProducts";
 import SearchFilterBar from "../../components/SearchFilterBar";
+import CategoryMenuButton from "../../components/categoriesmenubutton";
 import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
 
@@ -20,6 +21,7 @@ interface ShopContentProps {
   productsPerPage: number;
   onPageChange: (page: number) => void;
   initialSearchQuery?: string;
+  allProducts: Product[]; // Add this to get product counts
 }
 
 function ShopContent({
@@ -34,7 +36,8 @@ function ShopContent({
   indexOfLastProduct,
   productsPerPage,
   onPageChange,
-  initialSearchQuery = ''
+  initialSearchQuery = '',
+  allProducts
 }: ShopContentProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -56,6 +59,19 @@ function ShopContent({
     });
   };
 
+  // Generate category data with product counts
+  const categoryData = categories.map(category => {
+    const count = allProducts.filter(product => 
+      product.category?.toLowerCase() === category.toLowerCase()
+    ).length;
+    
+    return {
+      name: category.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      count: count,
+      slug: category
+    };
+  });
+
   return (
     <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-6">
       {/* Search and Filter Bar */}
@@ -66,6 +82,11 @@ function ShopContent({
         onViewModeChange={handleViewModeChange}
         initialSearchQuery={initialSearchQuery}
       />
+
+      {/* Category Menu Button */}
+      <div className="mb-6">
+        <CategoryMenuButton categories={categoryData} />
+      </div>
 
       {/* Results Info */}
       <div className="my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -89,9 +110,8 @@ function ShopContent({
         {filters.sortBy !== 'default' && (
           <div className="text-sm text-gray-600">
             Sorted by: <span className="font-medium">
-              {/* FIXED: Updated to match the actual type values */}
-              {filters.sortBy === 'price-low' ? 'Price: Low to High' :
-               filters.sortBy === 'price-high' ? 'Price: High to Low' :
+              {filters.sortBy === 'price-low-high' ? 'Price: Low to High' :
+               filters.sortBy === 'price-high-low' ? 'Price: High to Low' :
                filters.sortBy === 'rating' ? 'Highest Rated' : 'Name (A-Z)'}
             </span>
           </div>

@@ -1,13 +1,14 @@
 // components/BlogCard.tsx
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Blog {
   id: string | number;
   img: string;
   title: string;
   content: string;
-  link: string;
+  slug: string;  // Changed from 'link' to 'slug'
 }
 
 interface BlogCardProps {
@@ -19,9 +20,11 @@ export default function BlogCard({ blog }: BlogCardProps) {
     <article className="w-[408px] h-[476px] rounded-[14px] border border-gray-300 overflow-hidden flex-shrink-0 hover:shadow-lg transition-shadow">
       {/* Image */}
       <div className="w-[384px] h-[217px] mx-auto mt-4 rounded-[14px] overflow-hidden">
-        <img
+        <Image
           src={blog.img}
           alt={blog.title}
+          width={384}
+          height={217}
           className="w-full h-full object-cover"
           loading="lazy"
         />
@@ -36,7 +39,7 @@ export default function BlogCard({ blog }: BlogCardProps) {
           {blog.content}
         </p>
         <Link
-          href={blog.link}
+          href={`/blog/${blog.slug}`}
           className="font-poppins font-medium text-[18px] underline capitalize hover:text-blue-600 transition-colors inline-flex items-center"
         >
           Read More

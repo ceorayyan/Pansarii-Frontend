@@ -1,4 +1,3 @@
-// app/context/CartContext.tsx
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
@@ -15,11 +14,26 @@ interface CartItem {
   rating?: number;
 }
 
+interface WishlistItem {
+  id: string | number;
+  img: string;
+  nameEn: string;
+  nameUr: string;
+  price: number;
+  size: string;
+  category?: string;
+  rating?: number;
+}
+
 interface CartContextType {
   cartItems: CartItem[];
+  wishlistItems: WishlistItem[];
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   updateQuantity: (id: string | number, size: string, change: number) => void;
   removeFromCart: (id: string | number, size: string) => void;
+  addToWishlist: (item: WishlistItem) => void;
+  removeFromWishlist: (id: string | number) => void;
+  addToCartFromWishlist: (item: WishlistItem) => void;
   clearCart: () => void;
   getCartTotal: () => number;
   getCartCount: () => number;
@@ -30,6 +44,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([]);
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Initialize from localStorage - runs only once on mount
@@ -42,14 +57,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
           console.log('✅ Cart loaded from localStorage:', parsedCart);
           setCartItems(parsedCart);
         }
+
+        const savedWishlist = localStorage.getItem('pansari-wishlist');
+        if (savedWishlist) {
+          const parsedWishlist = JSON.parse(savedWishlist);
+          console.log('✅ Wishlist loaded from localStorage:', parsedWishlist);
+          setWishlistItems(parsedWishlist);
+        }
       } catch (error) {
-        console.error('❌ Error loading cart:', error);
+        console.error('❌ Error loading cart/wishlist:', error);
       }
       setIsInitialized(true);
     }
   }, []);
 
-  // Save to localStorage whenever cart changes (but only after initialization)
+  // Save cart to localStorage whenever it changes
   useEffect(() => {
     if (typeof window !== 'undefined' && isInitialized) {
       try {
@@ -61,18 +83,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [cartItems, isInitialized]);
 
+  // Save wishlist to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isInitialized) {
+      try {
+        localStorage.setItem('pansari-wishlist', JSON.stringify(wishlistItems));
+        console.log('💾 Wishlist saved to localStorage:', wishlistItems);
+      } catch (error) {
+        console.error('❌ Error saving wishlist:', error);
+      }
+    }
+  }, [wishlistItems, isInitialized]);
+
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
     console.log('🛒 Adding to cart:', item);
     
     setCartItems(prev => {
-      // Find existing item with same ID AND size
       const existingItem = prev.find(cartItem => 
         String(cartItem.id) === String(item.id) && 
         cartItem.size === item.size
       );
       
       if (existingItem) {
-        // Increment quantity if item already exists
         const newCart = prev.map(cartItem =>
           String(cartItem.id) === String(item.id) && cartItem.size === item.size
             ? { ...cartItem, quantity: cartItem.quantity + 1 }
@@ -81,7 +113,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         console.log('✅ Updated existing item, new cart:', newCart);
         return newCart;
       } else {
-        // Add new item with quantity 1
         const newCart = [...prev, { ...item, quantity: 1 }];
         console.log('✅ Added new item, new cart:', newCart);
         return newCart;
@@ -115,6 +146,55 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const addToWishlist = (item: WishlistItem) => {
+    console.log('❤️ Adding to wishlist:', item);
+    
+    setWishlistItems(prev => {
+      const exists = prev.some(wishlistItem => 
+        String(wishlistItem.id) === String(item.id)
+      );
+      
+      if (!exists) {
+        const newWishlist = [...prev, item];
+        console.log('✅ Added to wishlist, new wishlist:', newWishlist);
+        return newWishlist;
+      }
+      console.log('⚠️ Item already in wishlist');
+      return prev;
+    });
+  };
+
+  const removeFromWishlist = (id: string | number) => {
+    console.log('🗑️ Removing from wishlist:', { id });
+    
+    setWishlistItems(prev => {
+      const newWishlist = prev.filter(item => 
+        String(item.id) !== String(id)
+      );
+      console.log('✅ Item removed from wishlist, new wishlist:', newWishlist);
+      return newWishlist;
+    });
+  };
+
+  const addToCartFromWishlist = (item: WishlistItem) => {
+    console.log('🛒 Adding wishlist item to cart:', item);
+    
+    // Add to cart with quantity 1
+    addToCart({
+      id: item.id,
+      img: item.img,
+      nameEn: item.nameEn,
+      nameUr: item.nameUr,
+      price: item.price,
+      size: item.size,
+      category: item.category,
+      rating: item.rating
+    });
+    
+    // Remove from wishlist
+    removeFromWishlist(item.id);
+  };
+
   const clearCart = () => {
     console.log('🧹 Clearing cart');
     setCartItems([]);
@@ -139,9 +219,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = {
     cartItems,
+    wishlistItems,
     addToCart,
     updateQuantity,
     removeFromCart,
+    addToWishlist,
+    removeFromWishlist,
+    addToCartFromWishlist,
     clearCart,
     getCartTotal,
     getCartCount,

@@ -1,8 +1,10 @@
+// app/blog/[slug]/page.tsx
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import Footer from "../../Desktop/Sections/Footer";
+import Image from "next/image";
+import { blogPosts } from "../../Desktop/data/blogposts";
 import { 
   FaCalendar, 
   FaClock,
@@ -16,66 +18,25 @@ import {
   FaArrowRight
 } from "react-icons/fa";
 
-// This would come from your API/database
-const getPostBySlug = (slug: string) => {
-  const posts = [
-    {
-      id: 1,
-      slug: "benefits-of-herbal-medicine",
-      title: "10 Amazing Benefits of Herbal Medicine",
-      excerpt: "Discover how natural herbs can transform your health and wellbeing.",
-      image: "/images/blog/herbal-benefits.jpg",
-      category: "Herbal Medicine",
-      author: {
-        name: "Dr. Sarah Ahmed",
-        avatar: "/images/authors/sarah.jpg",
-        bio: "Dr. Sarah Ahmed is a certified Ayurvedic practitioner with over 10 years of experience in herbal medicine and natural wellness."
-      },
-      date: "2024-01-15",
-      readTime: "5 min read",
-      tags: ["herbs", "wellness", "health"],
-      content: `
-        <h2>Introduction to Herbal Medicine</h2>
-        <p>Herbal medicine has been used for thousands of years across different cultures and civilizations. From ancient Chinese medicine to Ayurveda, herbs have played a crucial role in healing and maintaining health.</p>
-        
-        <h2>1. Natural Healing Without Side Effects</h2>
-        <p>One of the most significant advantages of herbal medicine is its natural composition. Unlike synthetic drugs, herbs work in harmony with your body's natural processes, minimizing the risk of adverse side effects.</p>
-        
-        <h2>2. Boosts Immune System</h2>
-        <p>Many herbs like Echinacea, Elderberry, and Turmeric are known for their immune-boosting properties. Regular consumption can help your body fight off infections and diseases naturally.</p>
-        
-        <h2>3. Promotes Better Digestion</h2>
-        <p>Herbs like Ginger, Peppermint, and Fennel have been used for centuries to improve digestion, reduce bloating, and alleviate stomach discomfort.</p>
-        
-        <h2>4. Reduces Stress and Anxiety</h2>
-        <p>Adaptogenic herbs such as Ashwagandha, Holy Basil, and Rhodiola help your body adapt to stress and maintain balance in challenging situations.</p>
-        
-        <h2>5. Anti-Inflammatory Properties</h2>
-        <p>Turmeric, Ginger, and Green Tea contain powerful anti-inflammatory compounds that can help reduce inflammation throughout the body.</p>
-        
-        <h2>Conclusion</h2>
-        <p>Incorporating herbal medicine into your daily routine can significantly improve your overall health and wellbeing. Always consult with a healthcare professional before starting any new herbal regimen.</p>
-      `
-    }
-  ];
-
-  return posts.find(post => post.slug === slug) || null;
-};
-
 export default function BlogDetailPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
   
-  const post = getPostBySlug(slug);
+  const post = blogPosts.find(post => post.slug === slug);
 
   if (!post) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Article Not Found</h1>
-          <Link href="/blog" className="text-[#197B33] hover:underline">
-            ← Back to Blog
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center p-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Article Not Found</h1>
+          <p className="text-gray-600 mb-8">The blog post you're looking for doesn't exist.</p>
+          <Link 
+            href="/" 
+            className="inline-flex items-center gap-2 px-6 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors"
+          >
+            <FaArrowLeft />
+            Back to Home
           </Link>
         </div>
       </div>
@@ -85,6 +46,11 @@ export default function BlogDetailPage() {
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
   const shareTitle = post.title;
 
+  // Get related posts
+  const relatedPosts = blogPosts
+    .filter(p => p.id !== post.id && p.category === post.category)
+    .slice(0, 2);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Back Button */}
@@ -92,161 +58,180 @@ export default function BlogDetailPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-600 hover:text-[#197B33] transition-colors"
+            className="flex items-center gap-2 text-gray-600 hover:text-green-700 transition-colors text-sm font-medium"
           >
-            <FaArrowLeft />
+            <FaArrowLeft className="w-4 h-4" />
             Back to Blog
           </button>
         </div>
       </div>
 
-      {/* Article Header */}
+      {/* Article Content */}
       <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Category Badge */}
-        <div className="mb-4">
-          <span className="px-4 py-2 bg-green-100 text-[#197B33] text-sm font-medium rounded-full">
+        {/* Category */}
+        <div className="mb-6">
+          <span className="px-4 py-1.5 bg-green-100 text-green-800 text-sm font-medium rounded-full">
             {post.category}
           </span>
         </div>
 
         {/* Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
           {post.title}
         </h1>
 
         {/* Meta Information */}
-        <div className="flex flex-wrap items-center gap-6 text-gray-600 mb-8 pb-8 border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <img
-              src={post.author.avatar}
-              alt={post.author.name}
-              className="w-12 h-12 rounded-full"
-            />
-            <div>
-              <p className="font-medium text-gray-900">{post.author.name}</p>
-              <div className="flex items-center gap-4 text-sm">
-                <span className="flex items-center gap-1">
-                  <FaCalendar />
-                  {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                </span>
-                <span className="flex items-center gap-1">
-                  <FaClock />
-                  {post.readTime}
-                </span>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-8 border-b border-gray-200">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Image
+                src={post.author.avatar}
+                alt={post.author.name}
+                width={40}
+                height={40}
+                className="rounded-full"
+              />
+              <div>
+                <p className="font-medium text-gray-900">{post.author.name}</p>
+                <div className="flex items-center gap-3 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <FaCalendar className="w-3 h-3" />
+                    {new Date(post.date).toLocaleDateString('en-US', { 
+                      month: 'long', 
+                      day: 'numeric', 
+                      year: 'numeric' 
+                    })}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <FaClock className="w-3 h-3" />
+                    {post.readTime}
+                  </span>
+                </div>
               </div>
             </div>
+          </div>
+
+          {/* Share Buttons - Desktop */}
+          <div className="hidden sm:flex items-center gap-2">
+            <span className="text-sm text-gray-500 mr-2">Share:</span>
+            {[
+              { icon: FaFacebook, color: 'bg-blue-600 hover:bg-blue-700', label: 'Facebook' },
+              { icon: FaTwitter, color: 'bg-sky-500 hover:bg-sky-600', label: 'Twitter' },
+              { icon: FaLinkedin, color: 'bg-blue-700 hover:bg-blue-800', label: 'LinkedIn' },
+              { icon: FaWhatsapp, color: 'bg-green-600 hover:bg-green-700', label: 'WhatsApp' },
+            ].map((social, index) => (
+              <a
+                key={index}
+                href={`${social.icon === FaWhatsapp ? `https://wa.me/?text=${shareTitle} ${shareUrl}` : 
+                       social.icon === FaFacebook ? `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` :
+                       social.icon === FaTwitter ? `https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle}` :
+                       `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`w-8 h-8 ${social.color} text-white rounded-full flex items-center justify-center transition-colors`}
+                aria-label={`Share on ${social.label}`}
+              >
+                <social.icon className="w-3.5 h-3.5" />
+              </a>
+            ))}
           </div>
         </div>
 
         {/* Featured Image */}
-        <div className="mb-12 rounded-2xl overflow-hidden">
-          <img
+        <div className="mb-12 rounded-xl overflow-hidden shadow-lg">
+          <Image
             src={post.image}
             alt={post.title}
+            width={1200}
+            height={500}
             className="w-full h-[400px] object-cover"
           />
         </div>
 
         {/* Article Content */}
-        <div 
-          className="prose prose-lg max-w-none mb-12"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-          style={{
-            lineHeight: '1.8',
-            fontSize: '1.125rem',
-            color: '#374151'
-          }}
-        />
+        <div className="prose prose-lg max-w-none mb-12">
+          <div dangerouslySetInnerHTML={{ __html: post.content }} />
+        </div>
 
         {/* Tags */}
-        <div className="flex flex-wrap gap-3 mb-8 pb-8 border-b border-gray-200">
+        <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-gray-200">
+          <span className="flex items-center gap-1 text-gray-600">
+            <FaTag className="w-3 h-3" />
+            Tags:
+          </span>
           {post.tags.map((tag, index) => (
             <span
               key={index}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm flex items-center gap-2"
+              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm"
             >
-              <FaTag />
               {tag}
             </span>
           ))}
         </div>
 
-        {/* Share Section */}
-        <div className="bg-gray-50 rounded-2xl p-8 mb-12">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Share this article</h3>
-          <div className="flex flex-wrap gap-4">
-            <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <FaFacebook />
-              Facebook
-            </a>
-            <a
-              href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareTitle}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
-            >
-              <FaTwitter />
-              Twitter
-            </a>
-            <a
-              href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
-            >
-              <FaLinkedin />
-              LinkedIn
-            </a>
-            <a
-              href={`https://wa.me/?text=${shareTitle} ${shareUrl}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <FaWhatsapp />
-              WhatsApp
-            </a>
-          </div>
-        </div>
-
         {/* Author Bio */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-8 mb-12">
-          <div className="flex items-start gap-6">
-            <img
+        <div className="bg-gray-50 rounded-xl p-8 mb-12">
+          <div className="flex flex-col sm:flex-row items-start gap-6">
+            <Image
               src={post.author.avatar}
               alt={post.author.name}
-              className="w-24 h-24 rounded-full flex-shrink-0"
+              width={80}
+              height={80}
+              className="rounded-full flex-shrink-0"
             />
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">About {post.author.name}</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">About {post.author.name}</h3>
               <p className="text-gray-700">{post.author.bio}</p>
             </div>
           </div>
         </div>
-      </article>
 
-      {/* Related Articles CTA */}
-      <section className="bg-gray-50 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">
-            Continue Reading
-          </h2>
+        {/* Related Articles */}
+        {relatedPosts.length > 0 && (
+          <div className="mb-12">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6">Related Articles</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {relatedPosts.map(relatedPost => (
+                <Link
+                  key={relatedPost.id}
+                  href={`/blog/${relatedPost.slug}`}
+                  className="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 relative rounded-lg overflow-hidden flex-shrink-0">
+                      <Image
+                        src={relatedPost.image}
+                        alt={relatedPost.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-900 group-hover:text-green-700 mb-1">
+                        {relatedPost.title}
+                      </h4>
+                      <p className="text-sm text-gray-500">
+                        {new Date(relatedPost.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* CTA */}
+        <div className="text-center">
           <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-[#197B33] text-white font-semibold rounded-lg hover:bg-[#156529] transition-colors"
+            href="/"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
-            View All Articles
             <FaArrowRight />
+            Explore More Articles
           </Link>
         </div>
-      </section>
-
-      <Footer />
+      </article>
     </div>
   );
 }

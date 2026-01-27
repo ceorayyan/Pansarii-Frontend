@@ -1,15 +1,13 @@
 // app/shop/page.tsx
 'use client';
 
-import { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Product, FilterOptions, filterProducts, getCategoriesFromProducts, getPriceRangeFromProducts } from "../../utils/filterProducts";
 import ShopContent from "./ShopContent";
 import { allProducts } from "@/app/Desktop/data/products";
 
-// Create an inner component that uses useSearchParams
-function ShopContentWithParams() {
-  const { useSearchParams } = require('next/navigation');
+export default function Shop() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -225,24 +223,9 @@ function ShopContentWithParams() {
           productsPerPage={productsPerPage}
           onPageChange={handlePageChange}
           initialSearchQuery={initialSearchQuery}
+          allProducts={safeProducts}
         />
       </div>
     </div>
-  );
-}
-
-// Main component with Suspense wrapper
-export default function Shop() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading shop...</p>
-        </div>
-      </div>
-    }>
-      <ShopContentWithParams />
-    </Suspense>
   );
 }

@@ -81,7 +81,7 @@ function CartContent() {
                             alt={item.nameEn}
                             className="w-full h-full object-cover rounded-lg border border-gray-200"
                             onError={(e) => {
-                              (e.target as HTMLImageElement).src = '/images/placeholder-product.jpg';
+                              (e.target as HTMLImageElement).src = '/images/product.png';
                             }}
                           />
                         </div>

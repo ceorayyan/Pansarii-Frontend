@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import BackwardArrow from "@components/BackwardArrow";
 import ForwardArrow from "@components/ForwardArrow";
@@ -17,8 +17,10 @@ export default function SolutionBar() {
   const router = useRouter();
   const pic = '/images/Skincare.png';
   const sliderRef = useRef<HTMLDivElement | null>(null);
+  const autoSlideIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
 
   const checkScroll = () => {
     const el = sliderRef.current;
@@ -28,7 +30,7 @@ export default function SolutionBar() {
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
   };
 
-  const scroll = (direction: "left" | "right") => {
+  const scroll = useCallback((direction: "left" | "right") => {
     const el = sliderRef.current;
     if (!el) return;
 
@@ -43,6 +45,52 @@ export default function SolutionBar() {
       left: direction === "right" ? scrollAmount : -scrollAmount,
       behavior: "smooth",
     });
+
+    // Reset auto-slide timer when manually scrolling
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+    }
+    startAutoSlide();
+  }, []);
+
+  const startAutoSlide = useCallback(() => {
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+    }
+
+    autoSlideIntervalRef.current = setInterval(() => {
+      if (isHovering) return; // Don't auto-slide when user is hovering
+
+      const el = sliderRef.current;
+      if (!el) return;
+
+      const containerWidth = el.clientWidth;
+      const scrollWidth = el.scrollWidth;
+      const currentScroll = el.scrollLeft;
+      
+      // If we've scrolled to the end, go back to start
+      if (currentScroll + containerWidth >= scrollWidth - 10) {
+        el.scrollTo({
+          left: 0,
+          behavior: "smooth",
+        });
+      } else {
+        // Scroll to next card
+        scroll("right");
+      }
+    }, 1000); // Auto-slide every 4 seconds
+  }, [isHovering, scroll]);
+
+  const handleCategoryClick = (category: string) => {
+    router.push(`/shop?category=${category}`);
+    
+    // Pause auto-slide briefly when user clicks
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+      setTimeout(() => {
+        startAutoSlide();
+      }, 2000); // Resume after 2 seconds
+    }
   };
 
   useEffect(() => {
@@ -52,21 +100,37 @@ export default function SolutionBar() {
     checkScroll();
     el.addEventListener("scroll", checkScroll);
     window.addEventListener('resize', checkScroll);
+    
+    // Start auto-slide on component mount
+    startAutoSlide();
 
     return () => {
       el.removeEventListener("scroll", checkScroll);
       window.removeEventListener('resize', checkScroll);
+      
+      // Clear interval on unmount
+      if (autoSlideIntervalRef.current) {
+        clearInterval(autoSlideIntervalRef.current);
+      }
     };
-  }, []);
+  }, [startAutoSlide]);
 
-  const handleCategoryClick = (category: string) => {
-    // Navigate to shop page with category filter
-    router.push(`/shop?category=${category}`);
+  // Handle hover state
+  const handleMouseEnter = () => {
+    setIsHovering(true);
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovering(false);
+    startAutoSlide();
   };
 
   return (
     <section className="SolutionBar mx-[4%] my-8">
-      {/* Header - Your original UI */}
+      {/* Header - Keeping original UI */}
       <div className="top-solutionbar mb-6 flex items-center justify-between">
         <h2 className="text-3xl font-semibold">
           Find your <span className="me-color-y">Solutions</span>
@@ -84,7 +148,7 @@ export default function SolutionBar() {
         </div>
       </div>
 
-      {/* Cards Container - Your original UI */}
+      {/* Cards Container - Original UI with auto-slide */}
       <div
         ref={sliderRef}
         className="slide flex overflow-x-auto scroll-smooth no-scrollbar pb-4"
@@ -92,6 +156,8 @@ export default function SolutionBar() {
           scrollbarWidth: 'none', 
           msOverflowStyle: 'none',
         }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {categories.map((card, index) => (
           <div

@@ -27,7 +27,7 @@ function ProductGrid({ products, viewMode = 'grid' }: ProductGridProps) {
                   className="w-full h-full object-cover rounded-lg"
                   loading="lazy"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/images/placeholder-product.jpg';
+                    (e.target as HTMLImageElement).src = '/images/product.png';
                   }}
                 />
               </div>

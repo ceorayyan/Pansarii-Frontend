@@ -1,182 +1,9 @@
 // app/new-arrivals/page.tsx
+"use client";
 
+import { useState, useEffect } from 'react';
 import ProductCard from '../Desktop/components/ProductCard';
-
-// Define the product type that matches what ProductCard expects
-interface NewArrivalProduct {
-  id: string;
-  img: string;
-  nameEn: string;
-  nameUr: string;
-  description: string;
-  rating: number;
-  reviews: number;
-  price: number;
-  oldPrice?: number | null;
-  sale?: string | null;
-  category: string;
-  isNew: boolean;
-  isBestSeller: boolean;
-  features: string[];
-}
-
-// Mock products data
-const newArrivalProducts: NewArrivalProduct[] = [
-  {
-    id: '1',
-    img: '/images/products/apricot-oil.jpg',
-    nameEn: "Pure Apricot Oil",
-    nameUr: "خالص خوبانی تیل",
-    description: "Cold-pressed for skin & hair",
-    rating: 4.7,
-    reviews: 406,
-    price: 1149,
-    oldPrice: 1499,
-    sale: "23% OFF",
-    category: 'Oils & Ghee',
-    isNew: true,
-    isBestSeller: true,
-    features: [
-      'Acts as anti-tan agent',
-      'Healthy glowing skin',
-      'Improves hair health'
-    ]
-  },
-  {
-    id: '2',
-    img: '/images/products/turmeric.jpg',
-    nameEn: "Organic Turmeric Powder",
-    nameUr: "نامیاتی ہلدی پاؤڈر",
-    description: "Pure organic for cooking & health",
-    rating: 4.5,
-    reviews: 289,
-    price: 299,
-    oldPrice: 399,
-    sale: "25% OFF",
-    category: 'Herbs & Spices',
-    isNew: true,
-    isBestSeller: false,
-    features: [
-      'Boosts immunity',
-      'Anti-inflammatory',
-      'Natural antioxidant'
-    ]
-  },
-  {
-    id: '3',
-    img: '/images/products/honey.jpg',
-    nameEn: "Himalayan Honey",
-    nameUr: "ہمالیائی شہد",
-    description: "Pure from Himalayan flowers",
-    rating: 4.8,
-    reviews: 512,
-    price: 899,
-    category: 'Honey & Sweeteners',
-    isNew: true,
-    isBestSeller: true,
-    features: [
-      '100% Natural',
-      'Rich in antioxidants',
-      'Energy booster'
-    ]
-  },
-  {
-    id: '4',
-    img: '/images/products/face-wash.jpg',
-    nameEn: "Herbal Face Wash",
-    nameUr: "ہربل فیس واش",
-    description: "Natural for glowing skin",
-    rating: 4.3,
-    reviews: 187,
-    price: 549,
-    oldPrice: 699,
-    sale: "21% OFF",
-    category: 'Beauty & Skincare',
-    isNew: true,
-    isBestSeller: false,
-    features: [
-      'Removes impurities',
-      'Non-drying formula',
-      'Suitable for all skin'
-    ]
-  },
-  {
-    id: '5',
-    img: '/images/products/ashwagandha.jpg',
-    nameEn: "Ashwagandha Capsules",
-    nameUr: "اشواگنڈھا کیپسول",
-    description: "Pure for stress relief",
-    rating: 4.6,
-    reviews: 324,
-    price: 799,
-    category: 'Supplements',
-    isNew: true,
-    isBestSeller: true,
-    features: [
-      'Reduces stress',
-      'Improves sleep',
-      'Boosts immunity'
-    ]
-  },
-  {
-    id: '6',
-    img: '/images/products/green-tea.jpg',
-    nameEn: "Green Tea Leaves",
-    nameUr: "گرین ٹی پتیاں",
-    description: "Premium with antioxidants",
-    rating: 4.4,
-    reviews: 213,
-    price: 449,
-    oldPrice: 599,
-    sale: "25% OFF",
-    category: 'Tea & Beverages',
-    isNew: true,
-    isBestSeller: false,
-    features: [
-      'Weight management',
-      'Rich in antioxidants',
-      'Boosts metabolism'
-    ]
-  },
-  {
-    id: '7',
-    img: '/images/products/coconut-oil.jpg',
-    nameEn: "Coconut Oil Extra Virgin",
-    nameUr: "ناریل کا تیل ورجن",
-    description: "Cold-pressed for cooking & hair",
-    rating: 4.7,
-    reviews: 467,
-    price: 699,
-    oldPrice: 899,
-    sale: "22% OFF",
-    category: 'Oils & Ghee',
-    isNew: false,
-    isBestSeller: true,
-    features: [
-      'For cooking & hair',
-      'Moisturizes skin',
-      'High in MCTs'
-    ]
-  },
-  {
-    id: '8',
-    img: '/images/products/aloe-vera.jpg',
-    nameEn: "Aloe Vera Gel",
-    nameUr: "ایلوویرا جیل",
-    description: "100% pure for skin care",
-    rating: 4.2,
-    reviews: 156,
-    price: 399,
-    category: 'Beauty & Skincare',
-    isNew: false,
-    isBestSeller: false,
-    features: [
-      'Soothes skin',
-      'Hydrating',
-      'Sunburn relief'
-    ]
-  },
-];
+import { newArrivalProducts, NewArrivalProduct } from '../Desktop/data/newproducts';
 
 // Categories for filter
 const categories = [
@@ -189,9 +16,122 @@ const categories = [
   'Supplements'
 ];
 
+// Sort options
+const sortOptions = [
+  { value: 'newest', label: 'Newest First' },
+  { value: 'price-low-high', label: 'Price: Low to High' },
+  { value: 'price-high-low', label: 'Price: High to Low' },
+  { value: 'popular', label: 'Most Popular' }
+];
+
 export default function NewArrivalsPage() {
-  const featuredProducts = newArrivalProducts.filter(product => product.isNew).slice(0, 8);
-  const bestSellingProducts = newArrivalProducts.filter(product => product.isBestSeller && product.isNew);
+  const [selectedCategory, setSelectedCategory] = useState<string>('All Products');
+  const [sortBy, setSortBy] = useState<string>('newest');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [filteredProducts, setFilteredProducts] = useState<NewArrivalProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Filter and sort products based on selections
+  useEffect(() => {
+    setIsLoading(true);
+    
+    let products = [...newArrivalProducts];
+    
+    // Filter by category
+    if (selectedCategory !== 'All Products') {
+      products = products.filter(product => 
+        product.category === selectedCategory
+      );
+    }
+    
+    // Sort products
+    switch (sortBy) {
+      case 'price-low-high':
+        products.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high-low':
+        products.sort((a, b) => b.price - a.price);
+        break;
+      case 'popular':
+        products.sort((a, b) => b.reviews - a.reviews);
+        break;
+      case 'newest':
+      default:
+        // Sort by ID or keep as is (assuming newer products have higher IDs)
+        products.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+        break;
+    }
+    
+    // Filter for new products only
+    const newProducts = products.filter(product => product.isNew);
+    setFilteredProducts(newProducts);
+    
+    setIsLoading(false);
+  }, [selectedCategory, sortBy]);
+
+  // Get featured products (first 8 new arrivals)
+  const featuredProducts = newArrivalProducts
+    .filter(product => product.isNew)
+    .slice(0, 8);
+
+  // Get best selling new products
+  const bestSellingProducts = newArrivalProducts
+    .filter(product => product.isBestSeller && product.isNew)
+    .sort((a, b) => b.rating - a.rating);
+
+  // Handle category filter click
+  const handleCategoryFilter = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  // Handle sort change
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortBy(e.target.value);
+  };
+
+  // Handle view mode toggle
+  const toggleViewMode = (mode: 'grid' | 'list') => {
+    setViewMode(mode);
+  };
+
+  // Get product count by category
+  const getProductCountByCategory = (category: string) => {
+    if (category === 'All Products') {
+      return newArrivalProducts.filter(p => p.isNew).length;
+    }
+    return newArrivalProducts.filter(p => p.isNew && p.category === category).length;
+  };
+
+  // Calculate stats
+  const stats = {
+    totalNewProducts: newArrivalProducts.filter(p => p.isNew).length,
+    bestSellersCount: newArrivalProducts.filter(p => p.isBestSeller && p.isNew).length,
+    averageRating: Math.round(
+      newArrivalProducts
+        .filter(p => p.isNew)
+        .reduce((acc, p) => acc + p.rating, 0) / 
+      newArrivalProducts.filter(p => p.isNew).length * 10
+    ) / 10,
+    onSaleCount: newArrivalProducts.filter(p => p.isNew && p.sale).length
+  };
+
+  // Handle newsletter subscription
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const email = formData.get('email') as string;
+    
+    // Here you would typically make an API call
+    console.log('Subscribing email:', email);
+    alert('Thank you for subscribing to our newsletter!');
+    (e.target as HTMLFormElement).reset();
+  };
+
+  // Handle "Shop Now" button click
+  const handleShopNow = () => {
+    // Navigate to all products or trigger some action
+    console.log('Navigating to shop');
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -236,11 +176,20 @@ export default function NewArrivalsPage() {
             
             <div className="flex items-center gap-3">
               <div className="relative">
-                <select className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600">
-                  <option className="text-gray-800">Sort by: Newest First</option>
-                  <option className="text-gray-800">Price: Low to High</option>
-                  <option className="text-gray-800">Price: High to Low</option>
-                  <option className="text-gray-800">Most Popular</option>
+                <select 
+                  value={sortBy}
+                  onChange={handleSortChange}
+                  className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2.5 pr-10 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-green-600"
+                >
+                  {sortOptions.map(option => (
+                    <option 
+                      key={option.value} 
+                      value={option.value}
+                      className="text-gray-800"
+                    >
+                      Sort by: {option.label}
+                    </option>
+                  ))}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
                   <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,127 +205,160 @@ export default function NewArrivalsPage() {
             {categories.map((category) => (
               <button
                 key={category}
+                onClick={() => handleCategoryFilter(category)}
                 className={`px-4 py-2.5 rounded-lg text-sm font-medium transition ${
-                  category === 'All Products'
+                  selectedCategory === category
                     ? 'bg-green-700 text-white shadow-sm'
                     : 'bg-gray-100 text-gray-800 hover:bg-gray-200 border border-gray-200'
                 }`}
               >
-                {category}
+                {category} ({getProductCountByCategory(category)})
               </button>
             ))}
           </div>
         </div>
 
-        {/* Product Grid - Featured New Arrivals */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">
-                Featured New Arrivals
-              </h3>
-              <p className="text-gray-600 text-sm mt-1">
-                Handpicked premium quality products
-              </p>
-            </div>
-            <span className="text-green-800 font-semibold text-sm bg-green-50 px-3 py-1.5 rounded-lg">
-              {featuredProducts.length} products
-            </span>
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading products...</p>
           </div>
-          
-          {featuredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
-                <div key={product.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                  <ProductCard product={product} />
+        ) : (
+          <>
+            {/* Product Grid - Filtered Results */}
+            <section className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {selectedCategory === 'All Products' ? 'All New Arrivals' : selectedCategory}
+                  </h3>
+                  <p className="text-gray-600 text-sm mt-1">
+                    Showing {filteredProducts.length} products
+                  </p>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">No Featured Products</h4>
-              <p className="text-gray-600">Check back soon for new arrivals!</p>
-            </div>
-          )}
-        </section>
-
-        {/* Special Offer Banner */}
-        <section className="mb-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-xl p-6 md:p-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">🚀 LAUNCH OFFER</span>
-                <span className="px-3 py-1 bg-amber-500 text-white rounded-full text-sm font-medium">LIMITED TIME</span>
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Launch Special!</h3>
-              <p className="text-green-100 mb-4">
-                Get 20% OFF on all new arrivals + Free Shipping on orders above PKR 1500
-              </p>
-              <button className="px-6 py-3 bg-white text-green-800 font-semibold rounded-lg hover:bg-gray-100 transition shadow-md">
-                Shop Now & Save
-              </button>
-            </div>
-            <div className="text-center bg-white/10 p-6 rounded-xl">
-              <div className="text-5xl font-bold text-white">20%</div>
-              <div className="text-lg text-green-100 font-medium">OFF</div>
-              <p className="text-green-200 text-sm mt-2">New Arrivals</p>
-            </div>
-          </div>
-        </section>
-
-        {/* Best Selling New Products */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-xl font-bold text-gray-900">
-                Best Selling New Products
-              </h3>
-              <p className="text-gray-600 text-sm mt-1">
-                Most popular among our customers
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-gray-700 text-sm font-medium">View:</span>
-              <div className="flex gap-2">
-                <button className="p-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-                <button className="p-2.5 bg-green-100 text-green-800 rounded-lg">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-          
-          {bestSellingProducts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {bestSellingProducts.map((product) => (
-                <div key={product.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                  <ProductCard product={product} />
+                
+                <div className="flex items-center gap-4">
+                  <span className="text-gray-700 text-sm font-medium">View:</span>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => toggleViewMode('list')}
+                      className={`p-2.5 rounded-lg ${
+                        viewMode === 'list'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={() => toggleViewMode('grid')}
+                      className={`p-2.5 rounded-lg ${
+                        viewMode === 'grid'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-xl">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                </svg>
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">No Best Sellers Yet</h4>
-              <p className="text-gray-600">These products are new. Be the first to review!</p>
-            </div>
-          )}
-        </section>
+              
+              {filteredProducts.length > 0 ? (
+                <div className={`grid gap-6 ${
+                  viewMode === 'grid' 
+                    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+                    : 'grid-cols-1'
+                }`}>
+                  {filteredProducts.map((product) => (
+                    <div key={product.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                      <ProductCard product={product} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">No products found</h4>
+                  <p className="text-gray-600">Try selecting a different category</p>
+                </div>
+              )}
+            </section>
+
+            {/* Special Offer Banner */}
+            <section className="mb-12 bg-gradient-to-r from-green-700 to-emerald-700 rounded-xl p-6 md:p-8">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">🚀 LAUNCH OFFER</span>
+                    <span className="px-3 py-1 bg-amber-500 text-white rounded-full text-sm font-medium">LIMITED TIME</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-2">Launch Special!</h3>
+                  <p className="text-green-100 mb-4">
+                    Get 20% OFF on all new arrivals + Free Shipping on orders above PKR 1500
+                  </p>
+                  <button 
+                    onClick={handleShopNow}
+                    className="px-6 py-3 bg-white text-green-800 font-semibold rounded-lg hover:bg-gray-100 transition shadow-md"
+                  >
+                    Shop Now & Save
+                  </button>
+                </div>
+                <div className="text-center bg-white/10 p-6 rounded-xl">
+                  <div className="text-5xl font-bold text-white">20%</div>
+                  <div className="text-lg text-green-100 font-medium">OFF</div>
+                  <p className="text-green-200 text-sm mt-2">New Arrivals</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Best Selling New Products */}
+            <section className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Best Selling New Products
+                  </h3>
+                  <p className="text-gray-600 text-sm mt-1">
+                    Most popular among our customers
+                  </p>
+                </div>
+                <button className="text-green-700 font-medium text-sm hover:text-green-800">
+                  View All →
+                </button>
+              </div>
+              
+              {bestSellingProducts.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {bestSellingProducts.slice(0, 6).map((product) => (
+                    <div key={product.id} className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                      <ProductCard product={product} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 border-2 border-dashed border-gray-300 rounded-xl">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">No Best Sellers Yet</h4>
+                  <p className="text-gray-600">These products are new. Be the first to review!</p>
+                </div>
+              )}
+            </section>
+          </>
+        )}
 
         {/* Benefits Section */}
         <section className="mb-12 bg-gray-50 rounded-xl p-6 md:p-8 border border-gray-200">
@@ -427,16 +409,21 @@ export default function NewArrivalsPage() {
           <p className="text-green-100 mb-6 max-w-2xl mx-auto">
             Be the first to know about our latest herbal products and exclusive offers
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <form onSubmit={handleNewsletterSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
+              name="email"
               placeholder="Enter your email"
+              required
               className="flex-1 px-4 py-3 rounded-lg text-gray-900 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
-            <button className="px-6 py-3 bg-white text-green-800 font-semibold rounded-lg hover:bg-gray-100 transition shadow">
+            <button 
+              type="submit"
+              className="px-6 py-3 bg-white text-green-800 font-semibold rounded-lg hover:bg-gray-100 transition shadow"
+            >
               Subscribe
             </button>
-          </div>
+          </form>
           <p className="text-green-200 text-sm mt-4">
             We respect your privacy. No spam ever.
           </p>
@@ -445,19 +432,15 @@ export default function NewArrivalsPage() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
           <div className="bg-green-50 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-green-800">{newArrivalProducts.length}</div>
+            <div className="text-2xl font-bold text-green-800">{stats.totalNewProducts}</div>
             <div className="text-sm text-gray-700">New Products</div>
           </div>
           <div className="bg-emerald-50 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-emerald-800">
-              {newArrivalProducts.filter(p => p.isBestSeller).length}
-            </div>
+            <div className="text-2xl font-bold text-emerald-800">{stats.bestSellersCount}</div>
             <div className="text-sm text-gray-700">Best Sellers</div>
           </div>
           <div className="bg-blue-50 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-blue-800">
-              {Math.round(newArrivalProducts.reduce((acc, p) => acc + p.rating, 0) / newArrivalProducts.length * 10) / 10}
-            </div>
+            <div className="text-2xl font-bold text-blue-800">{stats.averageRating}</div>
             <div className="text-sm text-gray-700">Avg Rating</div>
           </div>
           <div className="bg-amber-50 p-4 rounded-lg text-center">

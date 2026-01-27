@@ -1,9 +1,9 @@
+// app/blog/page.tsx
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Footer from "../Desktop/Sections/Footer";
+import { blogPosts, BlogPost } from "../Desktop/data/blogposts";
 import { 
   FaSearch, 
   FaCalendar, 
@@ -13,156 +13,66 @@ import {
   FaTag
 } from "react-icons/fa";
 
-// Dynamic blog data configuration
-const blogData = {
-  hero: {
-    title: "Our",
-    highlight: "Blog",
-    subtitle: "Discover natural wellness tips, herbal remedies, and healthy living advice"
-  },
-  categories: [
-    { id: "all", name: "All Posts", count: 12 },
-    { id: "herbal-medicine", name: "Herbal Medicine", count: 5 },
-    { id: "ayurveda", name: "Ayurveda", count: 3 },
-    { id: "skin-care", name: "Skin Care", count: 2 },
-    { id: "nutrition", name: "Nutrition", count: 2 }
-  ],
-  posts: [
-    {
-      id: 1,
-      slug: "benefits-of-herbal-medicine",
-      title: "10 Amazing Benefits of Herbal Medicine",
-      excerpt: "Discover how natural herbs can transform your health and wellbeing through ancient wisdom and modern science combined. Learn about the most powerful herbs and their healing properties.",
-      content: "Full article content here...",
-      image: "/images/blog/herbal-benefits.jpg",
-      category: "herbal-medicine",
-      categoryName: "Herbal Medicine",
-      author: {
-        name: "Dr. Sarah Ahmed",
-        avatar: "/images/authors/sarah.jpg",
-        bio: "Ayurvedic Practitioner"
-      },
-      date: "2024-01-15",
-      readTime: "5 min read",
-      tags: ["herbs", "wellness", "health"],
-      featured: true
-    },
-    {
-      id: 2,
-      slug: "complete-guide-to-ayurveda",
-      title: "Complete Guide to Ayurveda for Beginners",
-      excerpt: "Learn about the ancient Indian healing system and how to incorporate it into your modern lifestyle effectively. Understanding doshas and their balance.",
-      content: "Full article content here...",
-      image: "/images/blog/ayurveda-guide.jpg",
-      category: "ayurveda",
-      categoryName: "Ayurveda",
-      author: {
-        name: "Ali Hassan",
-        avatar: "/images/authors/ali.jpg",
-        bio: "Wellness Coach"
-      },
-      date: "2024-01-12",
-      readTime: "8 min read",
-      tags: ["ayurveda", "lifestyle", "balance"],
-      featured: true
-    },
-    {
-      id: 3,
-      slug: "natural-skin-care-herbs",
-      title: "Top 10 Herbs for Glowing Skin",
-      excerpt: "Top 10 herbs for glowing skin and how to use them effectively in your daily beauty routine. Natural alternatives to chemical products.",
-      content: "Full article content here...",
-      image: "/images/blog/skin-care-herbs.jpg",
-      category: "skin-care",
-      categoryName: "Skin Care",
-      author: {
-        name: "Fatima Khan",
-        avatar: "/images/authors/fatima.jpg",
-        bio: "Beauty Expert"
-      },
-      date: "2024-01-10",
-      readTime: "6 min read",
-      tags: ["skincare", "beauty", "herbs"],
-      featured: false
-    },
-    {
-      id: 4,
-      slug: "detoxifying-herbal-teas",
-      title: "5 Detoxifying Herbal Teas You Must Try",
-      excerpt: "Prepare natural detox teas at home using these powerful herbs for complete body cleanse and rejuvenation. Simple recipes included.",
-      content: "Full article content here...",
-      image: "/images/blog/detox-teas.jpg",
-      category: "nutrition",
-      categoryName: "Nutrition",
-      author: {
-        name: "Ahmed Raza",
-        avatar: "/images/authors/ahmed.jpg",
-        bio: "Nutritionist"
-      },
-      date: "2024-01-08",
-      readTime: "4 min read",
-      tags: ["detox", "tea", "cleanse"],
-      featured: false
-    },
-    {
-      id: 5,
-      slug: "turmeric-health-benefits",
-      title: "Turmeric: The Golden Spice of Life",
-      excerpt: "Explore the incredible health benefits of turmeric and how this ancient spice can boost your immunity and fight inflammation naturally.",
-      content: "Full article content here...",
-      image: "/images/blog/turmeric.jpg",
-      category: "herbal-medicine",
-      categoryName: "Herbal Medicine",
-      author: {
-        name: "Dr. Sarah Ahmed",
-        avatar: "/images/authors/sarah.jpg",
-        bio: "Ayurvedic Practitioner"
-      },
-      date: "2024-01-05",
-      readTime: "7 min read",
-      tags: ["turmeric", "immunity", "inflammation"],
-      featured: false
-    },
-    {
-      id: 6,
-      slug: "ashwagandha-stress-relief",
-      title: "Ashwagandha: Nature's Stress Reliever",
-      excerpt: "Learn how Ashwagandha can help reduce stress, improve sleep quality, and boost your overall mental wellbeing naturally.",
-      content: "Full article content here...",
-      image: "/images/blog/ashwagandha.jpg",
-      category: "herbal-medicine",
-      categoryName: "Herbal Medicine",
-      author: {
-        name: "Ali Hassan",
-        avatar: "/images/authors/ali.jpg",
-        bio: "Wellness Coach"
-      },
-      date: "2024-01-03",
-      readTime: "5 min read",
-      tags: ["stress", "ashwagandha", "mental-health"],
-      featured: false
-    }
-  ],
-  popularTags: [
-    "Herbs", "Wellness", "Ayurveda", "Natural Remedies", 
-    "Skincare", "Detox", "Immunity", "Mental Health"
-  ]
+// Categories from the blog posts
+const getCategories = () => {
+  const categoriesMap = new Map<string, number>();
+  
+  blogPosts.forEach(post => {
+    const count = categoriesMap.get(post.category) || 0;
+    categoriesMap.set(post.category, count + 1);
+  });
+  
+  const allPostsCount = blogPosts.length;
+  const categories = Array.from(categoriesMap.entries()).map(([name, count]) => ({
+    id: name.toLowerCase().replace(/\s+/g, '-'),
+    name,
+    count
+  }));
+  
+  return [
+    { id: "all", name: "All Posts", count: allPostsCount },
+    ...categories
+  ];
+};
+
+// Popular tags from all posts
+const getPopularTags = () => {
+  const tagCount = new Map<string, number>();
+  
+  blogPosts.forEach(post => {
+    post.tags.forEach(tag => {
+      const count = tagCount.get(tag) || 0;
+      tagCount.set(tag, count + 1);
+    });
+  });
+  
+  // Sort by frequency and get top 8
+  return Array.from(tagCount.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([tag]) => tag);
 };
 
 export default function BlogPage() {
-  const router = useRouter();
+  const categories = getCategories();
+  const popularTags = getPopularTags();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   // Filter posts based on category and search
-  const filteredPosts = blogData.posts.filter(post => {
-    const matchesCategory = selectedCategory === "all" || post.category === selectedCategory;
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredPosts = blogPosts.filter(post => {
+    const matchesCategory = selectedCategory === "all" || 
+      post.category.toLowerCase().replace(/\s+/g, '-') === selectedCategory;
+    
+    const matchesSearch = searchQuery === "" ||
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    
     return matchesCategory && matchesSearch;
   });
 
-  const featuredPosts = blogData.posts.filter(post => post.featured);
+  const featuredPosts = blogPosts.filter(post => post.id <= 2); // First 2 posts as featured
 
   return (
     <div className="min-h-screen bg-white">
@@ -171,10 +81,10 @@ export default function BlogPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              {blogData.hero.title} <span className="text-[#197B33]">{blogData.hero.highlight}</span>
+              Our <span className="text-[#197B33]">Blog</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-              {blogData.hero.subtitle}
+              Discover natural wellness tips, herbal remedies, and healthy living advice
             </p>
 
             {/* Search Bar */}
@@ -199,8 +109,8 @@ export default function BlogPage() {
       {/* Categories */}
       <section className="border-b border-gray-200 sticky top-0 bg-white z-10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-2 overflow-x-auto py-4 scrollbar-hide">
-            {blogData.categories.map((category) => (
+          <div className="flex gap-2 overflow-x-auto py-4 no-scrollbar">
+            {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
@@ -218,7 +128,7 @@ export default function BlogPage() {
       </section>
 
       {/* Featured Posts */}
-      {selectedCategory === "all" && !searchQuery && (
+      {selectedCategory === "all" && searchQuery === "" && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Featured Articles</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -233,6 +143,7 @@ export default function BlogPage() {
                     src={post.image}
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
                   />
                   <div className="absolute top-4 left-4">
                     <span className="px-3 py-1 bg-[#197B33] text-white text-sm font-medium rounded-full">
@@ -263,10 +174,11 @@ export default function BlogPage() {
                         src={post.author.avatar}
                         alt={post.author.name}
                         className="w-10 h-10 rounded-full"
+                        loading="lazy"
                       />
                       <div>
                         <p className="text-sm font-medium text-gray-900">{post.author.name}</p>
-                        <p className="text-xs text-gray-500">{post.author.bio}</p>
+                        <p className="text-xs text-gray-500">{post.author.bio.split('.')[0]}.</p>
                       </div>
                     </div>
                     <FaArrowRight className="text-[#197B33] group-hover:translate-x-2 transition-transform" />
@@ -284,9 +196,9 @@ export default function BlogPage() {
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900">
               {selectedCategory === "all" ? "All Articles" : 
-               blogData.categories.find(c => c.id === selectedCategory)?.name}
+               categories.find(c => c.id === selectedCategory)?.name}
             </h2>
-            <p className="text-gray-600">{filteredPosts.length} articles found</p>
+            <p className="text-gray-600">{filteredPosts.length} article{filteredPosts.length !== 1 ? 's' : ''} found</p>
           </div>
 
           {filteredPosts.length > 0 ? (
@@ -302,10 +214,11 @@ export default function BlogPage() {
                       src={post.image}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      loading="lazy"
                     />
                     <div className="absolute top-3 left-3">
                       <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-[#197B33] text-xs font-medium rounded-full">
-                        {post.categoryName}
+                        {post.category}
                       </span>
                     </div>
                   </div>
@@ -331,10 +244,11 @@ export default function BlogPage() {
                         src={post.author.avatar}
                         alt={post.author.name}
                         className="w-8 h-8 rounded-full"
+                        loading="lazy"
                       />
-                      <div>
-                        <p className="text-xs font-medium text-gray-900">{post.author.name}</p>
-                      </div>
+                      <span className="text-xs font-medium text-gray-900">
+                        {post.author.name}
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -342,7 +256,22 @@ export default function BlogPage() {
             </div>
           ) : (
             <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No articles found. Try a different search or category.</p>
+              <div className="text-gray-400 text-5xl mb-4">🔍</div>
+              <p className="text-gray-500 text-lg mb-4">No articles found.</p>
+              {searchQuery && (
+                <p className="text-gray-600 mb-6">
+                  Try a different search or clear the search box to see all articles.
+                </p>
+              )}
+              <button
+                onClick={() => {
+                  setSelectedCategory("all");
+                  setSearchQuery("");
+                }}
+                className="px-6 py-3 bg-[#197B33] text-white rounded-lg hover:bg-[#156529] transition-colors font-medium"
+              >
+                View All Articles
+              </button>
             </div>
           )}
         </div>
@@ -352,22 +281,40 @@ export default function BlogPage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Popular Tags</h2>
         <div className="flex flex-wrap gap-3">
-          {blogData.popularTags.map((tag, index) => (
-            <button
+          {popularTags.map((tag, index) => (
+            <Link
               key={index}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-[#197B33] hover:text-white transition-colors"
+              href="#"
+              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-[#197B33] hover:text-white transition-colors inline-flex items-center gap-2"
             >
-              <FaTag className="inline mr-2" />
+              <FaTag className="w-3 h-3" />
               {tag}
-            </button>
+            </Link>
           ))}
         </div>
       </section>
 
-      
-
-      <Footer />
+      {/* Newsletter CTA */}
+      <section className="bg-gradient-to-r from-green-800 to-emerald-800 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Stay Updated with Our Latest Articles
+          </h2>
+          <p className="text-green-100 mb-8 max-w-2xl mx-auto">
+            Subscribe to our newsletter and get wellness tips, herbal remedies, and health advice delivered to your inbox.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <button className="px-6 py-3 bg-white text-green-800 font-semibold rounded-lg hover:bg-gray-100 transition">
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
-

@@ -1,14 +1,9 @@
 // app/layout.tsx
 import "./globals.css";
 import { CartProvider } from "./context/CartContext";
+import { WishlistProvider } from "./context/WishList";
 import Navbar from "./Desktop/components/navbar";
 import Footer from "./Desktop/components/footer";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
-// Add these exports to make ALL pages dynamic
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export const metadata = {
   title: "Pansari Inn - Premium Ayurvedic & Herbal Products",
@@ -46,28 +41,13 @@ export default function RootLayout({
       </head>
       <body className="bg-white text-gray-900 font-poppins antialiased">
         <CartProvider>
-          <Navbar />
-          <main className="min-h-screen bg-white relative">
-            {children}
-          </main>
-          <Footer />
-          
-          {/* React Toastify Container - FIXED: Removed invalid bodyClassName prop */}
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={true}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-            toastClassName="!bg-white !text-gray-800 !shadow-lg !rounded-lg !border !border-gray-200 !font-poppins"
-            progressClassName="!bg-[#197B33]"
-            className="!z-[10000]"
-          />
+          <WishlistProvider>
+            <Navbar />
+            <main className="min-h-screen bg-white">
+              {children}
+            </main>
+            <Footer />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

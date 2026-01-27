@@ -1,355 +1,670 @@
+// components/Sidebar.tsx
 "use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useCart } from '../../../context/CartContext';
+import { useWishlist } from '../../../context/WishList';
+import { allProducts } from '@/app/Desktop/data/products';
 import { 
-  AiOutlineClose, 
-  AiOutlineShoppingCart, 
-  AiOutlineHeart, 
-  AiOutlinePlus, 
-  AiOutlineMinus, 
-  AiOutlineDelete 
-} from 'react-icons/ai';
+  FaTimes, 
+  FaShoppingCart, 
+  FaPlus, 
+  FaMinus, 
+  FaTrash,
+  FaTruck,
+  FaShieldAlt,
+  FaCreditCard,
+  FaArrowRight,
+  FaStar,
+  FaHeart,
+  FaUser,
+  FaSignInAlt,
+  FaExchangeAlt
+} from 'react-icons/fa';
 
-interface CartItem {
-  id: number;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  slug: string;
+interface CartSidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-interface WishlistItem {
-  id: number;
-  name: string;
+// Product interface for suggestions
+interface SuggestedProduct {
+  id: string;
+  nameEn: string;
+  img: string;
   price: number;
-  image: string;
-  slug: string;
+  oldPrice?: number;
+  rating: number;
+  isBestSeller: boolean;
+  sale?: string;
 }
 
-const PansariinnSidebar = () => {
-  const router = useRouter();
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'cart' | 'wishlist'>('cart');
+export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
+  const { 
+    cartItems, 
+    updateQuantity, 
+    removeFromCart, 
+    getCartTotal,
+    getCartCount,
+    clearCart,
+    addToCart 
+  } = useCart();
   
-  // Sample cart data
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: 'Basmati Rice Premium',
-      price: 2500,
-      quantity: 2,
-      image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=100&h=100&fit=crop',
-      slug: 'basmati-rice-premium'
-    },
-    {
-      id: 2,
-      name: 'Red Chili Powder',
-      price: 450,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1599909533730-f9fc62c4cd08?w=100&h=100&fit=crop',
-      slug: 'red-chili-powder'
-    }
-  ]);
+  const { 
+    wishlistItems, 
+    removeFromWishlist, 
+    isInWishlist,
+    toggleWishlist,
+    getWishlistCount 
+  } = useWishlist();
   
-  // Sample wishlist data
-  const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>([
-    {
-      id: 3,
-      name: 'Organic Turmeric',
-      price: 350,
-      image: 'https://images.unsplash.com/photo-1615485500834-bc10199bc727?w=100&h=100&fit=crop',
-      slug: 'organic-turmeric'
-    },
-    {
-      id: 4,
-      name: 'Black Pepper Whole',
-      price: 800,
-      image: 'https://images.unsplash.com/photo-1596040001253-3d36c8f5ad38?w=100&h=100&fit=crop',
-      slug: 'black-pepper-whole'
+  const [activeMenu, setActiveMenu] = useState<'cart' | 'wishlist'>('cart');
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [suggestedProducts, setSuggestedProducts] = useState<SuggestedProduct[]>([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const cartTotal = getCartTotal();
+  const cartCount = getCartCount();
+  const wishlistCount = getWishlistCount();
+  const shippingCharge = cartTotal >= 2000 ? 0 : 250;
+  const finalTotal = cartTotal + shippingCharge;
+
+  // Check if user is logged in (you'll need to implement proper auth)
+  useEffect(() => {
+    // Check for auth token in localStorage
+    const token = localStorage.getItem('authToken');
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!(token && user));
+  }, []);
+
+  // Get product suggestions
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      // Get categories from cart items
+      const cartCategories = Array.from(new Set(cartItems.map(item => item.category)));
+      
+      // Find products from same categories
+      const suggestions = allProducts
+        .filter(product => 
+          cartCategories.includes(product.category) && 
+          !cartItems.some(item => item.id === product.id)
+        )
+        .slice(0, 3)
+        .map(product => ({
+          id: product.id,
+          nameEn: product.nameEn,
+          img: product.img,
+          price: product.price,
+          oldPrice: product.oldPrice,
+          rating: product.rating,
+          isBestSeller: product.isBestSeller,
+          sale: product.sale
+        }));
+      
+      setSuggestedProducts(suggestions);
+    } else {
+      // If cart is empty, show popular products
+      const popularSuggestions = allProducts
+        .filter(product => product.isBestSeller)
+        .slice(0, 3)
+        .map(product => ({
+          id: product.id,
+          nameEn: product.nameEn,
+          img: product.img,
+          price: product.price,
+          oldPrice: product.oldPrice,
+          rating: product.rating,
+          isBestSeller: product.isBestSeller,
+          sale: product.sale
+        }));
+      
+      setSuggestedProducts(popularSuggestions);
     }
-  ]);
+  }, [cartItems]);
 
-  const updateQuantity = (id: number, change: number): void => {
-    setCartItems(cartItems.map(item => 
-      item.id === id 
-        ? { ...item, quantity: Math.max(1, item.quantity + change) }
-        : item
-    ));
+  const handleQuantityChange = (productId: string, size: string, newQuantity: number) => {
+    if (newQuantity < 1) {
+      removeFromCart(productId, size);
+    } else {
+      updateQuantity(productId, size, newQuantity);
+    }
   };
 
-  const removeFromCart = (id: number): void => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+  const handleCheckout = () => {
+    setIsCheckingOut(true);
+    setTimeout(() => {
+      setIsCheckingOut(false);
+      onClose();
+      window.location.href = '/checkout';
+    }, 1000);
   };
 
-  const removeFromWishlist = (id: number): void => {
-    setWishlistItems(wishlistItems.filter(item => item.id !== id));
-  };
-
-  const moveToCart = (item: WishlistItem): void => {
-    const cartItem: CartItem = {
-      ...item,
+  const handleAddSuggestedProduct = (product: SuggestedProduct) => {
+    addToCart({
+      id: product.id,
+      nameEn: product.nameEn,
+      nameUr: product.nameEn,
+      img: product.img,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      category: 'Suggested',
+      size: 'Standard',
       quantity: 1
-    };
-    setCartItems([...cartItems, cartItem]);
+    });
+  };
+
+  const handleMoveToCart = (item: any) => {
+    addToCart({
+      id: item.id,
+      nameEn: item.nameEn,
+      nameUr: item.nameUr,
+      img: item.img,
+      price: item.price,
+      oldPrice: item.oldPrice,
+      category: item.category || 'Wishlist',
+      size: 'Standard',
+      quantity: 1
+    });
     removeFromWishlist(item.id);
   };
 
-  const handleCheckout = (): void => {
-    setIsSidebarOpen(false);
-    router.push('/pages/checkout');
+  const handleLoginRedirect = () => {
+    onClose();
+    window.location.href = '/login?redirect=wishlist';
   };
-
-  const goToProductDetails = (slug: string): void => {
-    setIsSidebarOpen(false);
-    router.push(`/pages/productdetails?slug=${slug}`);
-  };
-
-  const cartTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="fixed top-0 right-0 z-50">
-      {/* Toggle Buttons */}
-      <div className="fixed top-20 right-0 flex flex-col gap-2 z-50">
-        <button
-          onClick={() => {
-            setIsSidebarOpen(true);
-            setActiveTab('cart');
-          }}
-          className="bg-[#197B33] text-white p-3 rounded-l-lg shadow-lg hover:bg-[#156529] transition-all relative"
-          aria-label="Open Cart"
-        >
-          <AiOutlineShoppingCart size={24} />
-          {cartCount > 0 && (
-            <span className="absolute -top-2 -left-2 bg-red-500 text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-bold">
-              {cartCount}
-            </span>
-          )}
-        </button>
-        <button
-          onClick={() => {
-            setIsSidebarOpen(true);
-            setActiveTab('wishlist');
-          }}
-          className="bg-red-600 text-white p-3 rounded-l-lg shadow-lg hover:bg-red-700 transition-all relative"
-          aria-label="Open Wishlist"
-        >
-          <AiOutlineHeart size={24} />
-          {wishlistItems.length > 0 && (
-            <span className="absolute -top-2 -left-2 bg-[#197B33] text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-bold">
-              {wishlistItems.length}
-            </span>
-          )}
-        </button>
-      </div>
-
-      {/* Overlay */}
-      {isSidebarOpen && (
+    <>
+      {/* Blur Overlay */}
+      {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 transition-opacity z-40"
-          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100] transition-opacity"
+          onClick={onClose}
         />
       )}
 
-      {/* Sidebar */}
-      <div className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl transform transition-transform duration-300 z-50 ${
-        isSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+      {/* Cart/Wishlist Sidebar */}
+      <div className={`fixed right-0 top-0 h-full w-full sm:w-96 bg-white shadow-2xl z-[101] transform transition-transform duration-300 ${
+        isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
-        {/* Header */}
-        <div className="bg-[#197B33] text-white p-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold">Pansari Inn</h2>
-            <p className="text-xs text-green-100">Natural Herbs & Products</p>
+        {/* Header with Tabs */}
+        <div className="bg-green-700 text-white">
+          {/* Tabs */}
+          <div className="flex border-b border-green-600">
+            <button
+              onClick={() => setActiveMenu('cart')}
+              className={`flex-1 py-3 flex items-center justify-center gap-2 font-medium transition ${
+                activeMenu === 'cart' 
+                  ? 'bg-green-800' 
+                  : 'hover:bg-green-600'
+              }`}
+            >
+              <FaShoppingCart className="w-4 h-4" />
+              Cart
+              {cartCount > 0 && (
+                <span className="bg-white text-green-700 text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount > 9 ? '9+' : cartCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => {
+                if (!isLoggedIn) {
+                  handleLoginRedirect();
+                  return;
+                }
+                setActiveMenu('wishlist');
+              }}
+              className={`flex-1 py-3 flex items-center justify-center gap-2 font-medium transition ${
+                activeMenu === 'wishlist' 
+                  ? 'bg-green-800' 
+                  : 'hover:bg-green-600'
+              }`}
+            >
+              <FaHeart className="w-4 h-4" />
+              Wishlist
+              {wishlistCount > 0 && (
+                <span className="bg-white text-green-700 text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {wishlistCount > 9 ? '9+' : wishlistCount}
+                </span>
+              )}
+            </button>
+            <button 
+              onClick={onClose}
+              className="px-4 hover:bg-green-600 transition flex items-center"
+              aria-label="Close sidebar"
+            >
+              <FaTimes className="w-4 h-4" />
+            </button>
           </div>
-          <button 
-            onClick={() => setIsSidebarOpen(false)}
-            className="hover:bg-[#156529] p-2 rounded-full transition"
-            aria-label="Close Sidebar"
-          >
-            <AiOutlineClose size={24} />
-          </button>
-        </div>
 
-        {/* Tabs */}
-        <div className="flex border-b">
-          <button
-            onClick={() => setActiveTab('cart')}
-            className={`flex-1 py-3 font-semibold transition ${
-              activeTab === 'cart'
-                ? 'bg-green-50 text-[#197B33] border-b-2 border-[#197B33]'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <AiOutlineShoppingCart size={20} />
-              Cart ({cartCount})
+          {/* Title */}
+          <div className="p-4">
+            <div className="flex items-center gap-3">
+              {activeMenu === 'cart' ? (
+                <>
+                  <FaShoppingCart className="w-5 h-5" />
+                  <div>
+                    <h2 className="text-lg font-bold">Shopping Cart</h2>
+                    <p className="text-xs text-green-100">
+                      {cartCount} item{cartCount !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <FaHeart className="w-5 h-5" />
+                  <div>
+                    <h2 className="text-lg font-bold">My Wishlist</h2>
+                    <p className="text-xs text-green-100">
+                      {wishlistCount} item{wishlistCount !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
-          </button>
-          <button
-            onClick={() => setActiveTab('wishlist')}
-            className={`flex-1 py-3 font-semibold transition ${
-              activeTab === 'wishlist'
-                ? 'bg-red-50 text-red-700 border-b-2 border-red-700'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <div className="flex items-center justify-center gap-2">
-              <AiOutlineHeart size={20} />
-              Wishlist ({wishlistItems.length})
-            </div>
-          </button>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto h-[calc(100vh-220px)] p-4">
-          {activeTab === 'cart' ? (
-            <>
-              {cartItems.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <AiOutlineShoppingCart size={64} className="mx-auto mb-4 opacity-30" />
-                  <p className="text-lg font-medium">Your cart is empty</p>
-                  <p className="text-sm mt-2">Add items to get started</p>
-                  <button 
-                    onClick={() => {
-                      setIsSidebarOpen(false);
-                      router.push('/pages/shop');
-                    }}
-                    className="mt-4 px-6 py-2 bg-[#197B33] text-white rounded-lg hover:bg-[#156529] transition"
-                  >
-                    Continue Shopping
-                  </button>
+        <div className="h-[calc(100vh-250px)] overflow-y-auto p-4">
+          {activeMenu === 'cart' ? (
+            // CART CONTENT
+            cartCount === 0 ? (
+              // Empty Cart State
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaShoppingCart className="w-8 h-8 text-gray-400" />
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {cartItems.map(item => (
-                    <div key={item.id} className="flex gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="w-20 h-20 object-cover rounded cursor-pointer"
-                        onClick={() => goToProductDetails(item.slug)}
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Your cart is empty</h3>
+                <p className="text-gray-600 mb-6 text-sm">Add some products to get started</p>
+                <button
+                  onClick={onClose}
+                  className="px-5 py-2.5 bg-green-700 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium"
+                >
+                  Continue Shopping
+                </button>
+              </div>
+            ) : (
+              // Cart Items
+              <div className="space-y-3">
+                {cartItems.map((item) => (
+                  <div key={`${item.id}-${item.size}`} className="flex gap-3 p-3 bg-white border border-gray-200 rounded-lg">
+                    {/* Product Image */}
+                    <div className="w-16 h-16 flex-shrink-0 relative">
+                      <Image
+                        src={item.img}
+                        alt={item.nameEn}
+                        fill
+                        className="object-cover rounded-lg"
+                        sizes="64px"
                       />
-                      <div className="flex-1">
-                        <h3 
-                          className="font-semibold text-sm mb-1 text-gray-900 cursor-pointer hover:text-[#197B33] transition"
-                          onClick={() => goToProductDetails(item.slug)}
-                        >
-                          {item.name}
-                        </h3>
-                        <p className="text-[#197B33] font-bold text-lg">Rs. {item.price.toLocaleString()}</p>
-                        <div className="flex items-center gap-2 mt-2">
+                    </div>
+
+                    {/* Product Details */}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm">{item.nameEn}</h4>
+                          <p className="text-xs text-gray-500">{item.category}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
                           <button
-                            onClick={() => updateQuantity(item.id, -1)}
-                            className="bg-gray-200 p-1 rounded hover:bg-gray-300 transition"
+                            onClick={() => toggleWishlist({
+                              id: item.id,
+                              nameEn: item.nameEn,
+                              nameUr: item.nameUr,
+                              price: item.price,
+                              img: item.img
+                            })}
+                            className="text-gray-400 hover:text-red-500"
+                            aria-label="Toggle wishlist"
+                          >
+                            <FaHeart className={`w-3.5 h-3.5 ${isInWishlist(item.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                          </button>
+                          <button
+                            onClick={() => removeFromCart(item.id, item.size)}
+                            className="text-gray-400 hover:text-red-500"
+                            aria-label={`Remove ${item.nameEn}`}
+                          >
+                            <FaTrash className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Price and Quantity */}
+                      <div className="flex items-center justify-between mt-2">
+                        <div>
+                          <span className="font-bold text-green-700 text-sm">
+                            PKR {(item.price * item.quantity).toLocaleString()}
+                          </span>
+                          {item.oldPrice && (
+                            <span className="text-xs text-gray-400 line-through ml-1">
+                              PKR {(item.oldPrice * item.quantity).toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {/* Quantity Controls */}
+                        <div className="flex items-center gap-1 border border-gray-300 rounded-md">
+                          <button
+                            onClick={() => handleQuantityChange(item.id, item.size, item.quantity - 1)}
+                            className="px-1.5 py-0.5 text-gray-600 hover:text-green-700"
                             aria-label="Decrease quantity"
                           >
-                            <AiOutlineMinus size={16} />
+                            <FaMinus className="w-2.5 h-2.5" />
                           </button>
-                          <span className="font-semibold w-8 text-center">{item.quantity}</span>
+                          <span className="px-2 text-sm font-medium w-8 text-center">{item.quantity}</span>
                           <button
-                            onClick={() => updateQuantity(item.id, 1)}
-                            className="bg-gray-200 p-1 rounded hover:bg-gray-300 transition"
+                            onClick={() => handleQuantityChange(item.id, item.size, item.quantity + 1)}
+                            className="px-1.5 py-0.5 text-gray-600 hover:text-green-700"
                             aria-label="Increase quantity"
                           >
-                            <AiOutlinePlus size={16} />
-                          </button>
-                          <button
-                            onClick={() => removeFromCart(item.id)}
-                            className="ml-auto text-red-600 hover:bg-red-50 p-1 rounded transition"
-                            aria-label="Remove from cart"
-                          >
-                            <AiOutlineDelete size={20} />
+                            <FaPlus className="w-2.5 h-2.5" />
                           </button>
                         </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </>
+                  </div>
+                ))}
+              </div>
+            )
           ) : (
-            <>
-              {wishlistItems.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <AiOutlineHeart size={64} className="mx-auto mb-4 opacity-30" />
-                  <p className="text-lg font-medium">Your wishlist is empty</p>
-                  <p className="text-sm mt-2">Save your favorite items here</p>
-                  <button 
-                    onClick={() => {
-                      setIsSidebarOpen(false);
-                      router.push('/pages/shop');
-                    }}
-                    className="mt-4 px-6 py-2 bg-[#197B33] text-white rounded-lg hover:bg-[#156529] transition"
+            // WISHLIST CONTENT
+            !isLoggedIn ? (
+              // Login Required for Wishlist
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaUser className="w-8 h-8 text-red-300" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Login Required</h3>
+                <p className="text-gray-600 mb-4 text-sm">Please login to view your wishlist</p>
+                <p className="text-gray-500 text-xs mb-6">
+                  Your wishlist will be saved to your account for easy access across devices
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={handleLoginRedirect}
+                    className="w-full py-2.5 bg-green-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-green-600 transition"
                   >
-                    Browse Products
+                    <FaSignInAlt className="w-4 h-4" />
+                    Login to Continue
+                  </button>
+                  <button
+                    onClick={() => setActiveMenu('cart')}
+                    className="w-full py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
+                  >
+                    View Cart Instead
                   </button>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {wishlistItems.map(item => (
-                    <div key={item.id} className="flex gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                      <img 
-                        src={item.image} 
-                        alt={item.name}
-                        className="w-20 h-20 object-cover rounded cursor-pointer"
-                        onClick={() => goToProductDetails(item.slug)}
+              </div>
+            ) : wishlistCount === 0 ? (
+              // Empty Wishlist State
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaHeart className="w-8 h-8 text-red-300" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Your wishlist is empty</h3>
+                <p className="text-gray-600 mb-6 text-sm">Save your favorite products here!</p>
+                <button
+                  onClick={onClose}
+                  className="px-5 py-2.5 bg-green-700 text-white rounded-lg hover:bg-green-600 transition text-sm font-medium"
+                >
+                  Browse Products
+                </button>
+              </div>
+            ) : (
+              // Wishlist Items
+              <div className="space-y-3">
+                {wishlistItems.map((item) => (
+                  <div key={item.id} className="flex gap-3 p-3 bg-white border border-gray-200 rounded-lg">
+                    {/* Product Image */}
+                    <div className="w-16 h-16 flex-shrink-0 relative">
+                      <Image
+                        src={item.img}
+                        alt={item.nameEn}
+                        fill
+                        className="object-cover rounded-lg"
+                        sizes="64px"
                       />
-                      <div className="flex-1">
-                        <h3 
-                          className="font-semibold text-sm mb-1 text-gray-900 cursor-pointer hover:text-[#197B33] transition"
-                          onClick={() => goToProductDetails(item.slug)}
-                        >
-                          {item.name}
-                        </h3>
-                        <p className="text-[#197B33] font-bold text-lg mb-2">Rs. {item.price.toLocaleString()}</p>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => moveToCart(item)}
-                            className="bg-[#197B33] text-white text-xs px-3 py-1.5 rounded hover:bg-[#156529] transition flex items-center gap-1"
-                          >
-                            <AiOutlineShoppingCart size={14} />
-                            Add to Cart
-                          </button>
+                    </div>
+
+                    {/* Product Details */}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h4 className="font-medium text-gray-900 text-sm line-clamp-1">{item.nameEn}</h4>
+                          <p className="text-xs text-gray-500">{item.category || 'Product'}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
                           <button
                             onClick={() => removeFromWishlist(item.id)}
-                            className="text-red-600 hover:bg-red-50 p-1.5 rounded transition"
-                            aria-label="Remove from wishlist"
+                            className="text-gray-400 hover:text-red-500"
+                            aria-label={`Remove ${item.nameEn} from wishlist`}
                           >
-                            <AiOutlineDelete size={18} />
+                            <FaTrash className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>
+                      
+                      {/* Price */}
+                      <div className="mt-2 mb-3">
+                        <span className="font-bold text-green-700 text-sm">
+                          PKR {item.price.toLocaleString()}
+                        </span>
+                        {item.oldPrice && (
+                          <span className="text-xs text-gray-400 line-through ml-1">
+                            PKR {item.oldPrice.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleMoveToCart(item)}
+                          className="flex-1 py-1.5 bg-green-700 text-white text-xs font-medium rounded hover:bg-green-600 transition flex items-center justify-center gap-1"
+                        >
+                          <FaExchangeAlt className="w-2.5 h-2.5" />
+                          Move to Cart
+                        </button>
+                      </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+
+          {/* Product Suggestions Section (only for cart) */}
+          {activeMenu === 'cart' && suggestedProducts.length > 0 && (
+            <div className="mt-6 pt-4 border-t">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-gray-900 text-sm">Recommended for you</h3>
+                <div className="flex items-center gap-1">
+                  <FaStar className="w-3 h-3 text-amber-400" />
+                  <span className="text-xs text-gray-500">Popular</span>
                 </div>
-              )}
-            </>
+              </div>
+              
+              <div className="space-y-2">
+                {suggestedProducts.map((product) => (
+                  <div key={product.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition group">
+                    {/* Product Image with Badge */}
+                    <div className="relative w-12 h-12 flex-shrink-0">
+                      <Image
+                        src={product.img}
+                        alt={product.nameEn}
+                        fill
+                        className="object-cover rounded"
+                        sizes="48px"
+                      />
+                      {product.isBestSeller && (
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 rounded-full flex items-center justify-center">
+                          <FaStar className="w-2 h-2 text-white" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-gray-900 truncate">
+                        {product.nameEn}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-sm font-bold text-green-700">
+                          PKR {product.price.toLocaleString()}
+                        </span>
+                        {product.oldPrice && (
+                          <span className="text-xs text-gray-400 line-through">
+                            PKR {product.oldPrice.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Add to Cart Button */}
+                    <button
+                      onClick={() => handleAddSuggestedProduct(product)}
+                      className="flex-shrink-0 w-8 h-8 bg-green-100 text-green-700 rounded-full flex items-center justify-center hover:bg-green-200 transition group-hover:scale-110"
+                      aria-label={`Add ${product.nameEn} to cart`}
+                    >
+                      <span className="text-sm font-bold">+</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
 
-        {/* Footer - Checkout Section */}
-        {activeTab === 'cart' && cartItems.length > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 bg-white border-t p-4 space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-lg text-gray-700">Total:</span>
-              <span className="text-2xl font-bold text-[#197B33]">Rs. {cartTotal.toLocaleString()}</span>
+        {/* Footer - Different for cart and wishlist */}
+        {activeMenu === 'cart' && cartCount > 0 && (
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
+            {/* Cart Summary */}
+            <div className="space-y-2 mb-4">
+              {/* Subtotal */}
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Subtotal</span>
+                <span className="font-medium">PKR {cartTotal.toLocaleString()}</span>
+              </div>
+
+              {/* Shipping */}
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Shipping</span>
+                {shippingCharge === 0 ? (
+                  <span className="text-green-600 font-medium">FREE</span>
+                ) : (
+                  <span className="font-medium">PKR {shippingCharge.toLocaleString()}</span>
+                )}
+              </div>
+
+              {/* Free Shipping Notice */}
+              {cartTotal < 2000 && (
+                <div className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                  Add PKR {(2000 - cartTotal).toLocaleString()} more for free shipping
+                </div>
+              )}
+
+              {/* Total */}
+              <div className="flex justify-between text-base font-bold pt-2 border-t">
+                <span>Total</span>
+                <span className="text-green-700">PKR {finalTotal.toLocaleString()}</span>
+              </div>
             </div>
-            <button 
-              onClick={handleCheckout}
-              className="w-full bg-[#197B33] text-white py-3 rounded-lg font-semibold hover:bg-[#156529] transition shadow-md hover:shadow-lg"
-            >
-              Proceed to Checkout
-            </button>
-            <p className="text-xs text-center text-gray-500">
-              Free shipping on orders above Rs. 5000
-            </p>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <button
+                  onClick={clearCart}
+                  className="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition text-sm font-medium"
+                >
+                  Clear Cart
+                </button>
+                <Link
+                  href="/cart"
+                  onClick={onClose}
+                  className="flex-1 py-2 border border-green-700 text-green-700 text-center rounded-lg hover:bg-green-50 transition text-sm font-medium"
+                >
+                  View Cart
+                </Link>
+              </div>
+
+              <button
+                onClick={handleCheckout}
+                disabled={isCheckingOut}
+                className="w-full py-2.5 bg-green-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-green-600 transition disabled:opacity-70 disabled:cursor-not-allowed text-sm"
+              >
+                {isCheckingOut ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <FaCreditCard className="w-3.5 h-3.5" />
+                    Checkout Now
+                    <FaArrowRight className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
+
+              {/* Trust Badges */}
+              <div className="flex items-center justify-center gap-4 pt-2 border-t">
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <FaTruck className="w-2.5 h-2.5" />
+                  <span>Free Shipping</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <FaShieldAlt className="w-2.5 h-2.5" />
+                  <span>Secure</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeMenu === 'wishlist' && isLoggedIn && wishlistCount > 0 && (
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-white">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600">Total items:</span>
+                <span className="font-bold text-green-700">{wishlistCount}</span>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    wishlistItems.forEach(item => handleMoveToCart(item));
+                  }}
+                  className="flex-1 py-2.5 bg-green-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-green-600 transition"
+                >
+                  <FaExchangeAlt className="w-4 h-4" />
+                  Move All to Cart
+                </button>
+                <Link
+                  href="/wishlist"
+                  onClick={onClose}
+                  className="flex-1 py-2.5 border border-green-700 text-green-700 text-center rounded-lg hover:bg-green-50 transition font-medium flex items-center justify-center gap-2"
+                >
+                  <FaHeart className="w-4 h-4" />
+                  View All
+                </Link>
+              </div>
+
+              <button
+                onClick={onClose}
+                className="w-full py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition"
+              >
+                Continue Shopping
+              </button>
+            </div>
           </div>
         )}
       </div>
-    </div>
+    </>
   );
-};
-
-export default PansariinnSidebar;
+}

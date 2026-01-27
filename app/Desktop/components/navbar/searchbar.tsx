@@ -8,7 +8,6 @@ import {
   FiSearch, 
   FiX, 
   FiClock,
-  FiTrendingUp,
   FiChevronRight 
 } from 'react-icons/fi';
 import { HiOutlineShoppingBag, HiOutlineTag } from 'react-icons/hi';
@@ -64,7 +63,6 @@ export default function SearchBar({
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const [trendingSearches, setTrendingSearches] = useState<string[]>([]);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -123,21 +121,6 @@ export default function SearchBar({
         console.error('Error parsing recent searches:', error);
       }
     }
-
-    const fetchTrendingSearches = async () => {
-      try {
-        const response = await fetch('/api/search/trending');
-        if (response.ok) {
-          const data = await response.json();
-          setTrendingSearches(data.trending || []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch trending searches:', error);
-        setTrendingSearches(['Honey', 'Herbal Tea', 'Coconut Oil', 'Turmeric', 'Aloe Vera']);
-      }
-    };
-
-    fetchTrendingSearches();
   }, []);
 
   useEffect(() => {
@@ -182,11 +165,6 @@ export default function SearchBar({
   };
 
   const handleRecentSearchClick = (search: string) => {
-    setQuery(search);
-    handleSearch(search);
-  };
-
-  const handleTrendingSearchClick = (search: string) => {
     setQuery(search);
     handleSearch(search);
   };
@@ -415,27 +393,24 @@ export default function SearchBar({
               </div>
               <p className="text-gray-900 font-medium">No products found</p>
               <p className="text-sm text-gray-600 mt-1">Try different keywords or check spelling</p>
-            </div>
-          )}
-
-          {/* Trending Searches */}
-          {!query && suggestions.length === 0 && (
-            <div className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <FiTrendingUp className="w-4 h-4 text-gray-400" />
-                <h3 className="text-sm font-semibold text-gray-700">Trending Searches</h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {(trendingSearches.length > 0 ? trendingSearches : ['Honey', 'Herbal Tea', 'Coconut Oil', 'Turmeric', 'Aloe Vera']).map((term, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleTrendingSearchClick(term)}
-                    className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition flex items-center gap-1"
-                  >
-                    #{term}
-                  </button>
-                ))}
-              </div>
+              
+              {/* Show recent searches when no results are found */}
+              {recentSearches.length > 0 && (
+                <div className="mt-4 pt-4 border-t">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Recent searches:</h4>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {recentSearches.map((search, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleRecentSearchClick(search)}
+                        className="px-3 py-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-full transition"
+                      >
+                        {search}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

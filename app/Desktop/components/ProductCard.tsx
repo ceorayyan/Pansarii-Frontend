@@ -3,6 +3,7 @@
 import { FaStar, FaCheckCircle, FaShoppingCart } from "react-icons/fa";
 import { useState, MouseEvent } from "react";
 import ProductDetailsModal from "./ProductDetailsModal";
+import { useRouter } from "next/navigation"; // Add this import
 
 interface Product {
   id?: string | number;
@@ -26,6 +27,21 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const router = useRouter(); // Add router
+
+  // Handle entire card click (navigates to product details page)
+  const handleCardClick = (e: MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Navigate to product details page with product ID
+    // You should add a slug or ID to your product for better URLs
+    const productSlug = product.nameEn.toLowerCase().replace(/\s+/g, '-');
+    router.push(`/product/${productSlug}`);
+    
+    // OR if you want to pass the entire product as query params:
+    // router.push(`/product-details?product=${encodeURIComponent(JSON.stringify(product))}`);
+  };
 
   const handleQuickAdd = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -47,6 +63,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={handleCardClick} // Add click handler here
       >
         
         {/* Image Section with bottom border */}
@@ -106,7 +123,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      {/* Product Details Modal */}
+      {/* Product Details Modal (for Quick Add) */}
       {isModalOpen && (
         <ProductDetailsModal 
           product={product} 
