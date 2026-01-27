@@ -11,7 +11,8 @@ import {
   FaShoppingCart,
   FaStar,
   FaGift,
-  FaBolt
+  FaBolt,
+  FaCheckCircle
 } from 'react-icons/fa';
 import { FiCopy, FiCheck } from 'react-icons/fi';
 
@@ -111,30 +112,30 @@ export default function OffersPage() {
   const getOfferIcon = (type: Offer['type']) => {
     switch (type) {
       case 'flash':
-        return <FaBolt className="w-5 h-5" />;
+        return <FaBolt className="w-4 h-4" />;
       case 'seasonal':
-        return <FaFire className="w-5 h-5" />;
+        return <FaStar className="w-4 h-4" />;
       case 'bogo':
-        return <FaGift className="w-5 h-5" />;
+        return <FaGift className="w-4 h-4" />;
       case 'bundle':
-        return <FaShoppingCart className="w-5 h-5" />;
+        return <FaShoppingCart className="w-4 h-4" />;
       default:
-        return <FaPercent className="w-5 h-5" />;
+        return <FaPercent className="w-4 h-4" />;
     }
   };
 
   const getOfferColor = (type: Offer['type']) => {
     switch (type) {
       case 'flash':
-        return 'bg-red-100 text-red-700 border-red-200';
+        return 'text-red-600 bg-red-50';
       case 'seasonal':
-        return 'bg-orange-100 text-orange-700 border-orange-200';
+        return 'text-amber-600 bg-amber-50';
       case 'bogo':
-        return 'bg-purple-100 text-purple-700 border-purple-200';
+        return 'text-purple-600 bg-purple-50';
       case 'bundle':
-        return 'bg-blue-100 text-blue-700 border-blue-200';
+        return 'text-blue-600 bg-blue-50';
       default:
-        return 'bg-green-100 text-green-700 border-green-200';
+        return 'text-green-600 bg-green-50';
     }
   };
 
@@ -146,86 +147,129 @@ export default function OffersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
-        <div className="mx-[4%] py-12">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-              <FaTag className="w-6 h-6" />
-            </div>
-            <h1 className="text-4xl font-bold">Special Offers</h1>
-          </div>
-          <p className="text-green-100 text-lg max-w-2xl">
-            Save big on your favorite products! Check out our latest deals and exclusive discounts.
-          </p>
-        </div>
-      </div>
-
-      {/* Breadcrumb */}
+      {/* Header */}
       <div className="bg-white border-b">
-        <div className="mx-[4%] py-4">
-          <p className="text-sm text-gray-600">
-            <Link href="/" className="hover:text-green-700">Home</Link>
-            {' '}/{' '}
-            <span className="text-gray-900 font-medium">Offers</span>
-          </p>
+        <div className="mx-auto max-w-7xl px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Special Offers</h1>
+              <p className="text-gray-600 mt-2">
+                Save big on your favorite herbal products
+              </p>
+            </div>
+            <div className="hidden md:block w-12 h-12 bg-green-50 rounded-full flex items-center justify-center">
+              <FaTag className="w-6 h-6 text-green-600" />
+            </div>
+          </div>
+
+          {/* Filter Tabs - Simplified */}
+          <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+            <button
+              onClick={() => setFilter('all')}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${
+                filter === 'all'
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              All Offers
+            </button>
+            {['flash', 'seasonal', 'bogo', 'bundle', 'discount'].map((type) => (
+              <button
+                key={type}
+                onClick={() => setFilter(type as Offer['type'])}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${
+                  filter === type
+                    ? `${type === 'flash' ? 'bg-red-600' : 
+                       type === 'seasonal' ? 'bg-amber-600' : 
+                       type === 'bogo' ? 'bg-purple-600' : 
+                       type === 'bundle' ? 'bg-blue-600' : 'bg-green-600'} text-white`
+                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="mx-[4%] py-8">
-        {/* Featured Offers Banner */}
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        {/* Featured Offers - Cleaner Design */}
         {featuredOffers.length > 0 && (
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <FaFire className="w-5 h-5 text-orange-500" />
-              <h2 className="text-2xl font-bold text-gray-900">Hot Deals</h2>
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center">
+                <FaFire className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900">Featured Deals</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {featuredOffers.map((offer) => (
                 <div
                   key={offer.id}
-                  className="relative bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl overflow-hidden shadow-xl group"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
                 >
-                  <div className="absolute inset-0 bg-black opacity-20"></div>
-                  <div className="relative p-8 text-white">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <FaBolt className="w-5 h-5" />
-                          <span className="text-sm font-semibold uppercase tracking-wide">
-                            Featured Deal
-                          </span>
-                        </div>
-                        <h3 className="text-3xl font-bold mb-2">{offer.title}</h3>
-                        <p className="text-white/90">{offer.description}</p>
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-3 ${getOfferColor(offer.type)}`}>
+                        {getOfferIcon(offer.type)}
+                        {offer.type.toUpperCase()}
                       </div>
-                      <div className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                        <p className="text-2xl font-bold">{offer.discount}</p>
-                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{offer.title}</h3>
+                      <p className="text-gray-600">{offer.description}</p>
                     </div>
-                    
-                    <div className="flex items-center gap-4 mt-6">
-                      {offer.code && (
-                        <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg">
-                          <span className="font-mono font-semibold">{offer.code}</span>
-                          <button
-                            onClick={() => copyCode(offer.code!)}
-                            className="hover:scale-110 transition-transform"
-                          >
-                            {copiedCode === offer.code ? (
-                              <FiCheck className="w-4 h-4" />
-                            ) : (
-                              <FiCopy className="w-4 h-4" />
-                            )}
-                          </button>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-2 text-sm">
+                    <div className={`text-2xl font-bold px-4 py-2 rounded-lg ${offer.type === 'flash' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                      {offer.discount}
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
                         <FaClock className="w-4 h-4" />
                         <span>Valid until {new Date(offer.validUntil).toLocaleDateString()}</span>
                       </div>
+                      {offer.minPurchase && (
+                        <div className="flex items-center gap-2">
+                          <FaShoppingCart className="w-4 h-4" />
+                          <span>Min: PKR {offer.minPurchase.toLocaleString()}</span>
+                        </div>
+                      )}
                     </div>
+                    
+                    {offer.code && (
+                      <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1">Promo Code</p>
+                          <span className="font-mono font-bold text-gray-900">{offer.code}</span>
+                        </div>
+                        <button
+                          onClick={() => copyCode(offer.code!)}
+                          className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition text-sm font-medium flex items-center gap-2"
+                        >
+                          {copiedCode === offer.code ? (
+                            <>
+                              <FiCheck className="w-4 h-4" />
+                              Copied
+                            </>
+                          ) : (
+                            <>
+                              <FiCopy className="w-4 h-4" />
+                              Copy
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                    
+                    <Link
+                      href="/shop"
+                      className="block w-full py-3 bg-gray-900 text-white text-center rounded-lg hover:bg-gray-800 transition font-medium"
+                    >
+                      Shop Now
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -233,183 +277,125 @@ export default function OffersPage() {
           </div>
         )}
 
-        {/* Filter Tabs */}
-        <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-          <button
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
-              filter === 'all'
-                ? 'bg-green-700 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-            }`}
-          >
-            All Offers
-          </button>
-          <button
-            onClick={() => setFilter('flash')}
-            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
-              filter === 'flash'
-                ? 'bg-red-700 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-            }`}
-          >
-            Flash Sales
-          </button>
-          <button
-            onClick={() => setFilter('seasonal')}
-            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
-              filter === 'seasonal'
-                ? 'bg-orange-700 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-            }`}
-          >
-            Seasonal
-          </button>
-          <button
-            onClick={() => setFilter('bogo')}
-            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
-              filter === 'bogo'
-                ? 'bg-purple-700 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-            }`}
-          >
-            BOGO
-          </button>
-          <button
-            onClick={() => setFilter('bundle')}
-            className={`px-4 py-2 rounded-lg font-medium transition whitespace-nowrap ${
-              filter === 'bundle'
-                ? 'bg-blue-700 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-            }`}
-          >
-            Bundles
-          </button>
-        </div>
-
-        {/* Offers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredOffers.map((offer) => (
-            <div
-              key={offer.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow group"
-            >
-              {/* Image */}
-              <div className="relative aspect-video bg-gradient-to-br from-green-50 to-emerald-50">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border ${getOfferColor(offer.type)}`}>
-                      {getOfferIcon(offer.type)}
-                      <span className="font-bold text-lg">{offer.discount}</span>
+        {/* All Offers Grid - Clean Card Design */}
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">All Offers</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredOffers.map((offer) => (
+              <div
+                key={offer.id}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+              >
+                {/* Offer Header */}
+                <div className="p-6 border-b border-gray-100">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-2 ${getOfferColor(offer.type)}`}>
+                        {getOfferIcon(offer.type)}
+                        {offer.type.toUpperCase()}
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900">{offer.title}</h3>
                     </div>
+                    <span className={`text-xl font-bold ${offer.type === 'flash' ? 'text-red-600' : 'text-green-600'}`}>
+                      {offer.discount}
+                    </span>
                   </div>
+                  <p className="text-gray-600 text-sm">{offer.description}</p>
                 </div>
-                {offer.featured && (
-                  <div className="absolute top-3 right-3">
-                    <div className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1">
-                      <FaFire className="w-3 h-3" />
-                      Hot
-                    </div>
-                  </div>
-                )}
-              </div>
 
-              {/* Content */}
-              <div className="p-6">
-                <div className={`inline-block px-2 py-1 rounded text-xs font-semibold mb-3 ${getOfferColor(offer.type)}`}>
-                  {offer.type.toUpperCase()}
-                </div>
-                
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {offer.title}
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  {offer.description}
-                </p>
-
-                {/* Details */}
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <FaClock className="w-4 h-4 text-gray-400" />
-                    <span>Valid until {new Date(offer.validUntil).toLocaleDateString()}</span>
-                  </div>
-                  {offer.minPurchase && (
+                {/* Offer Details */}
+                <div className="p-6">
+                  <div className="space-y-3 mb-4">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <FaShoppingCart className="w-4 h-4 text-gray-400" />
-                      <span>Min. purchase: PKR {offer.minPurchase.toLocaleString()}</span>
+                      <FaClock className="w-4 h-4 text-gray-400" />
+                      <span>Valid until {new Date(offer.validUntil).toLocaleDateString()}</span>
+                    </div>
+                    {offer.minPurchase && (
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <FaShoppingCart className="w-4 h-4 text-gray-400" />
+                        <span>Min. purchase: PKR {offer.minPurchase.toLocaleString()}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Promo Code */}
+                  {offer.code && (
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1">Use code</p>
+                          <span className="font-mono font-bold text-gray-900">{offer.code}</span>
+                        </div>
+                        <button
+                          onClick={() => copyCode(offer.code!)}
+                          className="px-3 py-1.5 bg-gray-900 text-white rounded hover:bg-gray-800 transition text-sm font-medium flex items-center gap-2"
+                        >
+                          {copiedCode === offer.code ? (
+                            <FiCheck className="w-4 h-4" />
+                          ) : (
+                            <FiCopy className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   )}
+
+                  {/* CTA */}
+                  <Link
+                    href="/shop"
+                    className="block w-full py-3 bg-gray-900 text-white text-center rounded-lg hover:bg-gray-800 transition font-medium"
+                  >
+                    View Products
+                  </Link>
                 </div>
-
-                {/* Code */}
-                {offer.code && (
-                  <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                    <p className="text-xs text-gray-600 mb-1">Promo Code</p>
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-green-700">{offer.code}</span>
-                      <button
-                        onClick={() => copyCode(offer.code!)}
-                        className="px-3 py-1 bg-green-700 text-white rounded hover:bg-green-600 transition text-sm flex items-center gap-2"
-                      >
-                        {copiedCode === offer.code ? (
-                          <>
-                            <FiCheck className="w-4 h-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <FiCopy className="w-4 h-4" />
-                            Copy
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* CTA */}
-                <Link
-                  href="/shop"
-                  className="block w-full py-3 bg-green-700 text-white text-center rounded-lg hover:bg-green-600 transition font-semibold"
-                >
-                  Shop Now
-                </Link>
               </div>
+            ))}
+          </div>
+
+          {/* No Results */}
+          {filteredOffers.length === 0 && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FaTag className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No offers found</h3>
+              <p className="text-gray-600 mb-6">Try selecting a different category</p>
+              <button
+                onClick={() => setFilter('all')}
+                className="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition font-medium"
+              >
+                Show All Offers
+              </button>
             </div>
-          ))}
+          )}
         </div>
 
-        {/* No Results */}
-        {filteredOffers.length === 0 && (
-          <div className="text-center py-12">
-            <FaTag className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No offers found</h3>
-            <p className="text-gray-600 mb-6">Try a different category</p>
-            <button
-              onClick={() => setFilter('all')}
-              className="px-6 py-3 bg-green-700 text-white rounded-lg hover:bg-green-600 transition font-semibold"
-            >
-              View All Offers
-            </button>
-          </div>
-        )}
-
-        {/* Info Banner */}
-        <div className="mt-12 bg-blue-50 border border-blue-200 rounded-xl p-6">
+        {/* How to Use Banner - Clean Design */}
+        <div className="mt-12 bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <FaStar className="w-6 h-6 text-blue-600" />
+            <div className="w-10 h-10 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0">
+              <FaCheckCircle className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2">How to Use Promo Codes</h3>
-              <ol className="text-sm text-gray-600 space-y-1 list-decimal list-inside">
-                <li>Add products to your cart</li>
-                <li>Proceed to checkout</li>
-                <li>Enter the promo code in the designated field</li>
-                <li>Click "Apply" to see your discount</li>
-                <li>Complete your purchase and enjoy your savings!</li>
-              </ol>
-              <p className="text-xs text-gray-500 mt-3">
+              <h3 className="font-medium text-gray-900 mb-3">How to Use Promo Codes</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { step: '1', title: 'Add Products', desc: 'Select items and add to cart' },
+                  { step: '2', title: 'Go to Checkout', desc: 'Proceed to checkout page' },
+                  { step: '3', title: 'Apply Code', desc: 'Enter promo code in the field' },
+                  { step: '4', title: 'Enjoy Savings', desc: 'Complete your purchase' }
+                ].map((item) => (
+                  <div key={item.step} className="text-center p-4 border border-gray-100 rounded-lg">
+                    <div className="w-8 h-8 bg-gray-900 text-white rounded-full flex items-center justify-center text-sm font-bold mx-auto mb-2">
+                      {item.step}
+                    </div>
+                    <p className="font-medium text-gray-900 mb-1">{item.title}</p>
+                    <p className="text-sm text-gray-600">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-gray-500 mt-4">
                 * Terms and conditions apply. Offers cannot be combined unless specified.
               </p>
             </div>
