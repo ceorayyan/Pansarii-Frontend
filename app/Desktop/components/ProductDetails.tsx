@@ -18,6 +18,109 @@ import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishList";
 import { toast } from 'react-toastify';
 
+// Skeletal Loading Component for ProductDetails
+function ProductDetailsSkeleton() {
+  return (
+    <div className="h-screen max-h-screen overflow-hidden bg-white animate-pulse">
+      <div className="h-full max-h-full flex flex-col lg:flex-row gap-2 lg:gap-3 p-2">
+        
+        {/* Left Column - Images Skeleton */}
+        <div className="lg:w-2/5 h-full flex flex-col relative">
+          <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-200 mb-3"></div>
+          
+          {/* Thumbnail Images Skeleton */}
+          <div className="flex gap-2">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="w-12 h-12 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Column - Product Info Skeleton */}
+        <div className="lg:w-3/5 h-full overflow-y-auto">
+          <div className="space-y-4">
+            {/* Product Names Skeleton */}
+            <div className="space-y-2">
+              <div className="h-8 bg-gray-200 rounded w-48"></div>
+              <div className="h-4 bg-gray-200 rounded w-32"></div>
+            </div>
+            
+            {/* Rating & Reviews Skeleton */}
+            <div className="flex items-center gap-4">
+              <div className="h-4 bg-gray-200 rounded w-24"></div>
+              <div className="h-4 bg-gray-200 rounded w-20"></div>
+            </div>
+
+            {/* Price Skeleton */}
+            <div className="flex items-center gap-2">
+              <div className="h-8 bg-gray-200 rounded w-24"></div>
+              <div className="h-6 bg-gray-200 rounded w-16"></div>
+            </div>
+
+            {/* Ayurvedic Info Section Skeleton */}
+            <div className="flex flex-wrap gap-2">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="w-16 h-8 bg-gray-200 rounded"></div>
+              ))}
+            </div>
+
+            {/* Features Skeleton */}
+            <div className="grid grid-cols-2 gap-2">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="rounded p-2 bg-gray-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-gray-200 rounded"></div>
+                    <div className="h-4 bg-gray-200 rounded w-32"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pansari Points Skeleton */}
+            <div className="p-2 bg-gray-100 rounded">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 bg-gray-200 rounded"></div>
+                <div className="h-4 bg-gray-200 rounded w-40"></div>
+              </div>
+            </div>
+
+            {/* Size Selection Skeleton */}
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-16"></div>
+              <div className="flex gap-2">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-12 h-8 bg-gray-200 rounded-full"></div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quantity Skeleton */}
+            <div className="space-y-2">
+              <div className="h-4 bg-gray-200 rounded w-20"></div>
+              <div className="flex items-center gap-4">
+                <div className="w-32 h-8 bg-gray-200 rounded"></div>
+                <div className="space-y-1">
+                  <div className="h-3 bg-gray-200 rounded w-16"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons Skeleton */}
+            <div className="space-y-2 pt-4">
+              <div className="flex gap-2">
+                <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+              </div>
+              <div className="h-10 bg-gray-200 rounded-lg"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface FeatureItem {
   text: string;
   icon?: string;
@@ -54,8 +157,10 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || '15ml');
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Zoom state EXACTLY like modal
+  // Zoom state
   const [isZoomed, setIsZoomed] = useState<boolean>(false);
   const [zoomPosition, setZoomPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const imageRef = useRef<HTMLDivElement>(null);
@@ -63,12 +168,31 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   const additionalImages = product.additionalImages || [];
   const productId = product.productId;
 
+  // Check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!(token && user));
+    
+    // Simulate loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   // Check if product is in wishlist
   useEffect(() => {
-    if (productId) {
+    if (productId && isLoggedIn) {
       setIsWishlisted(isInWishlist(productId));
     }
-  }, [productId, isInWishlist]);
+  }, [productId, isInWishlist, isLoggedIn]);
+
+  // Show skeleton loading
+  if (isLoading) {
+    return <ProductDetailsSkeleton />;
+  }
 
   const handleImageClick = (image: string) => {
     setSelectedImage(image);
@@ -85,7 +209,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     }
   };
 
-  // Image hover for zoom effect EXACTLY like modal
+  // Image hover for zoom effect
   const handleImageHover = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (!isZoomed || !imageRef.current) return;
 
@@ -189,9 +313,34 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     }, 1600);
   };
 
-  // Toggle wishlist - Updated to match the improved functionality
+  // Toggle wishlist with login check
   const handleWishlistToggle = () => {
     if (!productId) return;
+    
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      toast.warning(
+        <div>
+          <div className="font-semibold">Please login to add to wishlist</div>
+          <div className="text-sm opacity-90 mt-1">Save your favorite products by logging in</div>
+        </div>,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+        }
+      );
+      
+      // Redirect to login after a delay
+      setTimeout(() => {
+        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+      }, 1500);
+      return;
+    }
     
     if (isWishlisted) {
       removeFromWishlist(productId);
@@ -233,7 +382,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     }
   };
 
-  // WhatsApp order function - Updated styling to outline style
+  // WhatsApp order function
   const handleWhatsAppOrder = () => {
     const totalPrice = product.price * quantity;
     
@@ -258,9 +407,9 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     <div className="h-screen max-h-screen overflow-hidden bg-white">
       <div className="h-full max-h-full flex flex-col lg:flex-row gap-2 lg:gap-3 p-2">
         
-        {/* Left Column - Images EXACTLY like before */}
+        {/* Left Column - Images */}
         <div className="lg:w-2/5 h-full flex flex-col relative">
-          {/* Wishlist Button - EXACTLY same but with improved styling */}
+          {/* Wishlist Button with login check */}
           <button
             onClick={handleWishlistToggle}
             className={`absolute top-2 left-2 z-20 p-2 rounded-full shadow-md transition-all duration-300 hover:scale-110 ${
@@ -268,7 +417,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 ? 'bg-red-50 border border-red-200 hover:bg-red-100' 
                 : 'bg-white/90 border border-gray-200 hover:bg-white'
             }`}
-            title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            title={!isLoggedIn ? "Login to add to wishlist" : isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
             {isWishlisted ? (
               <FaHeart className="w-4 h-4 text-red-500" />
@@ -277,7 +426,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             )}
           </button>
 
-          {/* Zoom Toggle Button - EXACTLY like modal */}
+          {/* Zoom Toggle Button */}
           <button
             onClick={toggleZoom}
             className="absolute top-2 right-2 z-20 bg-white/90 hover:bg-white p-1.5 rounded-full shadow-md transition-all z-20 border border-gray-200"
@@ -290,7 +439,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             )}
           </button>
 
-          {/* Main Image Container with Zoom EXACTLY like modal */}
+          {/* Main Image Container with Zoom */}
           <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-50 mb-3">
             <div 
               ref={imageRef}
@@ -309,12 +458,12 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 }}
               />
               
-              {/* Zoom Indicator EXACTLY like modal */}
+              {/* Zoom Indicator */}
               <div className="absolute bottom-3 right-3 bg-black/60 text-white p-2 rounded-full">
                 <FaSearchPlus className="w-4 h-4" />
               </div>
               
-              {/* Zoom Preview EXACTLY like modal */}
+              {/* Zoom Preview */}
               {isZoomed && (
                 <div className="absolute top-3 left-3 bg-green-600 text-white text-xs px-2 py-1 rounded">
                   Zoom Active (2x)
@@ -323,7 +472,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             </div>
           </div>
 
-          {/* Thumbnail Images EXACTLY same */}
+          {/* Thumbnail Images */}
           {additionalImages.length > 0 && (
             <div className="flex gap-2 overflow-x-auto">
               {[product.img, ...additionalImages].map((image, index) => (
@@ -347,16 +496,16 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           )}
         </div>
 
-        {/* Right Column - Product Info EXACTLY same styling */}
+        {/* Right Column - Product Info */}
         <div className="lg:w-3/5 h-full overflow-y-auto">
           <div className="space-y-2">
-            {/* Product Names - EXACTLY same */}
+            {/* Product Names */}
             <div className="mt-2">
               <h1 className="text-lg font-bold text-gray-900 leading-tight">{product.nameEn}</h1>
               <p className="text-xs text-gray-700 mt-0.5">{product.nameUr}</p>
             </div>
             
-            {/* Benefits - EXACTLY same */}
+            {/* Benefits */}
             {product.benefits && product.benefits.length > 0 && (
               <div className="text-gray-600 text-[10px] flex flex-wrap items-center gap-x-1 mt-2">
                 {product.benefits.map((benefit, index) => (
@@ -370,7 +519,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Rating & Reviews - EXACTLY same */}
+            {/* Rating & Reviews */}
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-center gap-1">
                 <FaStar className="w-3 h-3 text-yellow-400" />
@@ -383,7 +532,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             </div>
 
-            {/* Price - EXACTLY same */}
+            {/* Price */}
             <div className="mt-2">
               <div className="flex items-center gap-1 flex-wrap">
                 <span className="text-lg font-bold text-gray-900">PKR {product.price.toLocaleString()}</span>
@@ -398,7 +547,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             </div>
 
-            {/* Ayurvedic Info Section - EXACTLY same */}
+            {/* Ayurvedic Info Section */}
             {product.infoLines && product.infoLines.length > 0 && (
               <div className="mt-2">
                 <div className="flex flex-wrap gap-1">
@@ -414,7 +563,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Features - EXACTLY same */}
+            {/* Features */}
             {product.features && product.features.length > 0 && (
               <div className="mt-2">
                 <div className="grid grid-cols-2 gap-1">
@@ -465,7 +614,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Pansari Points - EXACTLY same */}
+            {/* Pansari Points */}
             {product.points && (
               <div className="mt-2">
                 <div className="bg-[#6464641A] rounded p-1.5 flex items-center justify-between">
@@ -482,7 +631,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Size Selection - EXACTLY same */}
+            {/* Size Selection */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="mt-2">
                 <h3 className="font-semibold text-gray-900 text-xs mb-1">Size</h3>
@@ -504,7 +653,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             )}
 
-            {/* Quantity - EXACTLY same */}
+            {/* Quantity */}
             <div className="mt-2">
               <h3 className="font-semibold text-gray-900 text-xs mb-1">Quantity</h3>
               <div className="flex items-center gap-4">
@@ -527,7 +676,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                   </button>
                 </div>
                 
-                {/* Subtotal Display - EXACTLY same */}
+                {/* Subtotal Display */}
                 <div className="text-xs ml-auto">
                   <div className="text-gray-700">Subtotal:</div>
                   <div className="font-bold text-green-700">PKR {(product.price * quantity).toLocaleString()}</div>
@@ -535,9 +684,9 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
               </div>
             </div>
 
-            {/* Action Buttons - Updated with new WhatsApp button styling */}
+            {/* Action Buttons */}
             <div className="mt-2 pt-2">
-              {/* Primary Buttons Row - EXACTLY same */}
+              {/* Primary Buttons Row */}
               <div className="flex flex-col sm:flex-row gap-1.5 mb-2">
                 <button 
                   onClick={handleAddToCart}
@@ -554,7 +703,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 </button>
               </div>
               
-              {/* WhatsApp Button Row - Updated to outline style */}
+              {/* WhatsApp Button Row */}
               <div className="w-full">
                 <button 
                   onClick={handleWhatsAppOrder}

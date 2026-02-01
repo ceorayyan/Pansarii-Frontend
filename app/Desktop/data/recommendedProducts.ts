@@ -1,7 +1,7 @@
 export const recommendedProducts = [
   {
     id: 1,
-    img: "/images/recommended1.jpg",
+    img: "/images/product.png",
     nameEn: "Jojoba Oil",
     nameUr: "جوجوبا آئل",
     description: "For skin & hair care",
@@ -13,7 +13,7 @@ export const recommendedProducts = [
   },
   {
     id: 2,
-    img: "/images/recommended2.jpg",
+    img: "/images/product.png",
     nameEn: "Vitamin C Serum",
     nameUr: "وٹامن سی سیرم",
     description: "Brightening & anti-aging",
@@ -25,7 +25,7 @@ export const recommendedProducts = [
   },
   {
     id: 3,
-    img: "/images/recommended3.jpg",
+    img: "/images/product.png",
     nameEn: "Rose Water Toner",
     nameUr: "گلاب کا پانی ٹونر",
     description: "Hydrating & refreshing",
@@ -37,7 +37,7 @@ export const recommendedProducts = [
   },
   {
     id: 4,
-    img: "/images/recommended4.jpg",
+    img: "/images/product.png",
     nameEn: "Hyaluronic Acid Moisturizer",
     nameUr: "ہائیلورونک ایسڈ موئسچرائزر",
     description: "Deep hydration for dry skin",
@@ -49,7 +49,7 @@ export const recommendedProducts = [
   },
   {
     id: 5,
-    img: "/images/recommended5.jpg",
+    img: "/images/product.png",
     nameEn: "Tea Tree Face Wash",
     nameUr: "ٹی ٹری فیس واش",
     description: "For acne-prone skin",
@@ -61,7 +61,7 @@ export const recommendedProducts = [
   },
   {
     id: 6,
-    img: "/images/recommended6.jpg",
+    img: "/images/product.png",
     nameEn: "Argan Oil Hair Mask",
     nameUr: "ارگن آئل ہیئر ماسک",
     description: "Repair damaged hair",
@@ -73,7 +73,7 @@ export const recommendedProducts = [
   },
   {
     id: 7,
-    img: "/images/recommended7.jpg",
+    img: "/images/product.png",
     nameEn: "Niacinamide 10% Serum",
     nameUr: "نائسینامائڈ 10% سیرم",
     description: "Pore refining & oil control",
@@ -85,7 +85,7 @@ export const recommendedProducts = [
   },
   {
     id: 8,
-    img: "/images/recommended8.jpg",
+    img: "/images/product.png",
     nameEn: "Saffron Face Cream",
     nameUr: "زعفران فیس کریم",
     description: "Glow & radiance",
@@ -97,7 +97,7 @@ export const recommendedProducts = [
   },
   {
     id: 9,
-    img: "/images/recommended9.jpg",
+    img: "/images/product.png",
     nameEn: "Aloe Vera Gel",
     nameUr: "ایلوویرا جیل",
     description: "Soothing & cooling",
@@ -109,7 +109,7 @@ export const recommendedProducts = [
   },
   {
     id: 10,
-    img: "/images/recommended10.jpg",
+    img: "/images/product.png",
     nameEn: "Retinol Night Cream",
     nameUr: "ریٹینول نائٹ کریم",
     description: "Anti-wrinkle treatment",
@@ -121,7 +121,7 @@ export const recommendedProducts = [
   },
   {
     id: 11,
-    img: "/images/recommended11.jpg",
+    img: "/images/product.png",
     nameEn: "Charcoal Clay Mask",
     nameUr: "چارکول کلے ماسک",
     description: "Deep pore cleansing",
@@ -133,7 +133,7 @@ export const recommendedProducts = [
   },
   {
     id: 12,
-    img: "/images/recommended12.jpg",
+    img: "/images/product.png",
     nameEn: "Kojic Acid Soap",
     nameUr: "کوجک ایسڈ صابن",
     description: "Skin brightening",
@@ -145,7 +145,7 @@ export const recommendedProducts = [
   },
   {
     id: 13,
-    img: "/images/recommended13.jpg",
+    img: "/images/product.png",
     nameEn: "Castor Oil",
     nameUr: "ارنڈی کا تیل",
     description: "For hair growth & lashes",
@@ -157,7 +157,7 @@ export const recommendedProducts = [
   },
   {
     id: 14,
-    img: "/images/recommended14.jpg",
+    img: "/images/product.png",
     nameEn: "Sunscreen SPF 50",
     nameUr: "سن اسکرین SPF 50",
     description: "PA++++ protection",
@@ -169,7 +169,7 @@ export const recommendedProducts = [
   },
   {
     id: 15,
-    img: "/images/recommended15.jpg",
+    img: "/images/product.png",
     nameEn: "Hair Growth Serum",
     nameUr: "ہیئر گروتھ سیرم",
     description: "Reduces hair fall",
@@ -181,7 +181,7 @@ export const recommendedProducts = [
   },
   {
     id: 16,
-    img: "/images/recommended16.jpg",
+    img: "/images/product.png",
     nameEn: "Vitamin E Cream",
     nameUr: "وٹامن ای کریم",
     description: "Nourishes dry skin",
@@ -193,7 +193,7 @@ export const recommendedProducts = [
   },
   {
     id: 17,
-    img: "/images/recommended17.jpg",
+    img: "/images/product.png",
     nameEn: "Lactic Acid 10%",
     nameUr: "لیکٹک ایسڈ 10%",
     description: "Gentle exfoliation",
@@ -205,7 +205,7 @@ export const recommendedProducts = [
   },
   {
     id: 18,
-    img: "/images/recommended18.jpg",
+    img: "/images/product.png",
     nameEn: "Henna Hair Color",
     nameUr: "حنا ہیئر کلر",
     description: "Natural & chemical-free",
@@ -217,7 +217,7 @@ export const recommendedProducts = [
   },
   {
     id: 19,
-    img: "/images/recommended19.jpg",
+    img: "/images/product.png",
     nameEn: "Glycolic Acid Toner",
     nameUr: "گلائکولک ایسڈ ٹونر",
     description: "Exfoliates & brightens",
@@ -229,7 +229,7 @@ export const recommendedProducts = [
   },
   {
     id: 20,
-    img: "/images/recommended20.jpg",
+    img: "/images/product.png",
     nameEn: "Multani Mitti Powder",
     nameUr: "ملتانی مٹی پاؤڈر",
     description: "Deep cleansing face pack",

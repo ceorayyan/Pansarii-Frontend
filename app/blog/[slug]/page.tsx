@@ -2,6 +2,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { blogPosts } from "../../Desktop/data/blogposts";
@@ -18,12 +19,132 @@ import {
   FaArrowRight
 } from "react-icons/fa";
 
+// Skeletal Loading Component for Blog Detail
+function BlogDetailSkeleton() {
+  return (
+    <div className="min-h-screen bg-white animate-pulse">
+      {/* Back Button Skeleton */}
+      <div className="bg-gray-50 border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="h-6 bg-gray-200 rounded w-24"></div>
+        </div>
+      </div>
+
+      {/* Article Content Skeleton */}
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Category Skeleton */}
+        <div className="mb-6">
+          <div className="w-32 h-8 bg-gray-200 rounded-full"></div>
+        </div>
+
+        {/* Title Skeleton */}
+        <div className="h-12 bg-gray-300 rounded w-full mb-6"></div>
+
+        {/* Meta Information Skeleton */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-8 border-b border-gray-200">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-32"></div>
+                <div className="flex gap-3">
+                  <div className="h-3 bg-gray-200 rounded w-20"></div>
+                  <div className="h-3 bg-gray-200 rounded w-16"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="w-8 h-8 bg-gray-200 rounded-full"></div>
+            ))}
+          </div>
+        </div>
+
+        {/* Featured Image Skeleton */}
+        <div className="mb-12">
+          <div className="w-full h-[400px] bg-gray-300 rounded-xl"></div>
+        </div>
+
+        {/* Article Content Skeleton */}
+        <div className="space-y-4 mb-12">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="space-y-2">
+              <div className={`h-4 bg-gray-200 rounded ${i % 3 === 0 ? 'w-full' : 'w-11/12'}`}></div>
+              <div className={`h-4 bg-gray-200 rounded ${i % 3 === 0 ? 'w-11/12' : 'w-full'}`}></div>
+              <div className={`h-4 bg-gray-200 rounded ${i % 3 === 0 ? 'w-4/5' : 'w-10/12'}`}></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tags Skeleton */}
+        <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-gray-200">
+          <div className="h-6 bg-gray-200 rounded w-16"></div>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="w-20 h-8 bg-gray-200 rounded-lg"></div>
+          ))}
+        </div>
+
+        {/* Author Bio Skeleton */}
+        <div className="bg-gray-50 rounded-xl p-8 mb-12">
+          <div className="flex flex-col sm:flex-row items-start gap-6">
+            <div className="w-20 h-20 bg-gray-200 rounded-full"></div>
+            <div className="space-y-3 flex-1">
+              <div className="h-6 bg-gray-200 rounded w-48"></div>
+              <div className="h-4 bg-gray-200 rounded w-full"></div>
+              <div className="h-4 bg-gray-200 rounded w-11/12"></div>
+              <div className="h-4 bg-gray-200 rounded w-10/12"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Articles Skeleton */}
+        <div className="mb-12">
+          <div className="h-8 bg-gray-300 rounded w-48 mb-6"></div>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="bg-white border border-gray-200 rounded-xl p-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg"></div>
+                  <div className="space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-40"></div>
+                    <div className="h-3 bg-gray-200 rounded w-24"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* CTA Skeleton */}
+        <div className="text-center">
+          <div className="h-12 bg-gray-200 rounded-lg w-64 mx-auto"></div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
 export default function BlogDetailPage() {
   const params = useParams();
   const router = useRouter();
   const slug = params.slug as string;
+  const [isLoading, setIsLoading] = useState(true);
   
   const post = blogPosts.find(post => post.slug === slug);
+
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <BlogDetailSkeleton />;
+  }
 
   if (!post) {
     return (

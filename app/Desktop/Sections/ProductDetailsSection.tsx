@@ -10,6 +10,103 @@ import 'react-toastify/dist/ReactToastify.css';
 import VideoProductsSection from "./ProductDetails/VideoProductsSection";
 import RecommendedProductsSection from "./ProductDetails/RecommendedProductsSection";
 import DirectionToUse from "../components/directiontouse";
+import InfiniteScrollingReviews from "./ProductDetails/InfiniteScrollingReviews";
+
+// Skeletal Loading Components
+function ProductDetailsSectionSkeleton() {
+  return (
+    <div className="w-full bg-white animate-pulse">
+      {/* Video Section Skeleton */}
+      <div className="w-full h-64 bg-gray-200"></div>
+      
+      {/* Product Info Tabs Skeleton */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Tabs Navigation Skeleton */}
+        <div className="border-b border-gray-200 mb-6">
+          <div className="flex gap-8 overflow-x-auto pb-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="w-24 h-6 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tab Content Skeleton */}
+        <div className="bg-white rounded-lg p-6 space-y-6">
+          {/* Description Skeleton */}
+          <div className="space-y-4">
+            <div className="h-8 bg-gray-200 rounded w-64"></div>
+            <div className="space-y-3">
+              <div className="h-4 bg-gray-200 rounded w-full"></div>
+              <div className="h-4 bg-gray-200 rounded w-11/12"></div>
+              <div className="h-4 bg-gray-200 rounded w-10/12"></div>
+            </div>
+            
+            {/* Benefits Skeleton */}
+            <div className="space-y-3">
+              <div className="h-6 bg-gray-200 rounded w-48"></div>
+              <div className="space-y-2">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="w-5 h-5 bg-gray-200 rounded-full"></div>
+                    <div className="h-4 bg-gray-200 rounded w-64"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Feature Cards Skeleton */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="p-4 bg-gray-100 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-gray-200 rounded w-20"></div>
+                      <div className="h-3 bg-gray-200 rounded w-16"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Banners Skeleton */}
+      <div className="space-y-4">
+        <div className="w-full h-64 bg-gray-200"></div>
+        <div className="w-full h-64 bg-gray-200"></div>
+      </div>
+      
+      {/* Bottom Bar Skeleton */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 md:gap-4">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="w-14 h-14 bg-gray-200 rounded-lg"></div>
+              <div className="space-y-2 flex-1 min-w-0">
+                <div className="h-4 bg-gray-200 rounded w-32"></div>
+                <div className="h-3 bg-gray-200 rounded w-24"></div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+              <div className="flex items-center gap-2">
+                <div className="w-24 h-8 bg-gray-200 rounded"></div>
+                <div className="w-32 h-8 bg-gray-200 rounded-lg"></div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+                <div className="h-10 bg-gray-200 rounded-lg flex-1"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface ProductDetailsSectionProps {
   product?: any;
@@ -38,6 +135,8 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   const sectionRef = useRef<HTMLDivElement>(null);
   const reviewsContainerRef = useRef<HTMLDivElement>(null);
@@ -47,25 +146,31 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
   const productId = product?.productId || product?.id;
   const isWishlisted = productId ? isInWishlist(productId) : false;
 
+  // Check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const user = localStorage.getItem('user');
+    setIsLoggedIn(!!(token && user));
+    
+    // Simulate loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   // Generate sample reviews
   const generateReviews = useCallback((pageNum: number) => {
     const newReviews: Review[] = [];
-    const reviewCount = pageNum === 1 ? 5 : 3; // Load 5 initially, then 3 each time
+    const reviewCount = pageNum === 1 ? 5 : 3;
     
     for (let i = 0; i < reviewCount; i++) {
       const id = (pageNum - 1) * 3 + i + 1;
       const ratings = [4, 4.5, 5, 5, 4.5, 5, 4, 5, 4.5, 5];
       const authors = [
-        "Ahmad Raza",
-        "Fatima Khan",
-        "Usman Ali",
-        "Sana Malik",
-        "Bilal Ahmed",
-        "Zainab Hassan",
-        "Omar Farooq",
-        "Ayesha Siddiqui",
-        "Haris Mahmood",
-        "Nida Shah"
+        "Ahmad Raza", "Fatima Khan", "Usman Ali", "Sana Malik", "Bilal Ahmed",
+        "Zainab Hassan", "Omar Farooq", "Ayesha Siddiqui", "Haris Mahmood", "Nida Shah"
       ];
       const comments = [
         "This product exceeded my expectations! The quality is outstanding and it works exactly as described. I've been using it for a month and can see visible improvements.",
@@ -80,16 +185,8 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
         "Worth the investment. While it's priced higher than some alternatives, the purity and effectiveness justify every rupee spent."
       ];
       const dates = [
-        "2 days ago",
-        "1 week ago",
-        "2 weeks ago",
-        "3 weeks ago",
-        "1 month ago",
-        "2 months ago",
-        "3 months ago",
-        "4 months ago",
-        "5 months ago",
-        "6 months ago"
+        "2 days ago", "1 week ago", "2 weeks ago", "3 weeks ago", "1 month ago",
+        "2 months ago", "3 months ago", "4 months ago", "5 months ago", "6 months ago"
       ];
       
       newReviews.push({
@@ -100,11 +197,7 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
         comment: comments[(id - 1) % comments.length],
         verified: Math.random() > 0.3,
         helpful: Math.floor(Math.random() * 50),
-        images: Math.random() > 0.7 ? [
-          '/images/review1.jpg',
-          '/images/review2.jpg',
-          '/images/review3.jpg'
-        ] : undefined
+        images: Math.random() > 0.7 ? ['/images/review1.jpg', '/images/review2.jpg', '/images/review3.jpg'] : undefined
       });
     }
     
@@ -125,7 +218,6 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
         setReviews(prev => [...prev, ...newReviews]);
       }
       
-      // Stop loading after 3 pages
       if (page >= 3) {
         setHasMore(false);
       }
@@ -186,6 +278,11 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
     };
   }, []);
 
+  // Show skeleton loading
+  if (isLoading) {
+    return <ProductDetailsSectionSkeleton />;
+  }
+
   // Helper function to render stars
   const renderStars = (rating: number) => {
     return (
@@ -209,7 +306,7 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
     );
   };
 
-  // Cart and wishlist functions remain the same
+  // Add to cart functionality
   const handleAddToCart = () => {
     if (!productId) {
       toast.error('Failed to add item to cart!', {
@@ -294,8 +391,34 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
     }, 1600);
   };
 
+  // Toggle wishlist with login check
   const toggleWishlist = () => {
     if (!productId) return;
+    
+    // Check if user is logged in
+    if (!isLoggedIn) {
+      toast.warning(
+        <div>
+          <div className="font-semibold">Please login to add to wishlist</div>
+          <div className="text-sm opacity-90 mt-1">Save your favorite products by logging in</div>
+        </div>,
+        {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          theme: "light",
+        }
+      );
+      
+      // Redirect to login after a delay
+      setTimeout(() => {
+        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+      }, 1500);
+      return;
+    }
     
     if (isWishlisted) {
       removeFromWishlist(productId);
@@ -680,9 +803,9 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
                     </div>
                   )}
                 </div>
+            <InfiniteScrollingReviews/>
               </div>
             )}
-
             {activeTab === 'howToUse' && (
               <div className="space-y-4">
                 <h2 className="text-2xl font-bold text-gray-900">How to Use</h2>
@@ -745,7 +868,7 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
         <DirectionToUse/>
         <RecommendedProductsSection />
         
-        {/* Enhanced Bottom Bar - Same as before */}
+        {/* Enhanced Bottom Bar */}
         {showBottomBar && product && (
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-50 animate-slide-up">
             <div className="max-w-7xl mx-auto px-4 py-3">
@@ -830,10 +953,11 @@ export default function ProductDetailsSection({ product }: ProductDetailsSection
                       </button>
                     </div>
 
-                    {/* Wishlist */}
+                    {/* Wishlist with login check */}
                     <button 
                       onClick={toggleWishlist}
                       className="p-2.5 border border-gray-300 rounded-lg hover:bg-red-50 hover:border-red-300 transition flex-shrink-0"
+                      title={!isLoggedIn ? "Login to add to wishlist" : isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
                     >
                       {isWishlisted ? (
                         <FaHeart className="w-5 h-5 text-red-500" />

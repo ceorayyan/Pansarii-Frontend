@@ -1,13 +1,83 @@
 // app/shop/page.tsx
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { Suspense, useState, useMemo, useEffect, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Product, FilterOptions, filterProducts, getCategoriesFromProducts, getPriceRangeFromProducts } from "../../utils/filterProducts";
-import ShopContent from "./ShopContent";
 import { allProducts } from "@/app/Desktop/data/products";
 
-export default function Shop() {
+// Skeletal Loading component for Suspense fallback
+function ShopLoading() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container-custom py-12">
+        {/* Results Banner Skeleton */}
+        <div className="mb-6">
+          <div className="bg-gray-100 border border-gray-200 rounded-xl p-6 shadow-sm animate-pulse">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-3">
+                <div className="h-6 bg-gray-200 rounded w-64"></div>
+                <div className="flex items-center gap-2">
+                  <div className="h-4 bg-gray-200 rounded w-32"></div>
+                  <div className="h-4 bg-gray-200 rounded w-16"></div>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="h-8 bg-gray-200 rounded-lg w-20"></div>
+                <div className="h-8 bg-gray-200 rounded-lg w-24"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Shop Content Skeleton */}
+        <div className="bg-white rounded-lg p-4">
+          {/* Search and Filter Bar Skeleton */}
+          <div className="mb-6">
+            <div className="h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+          </div>
+
+          {/* Category Menu Button Skeleton */}
+          <div className="mb-6">
+            <div className="h-10 bg-gray-200 rounded-lg animate-pulse w-48"></div>
+          </div>
+
+          {/* Results Info Skeleton */}
+          <div className="my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-2">
+              <div className="h-6 bg-gray-200 rounded animate-pulse w-64"></div>
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-48"></div>
+            </div>
+            <div className="h-5 bg-gray-200 rounded animate-pulse w-40"></div>
+          </div>
+
+          {/* Product Grid Skeleton */}
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="bg-white rounded-lg border border-gray-200 animate-pulse">
+                <div className="aspect-square bg-gray-200 rounded-t-lg"></div>
+                <div className="p-4 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded"></div>
+                  <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination Skeleton */}
+          <div className="mt-8 flex justify-center">
+            <div className="h-10 bg-gray-200 rounded-lg animate-pulse w-64"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Main shop content component that uses useSearchParams
+function ShopContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -143,14 +213,102 @@ export default function Shop() {
     router.push('/shop');
   }, [priceRange.max, router]);
 
+  // Dynamically import ShopContent component to avoid circular dependencies
+  const DynamicShopContent = useMemo(() => 
+    dynamic(() => import('./ShopContent'), { 
+      loading: () => (
+        <div className="min-h-screen bg-gray-50">
+          <div className="container-custom py-12">
+            {/* Shop Content Skeleton */}
+            <div className="bg-white rounded-lg p-4">
+              {/* Search and Filter Bar Skeleton */}
+              <div className="mb-6">
+                <div className="h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+              </div>
+
+              {/* Category Menu Button Skeleton */}
+              <div className="mb-6">
+                <div className="h-10 bg-gray-200 rounded-lg animate-pulse w-48"></div>
+              </div>
+
+              {/* Results Info Skeleton */}
+              <div className="my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-2">
+                  <div className="h-6 bg-gray-200 rounded animate-pulse w-64"></div>
+                  <div className="h-4 bg-gray-200 rounded animate-pulse w-48"></div>
+                </div>
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-40"></div>
+              </div>
+
+              {/* Product Grid Skeleton */}
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+                {[...Array(12)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-lg border border-gray-200 animate-pulse">
+                    <div className="aspect-square bg-gray-200 rounded-t-lg"></div>
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-gray-200 rounded"></div>
+                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination Skeleton */}
+              <div className="mt-8 flex justify-center">
+                <div className="h-10 bg-gray-200 rounded-lg animate-pulse w-64"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+      ssr: false 
+    }), 
+  []);
+
   // Loading state
   if (safeProducts.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container-custom py-12">
-          <div className="text-center py-20">
-            <div className="spinner mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading products...</p>
+          <div className="bg-white rounded-lg p-4">
+            {/* Search and Filter Bar Skeleton */}
+            <div className="mb-6">
+              <div className="h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+            </div>
+
+            {/* Category Menu Button Skeleton */}
+            <div className="mb-6">
+              <div className="h-10 bg-gray-200 rounded-lg animate-pulse w-48"></div>
+            </div>
+
+            {/* Results Info Skeleton */}
+            <div className="my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-2">
+                <div className="h-6 bg-gray-200 rounded animate-pulse w-64"></div>
+                <div className="h-4 bg-gray-200 rounded animate-pulse w-48"></div>
+              </div>
+              <div className="h-5 bg-gray-200 rounded animate-pulse w-40"></div>
+            </div>
+
+            {/* Product Grid Skeleton */}
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+              {[...Array(12)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg border border-gray-200 animate-pulse">
+                  <div className="aspect-square bg-gray-200 rounded-t-lg"></div>
+                  <div className="p-4 space-y-3">
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                    <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination Skeleton */}
+            <div className="mt-8 flex justify-center">
+              <div className="h-10 bg-gray-200 rounded-lg animate-pulse w-64"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -210,7 +368,7 @@ export default function Shop() {
         )}
 
         {/* Main Shop Content */}
-        <ShopContent
+        <DynamicShopContent
           categories={categories}
           filters={filters}
           setFilters={handleFilterChange}
@@ -227,5 +385,14 @@ export default function Shop() {
         />
       </div>
     </div>
+  );
+}
+
+// Main export with Suspense boundary
+export default function Shop() {
+  return (
+    <Suspense fallback={<ShopLoading />}>
+      <ShopContent />
+    </Suspense>
   );
 }

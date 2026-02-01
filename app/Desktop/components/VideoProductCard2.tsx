@@ -1,13 +1,15 @@
-import React, { useRef, useEffect } from 'react';
+"use client";
+
+import React, { useRef, useEffect, useState } from 'react';
 import { FaHeart, FaShareAlt } from 'react-icons/fa';
 
 interface VideoProduct {
   video: string;
   topImage: string;
-  productImage?: string; // Optional for this component
-  nameEn?: string; // Optional for this component
-  nameUr?: string; // Optional for this component
-  price?: number | string; // Optional for this component
+  productImage?: string;
+  nameEn?: string;
+  nameUr?: string;
+  price?: number | string;
   oldPrice?: number | string;
   sale?: string;
   views?: string;
@@ -20,21 +22,37 @@ interface VideoProductCard2Props {
 
 export default function VideoProductCard2({ product }: VideoProductCard2Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoError, setVideoError] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   useEffect(() => {
     const playVideo = async () => {
-      if (videoRef.current) {
+      if (videoRef.current && !videoError && videoLoaded) {
         try {
+          console.log('Attempting to play video:', product.video);
           videoRef.current.muted = true;
           await videoRef.current.play();
+          console.log('Video playback started');
         } catch (error) {
           console.log('Autoplay prevented:', error);
         }
       }
     };
 
-    playVideo();
-  }, []);
+    if (videoLoaded) {
+      playVideo();
+    }
+  }, [videoError, videoLoaded, product.video]);
+
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    console.error('Video failed to load:', product.video, e);
+    setVideoError(true);
+  };
+
+  const handleVideoLoaded = () => {
+    console.log('Video loaded successfully:', product.video);
+    setVideoLoaded(true);
+  };
 
   return (
     <div className="relative w-full max-w-[274px] sm:w-[250px] md:w-[274px] 
@@ -42,29 +60,33 @@ export default function VideoProductCard2({ product }: VideoProductCard2Props) {
                     rounded-[14px] sm:rounded-[16px] md:rounded-[18px] 
                     border border-gray-300 overflow-hidden bg-black
                     mx-auto">
-      {/* Video Player */}
-      <video
-        ref={videoRef}
-        src={product.video}
-        className="w-full h-full object-cover"
-        loop
-        muted
-        autoPlay
-        playsInline
-        disablePictureInPicture
-        disableRemotePlayback
-        style={{ pointerEvents: 'none' }}
-      />
       
-      {/* Fallback Image if video doesn't load */}
-      <img
-        src={product.topImage}
-        alt="Product"
-        className="absolute inset-0 w-full h-full object-cover opacity-0 hover:opacity-100 transition-opacity"
-        onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-          e.currentTarget.style.opacity = '1';
-        }}
-      />
+      {/* Video Player */}
+      {!videoError ? (
+        <video
+          ref={videoRef}
+          src={product.video}
+          className="w-full h-full object-cover"
+          loop
+          muted
+          autoPlay
+          playsInline
+          onError={handleVideoError}
+          onLoadedData={handleVideoLoaded}
+          onCanPlay={handleVideoLoaded}
+          disablePictureInPicture
+          disableRemotePlayback
+          preload="auto"
+        />
+      ) : (
+        <img
+          src={product.topImage}
+          alt="Product"
+          className="w-full h-full object-cover"
+        />
+      )}
+
+ 
 
       {/* Views badge bottom-left */}
       {product.views && (

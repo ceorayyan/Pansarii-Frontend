@@ -21,7 +21,7 @@ export interface NewArrivalProduct {
 export const newArrivalProducts: NewArrivalProduct[] = [
   {
     id: '1',
-    img: '/images/products/apricot-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Pure Apricot Oil",
     nameUr: "خالص خوبانی تیل",
     description: "Cold-pressed for skin & hair",
@@ -42,7 +42,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '2',
-    img: '/images/products/turmeric.jpg',
+    img: '/images/product.png',
     nameEn: "Organic Turmeric Powder",
     nameUr: "نامیاتی ہلدی پاؤڈر",
     description: "Pure organic for cooking & health",
@@ -63,7 +63,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '3',
-    img: '/images/products/honey.jpg',
+    img: '/images/product.png',
     nameEn: "Himalayan Honey",
     nameUr: "ہمالیائی شہد",
     description: "Pure from Himalayan flowers",
@@ -82,7 +82,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '4',
-    img: '/images/products/face-wash.jpg',
+    img: '/images/product.png',
     nameEn: "Herbal Face Wash",
     nameUr: "ہربل فیس واش",
     description: "Natural for glowing skin",
@@ -103,7 +103,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '5',
-    img: '/images/products/ashwagandha.jpg',
+    img: '/images/product.png',
     nameEn: "Ashwagandha Capsules",
     nameUr: "اشواگنڈھا کیپسول",
     description: "Pure for stress relief",
@@ -122,7 +122,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '6',
-    img: '/images/products/green-tea.jpg',
+    img: '/images/product.png',
     nameEn: "Green Tea Leaves",
     nameUr: "گرین ٹی پتیاں",
     description: "Premium with antioxidants",
@@ -143,7 +143,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '7',
-    img: '/images/products/coconut-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Coconut Oil Extra Virgin",
     nameUr: "ناریل کا تیل ورجن",
     description: "Cold-pressed for cooking & hair",
@@ -164,7 +164,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '8',
-    img: '/images/products/aloe-vera.jpg',
+    img: '/images/product.png',
     nameEn: "Aloe Vera Gel",
     nameUr: "ایلوویرا جیل",
     description: "100% pure for skin care",
@@ -183,7 +183,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '9',
-    img: '/images/products/ginger-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Ginger Essential Oil",
     nameUr: "ادرک کا تیل",
     description: "Pure essential oil for aromatherapy",
@@ -204,7 +204,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '10',
-    img: '/images/products/neem-capsules.jpg',
+    img: '/images/product.png',
     nameEn: "Neem Capsules",
     nameUr: "نیم کیپسول",
     description: "Blood purifier and immunity booster",
@@ -223,7 +223,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '11',
-    img: '/images/products/sesame-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Organic Sesame Oil",
     nameUr: "نامیاتی تل کا تیل",
     description: "Cold-pressed for cooking and massage",
@@ -244,7 +244,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '12',
-    img: '/images/products/basil-tea.jpg',
+    img: '/images/product.png',
     nameEn: "Holy Basil Tea",
     nameUr: "تلسی چائے",
     description: "Stress relief and respiratory health",
@@ -263,7 +263,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '13',
-    img: '/images/products/argan-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Argan Oil",
     nameUr: "ارجن تیل",
     description: "For hair and skin moisturizing",
@@ -284,7 +284,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '14',
-    img: '/images/products/amla-powder.jpg',
+    img: '/images/product.png',
     nameEn: "Amla Powder",
     nameUr: "آملہ پاؤڈر",
     description: "Vitamin C rich for hair and immunity",
@@ -305,7 +305,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '15',
-    img: '/images/products/rose-water.jpg',
+    img: '/images/product.png',
     nameEn: "Pure Rose Water",
     nameUr: "خالص گلاب کا پانی",
     description: "Natural toner and skin refresher",
@@ -324,7 +324,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '16',
-    img: '/images/products/moringa-capsules.jpg',
+    img: '/images/product.png',
     nameEn: "Moringa Capsules",
     nameUr: "مورنگا کیپسول",
     description: "Nutrient-rich superfood supplement",
@@ -345,7 +345,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '17',
-    img: '/images/products/jaggery.jpg',
+    img: '/images/product.png',
     nameEn: "Organic Jaggery",
     nameUr: "نامیاتی گڑ",
     description: "Natural sweetener with minerals",
@@ -364,7 +364,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '18',
-    img: '/images/products/peppermint-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Peppermint Essential Oil",
     nameUr: "پیپرمنٹ تیل",
     description: "For headache relief and freshness",
@@ -385,7 +385,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '19',
-    img: '/images/products/saffron.jpg',
+    img: '/images/product.png',
     nameEn: "Kashmiri Saffron",
     nameUr: "کشمیری زعفران",
     description: "Premium quality for cooking and health",
@@ -406,7 +406,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '20',
-    img: '/images/products/chamomile-tea.jpg',
+    img: '/images/product.png',
     nameEn: "Chamomile Tea",
     nameUr: "بابونہ چائے",
     description: "Calming tea for better sleep",
@@ -425,7 +425,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '21',
-    img: '/images/products/black-seed-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Black Seed Oil",
     nameUr: "کلونجی کا تیل",
     description: "Prophetic medicine for overall health",
@@ -446,7 +446,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '22',
-    img: '/images/products/spirulina.jpg',
+    img: '/images/product.png',
     nameEn: "Spirulina Powder",
     nameUr: "سپرولینا پاؤڈر",
     description: "Protein-rich superfood algae",
@@ -465,7 +465,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '23',
-    img: '/images/products/sheabutter.jpg',
+    img: '/images/product.png',
     nameEn: "Shea Butter",
     nameUr: "شیا مکھن",
     description: "Natural moisturizer for skin and hair",
@@ -486,7 +486,7 @@ export const newArrivalProducts: NewArrivalProduct[] = [
   },
   {
     id: '24',
-    img: '/images/products/fennel-seeds.jpg',
+    img: '/images/product.png',
     nameEn: "Fennel Seeds",
     nameUr: "سونف کے بیج",
     description: "Digestive aid and mouth freshener",

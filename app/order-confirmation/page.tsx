@@ -1,8 +1,7 @@
-// app/order-confirmation/page.tsx
 "use client";
 
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   FaCheckCircle, 
@@ -12,18 +11,18 @@ import {
   FaPhone,
   FaEnvelope,
   FaDownload,
-  FaPrint
+  FaPrint,
+  FaHome
 } from 'react-icons/fa';
 import { FiPackage, FiClock } from 'react-icons/fi';
 
 interface OrderItem {
-  id: string;
+  id: number;
   nameEn: string;
-  nameUr: string;
-  img: string;
   price: number;
   quantity: number;
   size: string;
+  img: string;
 }
 
 interface OrderDetails {
@@ -45,8 +44,9 @@ interface OrderDetails {
   paymentMethod: string;
 }
 
-export default function OrderConfirmationPage() {
+function OrderConfirmationContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [mounted, setMounted] = useState(false);
 
@@ -56,53 +56,31 @@ export default function OrderConfirmationPage() {
     // Get order ID from URL
     const orderId = searchParams.get('orderId');
     
-    // Load order from localStorage or generate mock data
+    if (!orderId) {
+      // Redirect to home if no order ID
+      router.push('/');
+      return;
+    }
+    
+    // Load order from localStorage
     const savedOrder = localStorage.getItem(`order-${orderId}`);
     
     if (savedOrder) {
       setOrder(JSON.parse(savedOrder));
     } else {
-      // Mock order data for demo
-      const mockOrder: OrderDetails = {
-        orderId: orderId || `ORD-${Date.now()}`,
-        orderDate: new Date().toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        }),
-        estimatedDelivery: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
-        }),
-        items: [],
-        subtotal: 0,
-        shipping: 0,
-        total: 0,
-        shippingAddress: {
-          name: 'Customer Name',
-          phone: '+92 300 1234567',
-          email: 'customer@example.com',
-          address: '123 Main Street, Apartment 4B',
-          city: 'Karachi',
-          postalCode: '75500'
-        },
-        paymentMethod: 'Cash on Delivery'
-      };
-      
-      setOrder(mockOrder);
+      // If no order found, redirect to home
+      router.push('/');
     }
 
     // Clear cart after order
     localStorage.removeItem('pansari-cart');
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const handlePrint = () => {
     window.print();
   };
 
   const handleDownload = () => {
-    // Generate PDF or download invoice
     alert('Invoice download feature coming soon!');
   };
 
@@ -220,7 +198,6 @@ export default function OrderConfirmationPage() {
                       />
                       <div className="flex-1">
                         <h3 className="font-semibold text-gray-900">{item.nameEn}</h3>
-                        <p className="text-sm text-gray-600">{item.nameUr}</p>
                         <p className="text-xs text-gray-500 mt-1">Size: {item.size}</p>
                       </div>
                       <div className="text-right">
@@ -313,10 +290,11 @@ export default function OrderConfirmationPage() {
                   Download Invoice
                 </button>
                 <Link
-                  href="/shop"
-                  className="block w-full py-3 bg-green-700 text-white rounded-lg hover:bg-green-600 transition font-medium text-center"
+                  href="/"
+                  className="block w-full py-3 bg-green-700 text-white rounded-lg hover:bg-green-600 transition font-medium text-center flex items-center justify-center gap-2"
                 >
-                  Continue Shopping
+                  <FaHome className="w-4 h-4" />
+                  Back to Home
                 </Link>
               </div>
             </div>
@@ -346,5 +324,25 @@ export default function OrderConfirmationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+function OrderConfirmationLoading() {
+  return (
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-700 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading order details...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main component with Suspense
+export default function OrderConfirmationPage() {
+  return (
+    <Suspense fallback={<OrderConfirmationLoading />}>
+      <OrderConfirmationContent />
+    </Suspense>
   );
 }

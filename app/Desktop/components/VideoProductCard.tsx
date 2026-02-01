@@ -1,4 +1,6 @@
-import React, { useRef, useEffect } from 'react';
+"use client";
+
+import React, { useRef, useEffect, useState } from 'react';
 import { FaHeart, FaShareAlt } from 'react-icons/fa';
 
 interface VideoProduct {
@@ -20,22 +22,37 @@ interface VideoProductCardProps {
 
 export default function VideoProductCard({ product }: VideoProductCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoError, setVideoError] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   useEffect(() => {
-    // Try to autoplay video when component mounts
     const playVideo = async () => {
-      if (videoRef.current) {
+      if (videoRef.current && !videoError && videoLoaded) {
         try {
-          videoRef.current.muted = true; // Mute for autoplay
+          console.log('Attempting to play video:', product.video);
+          videoRef.current.muted = true;
           await videoRef.current.play();
+          console.log('Video playback started');
         } catch (error) {
           console.log('Autoplay prevented:', error);
         }
       }
     };
 
-    playVideo();
-  }, []);
+    if (videoLoaded) {
+      playVideo();
+    }
+  }, [videoError, videoLoaded, product.video]);
+
+  const handleVideoError = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
+    console.error('Video failed to load:', product.video, e);
+    setVideoError(true);
+  };
+
+  const handleVideoLoaded = () => {
+    console.log('Video loaded successfully:', product.video);
+    setVideoLoaded(true);
+  };
 
   return (
     <div className="w-[274px] h-[495px] rounded-[18px] border border-gray-300 overflow-hidden flex flex-col bg-white">
@@ -43,28 +60,36 @@ export default function VideoProductCard({ product }: VideoProductCardProps) {
       {/* Top Section - VIDEO (replaces image) */}
       <div className="relative w-full h-[323px] rounded-t-[18px] overflow-hidden bg-black">
         {/* Video Player */}
-        <video
-          ref={videoRef}
-          src={product.video}
-          className="w-full h-full object-cover"
-          loop
-          muted
-          autoPlay
-          playsInline
-          disablePictureInPicture
-          disableRemotePlayback
-          style={{ pointerEvents: 'none' }}
-        />
-        
-        {/* Fallback Image if video doesn't load */}
-        <img
-          src={product.topImage}
-          alt="Product"
-          className="absolute inset-0 w-full h-full object-cover opacity-0 hover:opacity-100 transition-opacity"
-          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-            e.currentTarget.style.opacity = '1'; // Show image if video fails
-          }}
-        />
+        {!videoError ? (
+          <video
+            ref={videoRef}
+            src={product.video}
+            className="w-full h-full object-cover"
+            loop
+            muted
+            autoPlay
+            playsInline
+            onError={handleVideoError}
+            onLoadedData={handleVideoLoaded}
+            onCanPlay={handleVideoLoaded}
+            disablePictureInPicture
+            disableRemotePlayback
+            preload="auto"
+          />
+        ) : (
+          <img
+            src={product.topImage}
+            alt="Product"
+            className="w-full h-full object-cover"
+          />
+        )}
+
+        {/* Show loading indicator */}
+        {!videoLoaded && !videoError && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
+            <div className="text-white">Loading video...</div>
+          </div>
+        )}
 
         {/* Views badge bottom-left */}
         {product.views && (

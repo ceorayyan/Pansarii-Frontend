@@ -1,7 +1,7 @@
 // app/offers/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   FaTag, 
@@ -99,9 +99,141 @@ const offers: Offer[] = [
   }
 ];
 
+// Skeletal Loading Components
+function OffersPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 animate-pulse">
+      {/* Header Skeleton */}
+      <div className="bg-white border-b">
+        <div className="mx-auto max-w-7xl px-4 py-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="space-y-3">
+              <div className="h-8 bg-gray-200 rounded w-64"></div>
+              <div className="h-4 bg-gray-200 rounded w-96"></div>
+            </div>
+            <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+          </div>
+
+          {/* Filter Tabs Skeleton */}
+          <div className="flex items-center gap-2 mb-8 overflow-x-auto pb-2">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="w-24 h-10 bg-gray-200 rounded-lg"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        {/* Featured Offers Skeleton */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+            <div className="h-8 bg-gray-200 rounded w-48"></div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 p-6">
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="h-6 bg-gray-200 rounded w-32"></div>
+                      <div className="h-4 bg-gray-200 rounded w-48"></div>
+                      <div className="h-3 bg-gray-200 rounded w-64"></div>
+                    </div>
+                    <div className="w-20 h-10 bg-gray-200 rounded-lg"></div>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-16 h-4 bg-gray-200 rounded"></div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-20 h-4 bg-gray-200 rounded"></div>
+                      </div>
+                    </div>
+                    
+                    <div className="h-12 bg-gray-200 rounded-lg"></div>
+                    
+                    <div className="h-12 bg-gray-200 rounded-lg"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* All Offers Grid Skeleton */}
+        <div>
+          <div className="h-8 bg-gray-200 rounded w-48 mb-6"></div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="p-6 border-b border-gray-100 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="h-6 bg-gray-200 rounded w-24"></div>
+                      <div className="h-4 bg-gray-200 rounded w-32"></div>
+                    </div>
+                    <div className="w-16 h-8 bg-gray-200 rounded"></div>
+                  </div>
+                  <div className="h-3 bg-gray-200 rounded w-48"></div>
+                </div>
+
+                <div className="p-6">
+                  <div className="space-y-3 mb-4">
+                    <div className="h-4 bg-gray-200 rounded w-40"></div>
+                    <div className="h-4 bg-gray-200 rounded w-48"></div>
+                  </div>
+
+                  <div className="h-12 bg-gray-200 rounded-lg mb-4"></div>
+
+                  <div className="h-12 bg-gray-200 rounded-lg"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* How to Use Banner Skeleton */}
+        <div className="mt-12 bg-white rounded-xl border border-gray-200 p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+            <div className="flex-1 space-y-4">
+              <div className="h-6 bg-gray-200 rounded w-48"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="text-center p-4 border border-gray-100 rounded-lg space-y-2">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full mx-auto"></div>
+                    <div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div>
+                    <div className="h-3 bg-gray-200 rounded w-32 mx-auto"></div>
+                  </div>
+                ))}
+              </div>
+              <div className="h-3 bg-gray-200 rounded w-64"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function OffersPage() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | Offer['type']>('all');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -144,6 +276,11 @@ export default function OffersPage() {
     : offers.filter(offer => offer.type === filter);
 
   const featuredOffers = offers.filter(offer => offer.featured);
+
+  // Show skeleton loading
+  if (isLoading) {
+    return <OffersPageSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

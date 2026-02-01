@@ -1,8 +1,8 @@
-// Mock products data - 50+ products
-export const  allProducts = [
+// Mock products data - 50+ products with additionalImages
+export const allProducts = [
   {
     id: '1',
-    img: '/images/products/apricot-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Pure Apricot Kernel Oil",
     nameUr: "خالص خوبانی کا تیل",
     description: "Cold-pressed for radiant skin & hair",
@@ -15,11 +15,17 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Skin Care', 'Hair Care', 'Moisturizing']
+    tags: ['Skin Care', 'Hair Care', 'Moisturizing'],
+    additionalImages: [
+      '/images/apricot-oil-1.jpg',
+      '/images/apricot-oil-2.jpg',
+      '/images/apricot-oil-3.jpg',
+      '/images/apricot-oil-4.jpg'
+    ]
   },
   {
     id: '2',
-    img: '/images/products/turmeric.jpg',
+    img: '/images/product.png',
     nameEn: "Organic Turmeric Powder",
     nameUr: "نامیاتی ہلدی پاؤڈر",
     description: "Pure golden turmeric for health",
@@ -32,11 +38,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Immunity', 'Anti-inflammatory']
+    tags: ['Immunity', 'Anti-inflammatory'],
+    additionalImages: [
+      '/images/turmeric-1.jpg',
+      '/images/turmeric-2.jpg',
+      '/images/turmeric-3.jpg'
+    ]
   },
   {
     id: '3',
-    img: '/images/products/honey.jpg',
+    img: '/images/product.png',
     nameEn: "Himalayan Wild Honey",
     nameUr: "ہمالیائی جنگلی شہد",
     description: "Raw honey from mountain flowers",
@@ -49,11 +60,17 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Natural', 'Energy', 'Antioxidants']
+    tags: ['Natural', 'Energy', 'Antioxidants'],
+    additionalImages: [
+      '/images/honey-1.jpg',
+      '/images/honey-2.jpg',
+      '/images/honey-3.jpg',
+      '/images/honey-4.jpg'
+    ]
   },
   {
     id: '4',
-    img: '/images/products/face-wash.jpg',
+    img: '/images/product.png',
     nameEn: "Neem & Turmeric Face Wash",
     nameUr: "نیم اور ہلدی فیس واش",
     description: "Herbal cleanser for clear skin",
@@ -66,11 +83,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Acne Control', 'Natural']
+    tags: ['Acne Control', 'Natural'],
+    additionalImages: [
+      '/images/facewash-1.jpg',
+      '/images/facewash-2.jpg',
+      '/images/facewash-3.jpg'
+    ]
   },
   {
     id: '5',
-    img: '/images/products/ashwagandha.jpg',
+    img: '/images/product.png',
     nameEn: "Ashwagandha Root Powder",
     nameUr: "اشواگنڈھا جڑ پاؤڈر",
     description: "Stress relief & energy booster",
@@ -83,11 +105,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Stress Relief', 'Immunity']
+    tags: ['Stress Relief', 'Immunity'],
+    additionalImages: [
+      '/images/ashwagandha-1.jpg',
+      '/images/ashwagandha-2.jpg',
+      '/images/ashwagandha-3.jpg'
+    ]
   },
   {
     id: '6',
-    img: '/images/products/green-tea.jpg',
+    img: '/images/product.png',
     nameEn: "Himalayan Green Tea",
     nameUr: "ہمالیائی گرین ٹی",
     description: "Antioxidant rich tea leaves",
@@ -100,11 +127,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Weight Loss', 'Detox']
+    tags: ['Weight Loss', 'Detox'],
+    additionalImages: [
+      '/images/green-tea-1.jpg',
+      '/images/green-tea-2.jpg',
+      '/images/green-tea-3.jpg'
+    ]
   },
   {
     id: '7',
-    img: '/images/products/coconut-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Cold Pressed Coconut Oil",
     nameUr: "کولڈ پریسڈ ناریل تیل",
     description: "Virgin oil for cooking & beauty",
@@ -117,11 +149,17 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Cooking', 'Hair Care']
+    tags: ['Cooking', 'Hair Care'],
+    additionalImages: [
+      '/images/coconut-oil-1.jpg',
+      '/images/coconut-oil-2.jpg',
+      '/images/coconut-oil-3.jpg',
+      '/images/coconut-oil-4.jpg'
+    ]
   },
   {
     id: '8',
-    img: '/images/products/aloe-vera.jpg',
+    img: '/images/product.png',
     nameEn: "Pure Aloe Vera Gel",
     nameUr: "خالص ایلوویرا جیل",
     description: "Soothing gel for skin care",
@@ -134,11 +172,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: false,
     inStock: true,
-    tags: ['Sunburn', 'Hydration']
+    tags: ['Sunburn', 'Hydration'],
+    additionalImages: [
+      '/images/aloe-vera-1.jpg',
+      '/images/aloe-vera-2.jpg',
+      '/images/aloe-vera-3.jpg'
+    ]
   },
   {
     id: '9',
-    img: '/images/products/moringa.jpg',
+    img: '/images/product.png',
     nameEn: "Moringa Leaf Powder",
     nameUr: "مورنگا پتی پاؤڈر",
     description: "Nutrient-rich superfood powder",
@@ -151,11 +194,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Energy', 'Vitamins']
+    tags: ['Energy', 'Vitamins'],
+    additionalImages: [
+      '/images/moringa-1.jpg',
+      '/images/moringa-2.jpg',
+      '/images/moringa-3.jpg'
+    ]
   },
   {
     id: '10',
-    img: '/images/products/ghee.jpg',
+    img: '/images/product.png',
     nameEn: "A2 Desi Cow Ghee",
     nameUr: "ای2 دیسی گائے گھی",
     description: "Traditional homemade pure ghee",
@@ -168,11 +216,17 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Traditional', 'Pure']
+    tags: ['Traditional', 'Pure'],
+    additionalImages: [
+      '/images/ghee-1.jpg',
+      '/images/ghee-2.jpg',
+      '/images/ghee-3.jpg',
+      '/images/ghee-4.jpg'
+    ]
   },
   {
     id: '11',
-    img: '/images/products/shampoo.jpg',
+    img: '/images/product.png',
     nameEn: "Amla & Bhringraj Shampoo",
     nameUr: "آملہ اور بھرنگ راج شیمپو",
     description: "Herbal shampoo for hair growth",
@@ -185,11 +239,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Hair Growth', 'Natural']
+    tags: ['Hair Growth', 'Natural'],
+    additionalImages: [
+      '/images/shampoo-1.jpg',
+      '/images/shampoo-2.jpg',
+      '/images/shampoo-3.jpg'
+    ]
   },
   {
     id: '12',
-    img: '/images/products/black-seed.jpg',
+    img: '/images/product.png',
     nameEn: "Black Seed Oil (Kalonji)",
     nameUr: "کلونجی کا تیل",
     description: "Cold-pressed for immunity",
@@ -202,11 +261,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Immunity', 'Health']
+    tags: ['Immunity', 'Health'],
+    additionalImages: [
+      '/images/kalonji-oil-1.jpg',
+      '/images/kalonji-oil-2.jpg',
+      '/images/kalonji-oil-3.jpg'
+    ]
   },
   {
     id: '13',
-    img: '/images/products/cinnamon.jpg',
+    img: '/images/product.png',
     nameEn: "Ceylon Cinnamon Powder",
     nameUr: "سیلون دار چینی پاؤڈر",
     description: "Pure cinnamon for blood sugar",
@@ -219,11 +283,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Blood Sugar', 'Metabolism']
+    tags: ['Blood Sugar', 'Metabolism'],
+    additionalImages: [
+      '/images/cinnamon-1.jpg',
+      '/images/cinnamon-2.jpg',
+      '/images/cinnamon-3.jpg'
+    ]
   },
   {
     id: '14',
-    img: '/images/products/saffron.jpg',
+    img: '/images/product.png',
     nameEn: "Kashmiri Saffron (Kesar)",
     nameUr: "کشمیری زعفران",
     description: "Premium quality saffron threads",
@@ -236,11 +305,17 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Premium', 'Skin Care']
+    tags: ['Premium', 'Skin Care'],
+    additionalImages: [
+      '/images/saffron-1.jpg',
+      '/images/saffron-2.jpg',
+      '/images/saffron-3.jpg',
+      '/images/saffron-4.jpg'
+    ]
   },
   {
     id: '15',
-    img: '/images/products/argan-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Moroccan Argan Oil",
     nameUr: "مراکشی ارگن تیل",
     description: "For hair repair & skin glow",
@@ -253,11 +328,17 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Hair Repair', 'Anti-aging']
+    tags: ['Hair Repair', 'Anti-aging'],
+    additionalImages: [
+      '/images/argan-oil-1.jpg',
+      '/images/argan-oil-2.jpg',
+      '/images/argan-oil-3.jpg',
+      '/images/argan-oil-4.jpg'
+    ]
   },
   {
     id: '16',
-    img: '/images/products/tea-tree-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Tea Tree Essential Oil",
     nameUr: "ٹی ٹری ایسینشل آئل",
     description: "Antibacterial for skin issues",
@@ -270,11 +351,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: false,
     inStock: true,
-    tags: ['Acne', 'Antibacterial']
+    tags: ['Acne', 'Antibacterial'],
+    additionalImages: [
+      '/images/tea-tree-oil-1.jpg',
+      '/images/tea-tree-oil-2.jpg',
+      '/images/tea-tree-oil-3.jpg'
+    ]
   },
   {
     id: '17',
-    img: '/images/products/flaxseed.jpg',
+    img: '/images/product.png',
     nameEn: "Golden Flax Seeds",
     nameUr: "گولڈن السی کے بیج",
     description: "Omega-3 rich super seeds",
@@ -287,11 +373,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Omega-3', 'Fiber']
+    tags: ['Omega-3', 'Fiber'],
+    additionalImages: [
+      '/images/flax-seeds-1.jpg',
+      '/images/flax-seeds-2.jpg',
+      '/images/flax-seeds-3.jpg'
+    ]
   },
   {
     id: '18',
-    img: '/images/products/rosemary-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Rosemary Essential Oil",
     nameUr: "روزمیری ایسینشل آئل",
     description: "For hair growth & memory",
@@ -304,11 +395,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Hair Growth', 'Focus']
+    tags: ['Hair Growth', 'Focus'],
+    additionalImages: [
+      '/images/rosemary-oil-1.jpg',
+      '/images/rosemary-oil-2.jpg',
+      '/images/rosemary-oil-3.jpg'
+    ]
   },
   {
     id: '19',
-    img: '/images/products/basil.jpg',
+    img: '/images/product.png',
     nameEn: "Holy Basil (Tulsi) Tea",
     nameUr: "تلسی کی چائے",
     description: "Stress relief & immunity tea",
@@ -321,11 +417,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Immunity', 'Stress Relief']
+    tags: ['Immunity', 'Stress Relief'],
+    additionalImages: [
+      '/images/tulsi-tea-1.jpg',
+      '/images/tulsi-tea-2.jpg',
+      '/images/tulsi-tea-3.jpg'
+    ]
   },
   {
     id: '20',
-    img: '/images/products/olive-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Extra Virgin Olive Oil",
     nameUr: "ایکٹرا ورجن زیتون کا تیل",
     description: "Cold-pressed for health",
@@ -338,11 +439,17 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Heart Health', 'Cooking']
+    tags: ['Heart Health', 'Cooking'],
+    additionalImages: [
+      '/images/olive-oil-1.jpg',
+      '/images/olive-oil-2.jpg',
+      '/images/olive-oil-3.jpg',
+      '/images/olive-oil-4.jpg'
+    ]
   },
   {
     id: '21',
-    img: '/images/products/chamomile.jpg',
+    img: '/images/product.png',
     nameEn: "Chamomile Tea Bags",
     nameUr: "کیمومائل ٹی بیگز",
     description: "Calming herbal tea for sleep",
@@ -355,11 +462,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Sleep Aid', 'Calming']
+    tags: ['Sleep Aid', 'Calming'],
+    additionalImages: [
+      '/images/chamomile-tea-1.jpg',
+      '/images/chamomile-tea-2.jpg',
+      '/images/chamomile-tea-3.jpg'
+    ]
   },
   {
     id: '22',
-    img: '/images/products/peppermint-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Peppermint Essential Oil",
     nameUr: "پیپرمنٹ ایسینشل آئل",
     description: "For digestion & headache relief",
@@ -372,11 +484,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Digestion', 'Headache']
+    tags: ['Digestion', 'Headache'],
+    additionalImages: [
+      '/images/peppermint-oil-1.jpg',
+      '/images/peppermint-oil-2.jpg',
+      '/images/peppermint-oil-3.jpg'
+    ]
   },
   {
     id: '23',
-    img: '/images/products/ginger.jpg',
+    img: '/images/product.png',
     nameEn: "Organic Ginger Powder",
     nameUr: "نامیاتی ادرک پاؤڈر",
     description: "For digestion & immunity",
@@ -389,11 +506,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: false,
     inStock: true,
-    tags: ['Digestion', 'Immunity']
+    tags: ['Digestion', 'Immunity'],
+    additionalImages: [
+      '/images/ginger-powder-1.jpg',
+      '/images/ginger-powder-2.jpg',
+      '/images/ginger-powder-3.jpg'
+    ]
   },
   {
     id: '24',
-    img: '/images/products/lavender-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Lavender Essential Oil",
     nameUr: "لیونڈر ایسینشل آئل",
     description: "For relaxation & sleep",
@@ -406,11 +528,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Relaxation', 'Sleep']
+    tags: ['Relaxation', 'Sleep'],
+    additionalImages: [
+      '/images/lavender-oil-1.jpg',
+      '/images/lavender-oil-2.jpg',
+      '/images/lavender-oil-3.jpg'
+    ]
   },
   {
     id: '25',
-    img: '/images/products/jaggery.jpg',
+    img: '/images/product.png',
     nameEn: "Organic Jaggery (Gur)",
     nameUr: "نامیاتی گڑ",
     description: "Natural sweetener with iron",
@@ -423,11 +550,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Natural Sweetener', 'Iron']
+    tags: ['Natural Sweetener', 'Iron'],
+    additionalImages: [
+      '/images/jaggery-1.jpg',
+      '/images/jaggery-2.jpg',
+      '/images/jaggery-3.jpg'
+    ]
   },
   {
     id: '26',
-    img: '/images/products/brahmi-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Brahmi Hair Oil",
     nameUr: "براہمی ہیئر آئل",
     description: "For memory & hair growth",
@@ -440,11 +572,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Memory', 'Hair Growth']
+    tags: ['Memory', 'Hair Growth'],
+    additionalImages: [
+      '/images/brahmi-oil-1.jpg',
+      '/images/brahmi-oil-2.jpg',
+      '/images/brahmi-oil-3.jpg'
+    ]
   },
   {
     id: '27',
-    img: '/images/products/spirulina.jpg',
+    img: '/images/product.png',
     nameEn: "Spirulina Powder",
     nameUr: "سپیرولینا پاؤڈر",
     description: "Protein-rich algae supplement",
@@ -457,11 +594,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Protein', 'Energy']
+    tags: ['Protein', 'Energy'],
+    additionalImages: [
+      '/images/spirulina-1.jpg',
+      '/images/spirulina-2.jpg',
+      '/images/spirulina-3.jpg'
+    ]
   },
   {
     id: '28',
-    img: '/images/products/lemongrass-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Lemongrass Essential Oil",
     nameUr: "لیمن گراس ایسینشل آئل",
     description: "For pain relief & anxiety",
@@ -474,11 +616,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: false,
     inStock: true,
-    tags: ['Pain Relief', 'Anxiety']
+    tags: ['Pain Relief', 'Anxiety'],
+    additionalImages: [
+      '/images/lemongrass-oil-1.jpg',
+      '/images/lemongrass-oil-2.jpg',
+      '/images/lemongrass-oil-3.jpg'
+    ]
   },
   {
     id: '29',
-    img: '/images/products/clove-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Clove Essential Oil",
     nameUr: "لونگ کا ایسینشل آئل",
     description: "For dental care & pain relief",
@@ -491,11 +638,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Dental Care', 'Pain Relief']
+    tags: ['Dental Care', 'Pain Relief'],
+    additionalImages: [
+      '/images/clove-oil-1.jpg',
+      '/images/clove-oil-2.jpg',
+      '/images/clove-oil-3.jpg'
+    ]
   },
   {
     id: '30',
-    img: '/images/products/mustard-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Cold Pressed Mustard Oil",
     nameUr: "کولڈ پریسڈ سرسوں کا تیل",
     description: "Traditional oil for cooking",
@@ -508,11 +660,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Cooking', 'Traditional']
+    tags: ['Cooking', 'Traditional'],
+    additionalImages: [
+      '/images/mustard-oil-1.jpg',
+      '/images/mustard-oil-2.jpg',
+      '/images/mustard-oil-3.jpg'
+    ]
   },
   {
     id: '31',
-    img: '/images/products/eucalyptus-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Eucalyptus Essential Oil",
     nameUr: "یوکلپٹس ایسینشل آئل",
     description: "For respiratory relief",
@@ -525,11 +682,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Respiratory', 'Congestion']
+    tags: ['Respiratory', 'Congestion'],
+    additionalImages: [
+      '/images/eucalyptus-oil-1.jpg',
+      '/images/eucalyptus-oil-2.jpg',
+      '/images/eucalyptus-oil-3.jpg'
+    ]
   },
   {
     id: '32',
-    img: '/images/products/fennel-seeds.jpg',
+    img: '/images/product.png',
     nameEn: "Fennel Seeds (Saunf)",
     nameUr: "سونف کے بیج",
     description: "For digestion & fresh breath",
@@ -542,11 +704,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Digestion', 'Fresh Breath']
+    tags: ['Digestion', 'Fresh Breath'],
+    additionalImages: [
+      '/images/fennel-seeds-1.jpg',
+      '/images/fennel-seeds-2.jpg',
+      '/images/fennel-seeds-3.jpg'
+    ]
   },
   {
     id: '33',
-    img: '/images/products/rose-water.jpg',
+    img: '/images/product.png',
     nameEn: "Pure Rose Water",
     nameUr: "خالص گلاب کا پانی",
     description: "Natural toner for skin",
@@ -559,11 +726,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Toner', 'Hydration']
+    tags: ['Toner', 'Hydration'],
+    additionalImages: [
+      '/images/rose-water-1.jpg',
+      '/images/rose-water-2.jpg',
+      '/images/rose-water-3.jpg'
+    ]
   },
   {
     id: '34',
-    img: '/images/products/sesame-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Cold Pressed Sesame Oil",
     nameUr: "کولڈ پریسڈ تل کا تیل",
     description: "For massage & cooking",
@@ -576,11 +748,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Massage', 'Cooking']
+    tags: ['Massage', 'Cooking'],
+    additionalImages: [
+      '/images/sesame-oil-1.jpg',
+      '/images/sesame-oil-2.jpg',
+      '/images/sesame-oil-3.jpg'
+    ]
   },
   {
     id: '35',
-    img: '/images/products/hemp-seeds.jpg',
+    img: '/images/product.png',
     nameEn: "Hemp Seeds",
     nameUr: "ہیمپ سیڈز",
     description: "Protein & Omega-3 rich",
@@ -593,11 +770,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Protein', 'Omega-3']
+    tags: ['Protein', 'Omega-3'],
+    additionalImages: [
+      '/images/hemp-seeds-1.jpg',
+      '/images/hemp-seeds-2.jpg',
+      '/images/hemp-seeds-3.jpg'
+    ]
   },
   {
     id: '36',
-    img: '/images/products/ajwain.jpg',
+    img: '/images/product.png',
     nameEn: "Carom Seeds (Ajwain)",
     nameUr: "اجوائن کے بیج",
     description: "For digestion & cold relief",
@@ -610,11 +792,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Digestion', 'Cold Relief']
+    tags: ['Digestion', 'Cold Relief'],
+    additionalImages: [
+      '/images/ajwain-1.jpg',
+      '/images/ajwain-2.jpg',
+      '/images/ajwain-3.jpg'
+    ]
   },
   {
     id: '37',
-    img: '/images/products/calendula-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Calendula Infused Oil",
     nameUr: "کیلنڈولا انفیوزڈ آئل",
     description: "For skin healing & soothing",
@@ -627,11 +814,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Skin Healing', 'Soothing']
+    tags: ['Skin Healing', 'Soothing'],
+    additionalImages: [
+      '/images/calendula-oil-1.jpg',
+      '/images/calendula-oil-2.jpg',
+      '/images/calendula-oil-3.jpg'
+    ]
   },
   {
     id: '38',
-    img: '/images/products/dates.jpg',
+    img: '/images/product.png',
     nameEn: "Medjool Dates",
     nameUr: "مجھول کھجوریں",
     description: "Natural energy & sweetness",
@@ -644,11 +836,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: false,
     inStock: true,
-    tags: ['Energy', 'Natural Sweet']
+    tags: ['Energy', 'Natural Sweet'],
+    additionalImages: [
+      '/images/dates-1.jpg',
+      '/images/dates-2.jpg',
+      '/images/dates-3.jpg'
+    ]
   },
   {
     id: '39',
-    img: '/images/products/castor-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Cold Pressed Castor Oil",
     nameUr: "کولڈ پریسڈ ارنڈی کا تیل",
     description: "For hair growth & lashes",
@@ -661,11 +858,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Hair Growth', 'Eyelashes']
+    tags: ['Hair Growth', 'Eyelashes'],
+    additionalImages: [
+      '/images/castor-oil-1.jpg',
+      '/images/castor-oil-2.jpg',
+      '/images/castor-oil-3.jpg'
+    ]
   },
   {
     id: '40',
-    img: '/images/products/maple-syrup.jpg',
+    img: '/images/product.png',
     nameEn: "Pure Maple Syrup",
     nameUr: "خالص میپل شربت",
     description: "Natural sweetener alternative",
@@ -678,11 +880,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Natural Sweetener', 'Low GI']
+    tags: ['Natural Sweetener', 'Low GI'],
+    additionalImages: [
+      '/images/maple-syrup-1.jpg',
+      '/images/maple-syrup-2.jpg',
+      '/images/maple-syrup-3.jpg'
+    ]
   },
   {
     id: '41',
-    img: '/images/products/tea-blend.jpg',
+    img: '/images/product.png',
     nameEn: "Detox Herbal Tea Blend",
     nameUr: "ڈیٹاکس ہربل ٹی بلینڈ",
     description: "Liver cleansing herbal mix",
@@ -695,11 +902,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Detox', 'Liver Cleanse']
+    tags: ['Detox', 'Liver Cleanse'],
+    additionalImages: [
+      '/images/detox-tea-1.jpg',
+      '/images/detox-tea-2.jpg',
+      '/images/detox-tea-3.jpg'
+    ]
   },
   {
     id: '42',
-    img: '/images/products/shea-butter.jpg',
+    img: '/images/product.png',
     nameEn: "Raw Shea Butter",
     nameUr: "خام شیا مکھن",
     description: "Moisturizer for dry skin",
@@ -712,11 +924,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Moisturizer', 'Dry Skin']
+    tags: ['Moisturizer', 'Dry Skin'],
+    additionalImages: [
+      '/images/shea-butter-1.jpg',
+      '/images/shea-butter-2.jpg',
+      '/images/shea-butter-3.jpg'
+    ]
   },
   {
     id: '43',
-    img: '/images/products/mint.jpg',
+    img: '/images/product.png',
     nameEn: "Dried Mint Leaves",
     nameUr: "خشک پودینہ پتیاں",
     description: "For digestion & freshness",
@@ -729,11 +946,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: false,
     inStock: true,
-    tags: ['Digestion', 'Freshness']
+    tags: ['Digestion', 'Freshness'],
+    additionalImages: [
+      '/images/mint-leaves-1.jpg',
+      '/images/mint-leaves-2.jpg',
+      '/images/mint-leaves-3.jpg'
+    ]
   },
   {
     id: '44',
-    img: '/images/products/jojoba-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Jojoba Carrier Oil",
     nameUr: "جوجوبا کیریئر آئل",
     description: "Light oil for face & hair",
@@ -746,11 +968,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Face Oil', 'Non-greasy']
+    tags: ['Face Oil', 'Non-greasy'],
+    additionalImages: [
+      '/images/jojoba-oil-1.jpg',
+      '/images/jojoba-oil-2.jpg',
+      '/images/jojoba-oil-3.jpg'
+    ]
   },
   {
     id: '45',
-    img: '/images/products/chia-seeds.jpg',
+    img: '/images/product.png',
     nameEn: "Organic Chia Seeds",
     nameUr: "نامیاتی چیا سیڈز",
     description: "Fiber & Omega-3 source",
@@ -763,11 +990,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Fiber', 'Omega-3']
+    tags: ['Fiber', 'Omega-3'],
+    additionalImages: [
+      '/images/chia-seeds-1.jpg',
+      '/images/chia-seeds-2.jpg',
+      '/images/chia-seeds-3.jpg'
+    ]
   },
   {
     id: '46',
-    img: '/images/products/frankincense-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Frankincense Essential Oil",
     nameUr: "لوبان ایسینشل آئل",
     description: "For meditation & skin",
@@ -780,11 +1012,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Meditation', 'Anti-aging']
+    tags: ['Meditation', 'Anti-aging'],
+    additionalImages: [
+      '/images/frankincense-oil-1.jpg',
+      '/images/frankincense-oil-2.jpg',
+      '/images/frankincense-oil-3.jpg'
+    ]
   },
   {
     id: '47',
-    img: '/images/products/oregano-oil.jpg',
+    img: '/images/product.png',
     nameEn: "Oregano Essential Oil",
     nameUr: "اوریگانو ایسینشل آئل",
     description: "Natural antibiotic properties",
@@ -797,11 +1034,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: true,
     inStock: true,
-    tags: ['Antibiotic', 'Immunity']
+    tags: ['Antibiotic', 'Immunity'],
+    additionalImages: [
+      '/images/oregano-oil-1.jpg',
+      '/images/oregano-oil-2.jpg',
+      '/images/oregano-oil-3.jpg'
+    ]
   },
   {
     id: '48',
-    img: '/images/products/stevia.jpg',
+    img: '/images/product.png',
     nameEn: "Stevia Leaf Powder",
     nameUr: "سٹیویا پتی پاؤڈر",
     description: "Zero calorie natural sweetener",
@@ -814,11 +1056,16 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: false,
     inStock: true,
-    tags: ['Zero Calorie', 'Diabetic Friendly']
+    tags: ['Zero Calorie', 'Diabetic Friendly'],
+    additionalImages: [
+      '/images/stevia-1.jpg',
+      '/images/stevia-2.jpg',
+      '/images/stevia-3.jpg'
+    ]
   },
   {
     id: '49',
-    img: '/images/products/sage.jpg',
+    img: '/images/product.png',
     nameEn: "Dried Sage Leaves",
     nameUr: "خشک سیج پتیاں",
     description: "For memory & sore throat",
@@ -831,11 +1078,16 @@ export const  allProducts = [
     isNew: false,
     isBestSeller: false,
     inStock: true,
-    tags: ['Memory', 'Throat Relief']
+    tags: ['Memory', 'Throat Relief'],
+    additionalImages: [
+      '/images/sage-leaves-1.jpg',
+      '/images/sage-leaves-2.jpg',
+      '/images/sage-leaves-3.jpg'
+    ]
   },
   {
     id: '50',
-    img: '/images/products/tea-blend2.jpg',
+    img: '/images/product.png',
     nameEn: "Sleep Well Tea Blend",
     nameUr: "نیند لانے والی چائے",
     description: "Calming herbs for better sleep",
@@ -848,11 +1100,17 @@ export const  allProducts = [
     isNew: true,
     isBestSeller: true,
     inStock: true,
-    tags: ['Sleep Aid', 'Calming']
+    tags: ['Sleep Aid', 'Calming'],
+    additionalImages: [
+      '/images/sleep-tea-1.jpg',
+      '/images/sleep-tea-2.jpg',
+      '/images/sleep-tea-3.jpg'
+    ]
   }
 ];
 
-// // Filter to get new arrivals (products marked as isNew: true)
-const newArrivals = allProducts.filter(product => product.isNew);
-// // Filter to get best sellers (products marked as isBestSeller: true)
-const bestSellers = allProducts.filter(product => product.isBestSeller);
+// Filter to get new arrivals (products marked as isNew: true)
+export const newArrivals = allProducts.filter(product => product.isNew);
+
+// Filter to get best sellers (products marked as isBestSeller: true)
+export const bestSellers = allProducts.filter(product => product.isBestSeller);

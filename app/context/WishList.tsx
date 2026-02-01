@@ -11,9 +11,9 @@ interface WishlistItem {
   price: number;
   oldPrice?: number;
   sale?: string;
-  rating: number;
-  reviews: number;
-  inStock: boolean;
+  rating?: number;
+  reviews?: number;
+  inStock?: boolean;
   category?: string;
 }
 
@@ -21,6 +21,7 @@ interface WishlistContextType {
   wishlistItems: WishlistItem[];
   addToWishlist: (item: WishlistItem) => void;
   removeFromWishlist: (id: string | number) => void;
+  toggleWishlist: (item: WishlistItem) => void;
   clearWishlist: () => void;
   isInWishlist: (id: string | number) => boolean;
   getWishlistCount: () => number;
@@ -93,6 +94,20 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const toggleWishlist = (item: WishlistItem) => {
+    console.log('🔄 Toggling wishlist for:', item.id);
+    
+    const exists = wishlistItems.some(wishlistItem => 
+      String(wishlistItem.id) === String(item.id)
+    );
+    
+    if (exists) {
+      removeFromWishlist(item.id);
+    } else {
+      addToWishlist(item);
+    }
+  };
+
   const clearWishlist = () => {
     console.log('🧹 Clearing wishlist');
     setWishlistItems([]);
@@ -110,6 +125,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     wishlistItems,
     addToWishlist,
     removeFromWishlist,
+    toggleWishlist,
     clearWishlist,
     isInWishlist,
     getWishlistCount

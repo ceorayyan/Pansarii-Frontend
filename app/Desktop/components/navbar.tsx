@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import SearchBarWrapper from './navbar/SearchBarWrapper';
-import CartSidebar from '../components/sidebar/page';
+import CartSidebar from './sidebar';
 import { useCart } from '../../context/CartContext';
 
 // Import React Icons
@@ -117,7 +117,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="w-full">
+     <header className="w-full fixed top-0 left-0 z-40">
         {/* Top Header - Green Background */}
         <div className="bg-green-700 text-white py-2">
           <div className="mx-[4%]">
@@ -345,22 +345,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Announcement Bar */}
-        <div className="bg-green-50">
-          <div className="mx-[4%] py-2">
-            <div className="flex items-center justify-center gap-4 text-sm">
-              <div className="flex items-center gap-2 text-green-700">
-                <FaTruck className="w-5 h-5" />
-                <span>Free shipping on orders over PKR 2000</span>
-              </div>
-              <span className="hidden md:inline text-gray-400">•</span>
-              <div className="hidden md:flex items-center gap-2 text-green-700">
-                <FaGift className="w-4 h-4" />
-                <span>Earn rewards on every purchase</span>
-              </div>
-            </div>
-          </div>
-        </div>
+       
       </header>
 
       {/* Category Sidebar - LEFT SIDE */}

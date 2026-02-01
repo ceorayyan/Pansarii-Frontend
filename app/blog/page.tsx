@@ -1,7 +1,7 @@
 // app/blog/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { blogPosts, BlogPost } from "../Desktop/data/blogposts";
 import { 
@@ -12,6 +12,121 @@ import {
   FaArrowRight,
   FaTag
 } from "react-icons/fa";
+
+// Skeletal Loading Components
+function BlogPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-white animate-pulse">
+      {/* Hero Section Skeleton */}
+      <section className="relative bg-gradient-to-r from-gray-100 to-gray-200 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center space-y-6">
+            <div className="h-12 bg-gray-300 rounded w-64 mx-auto"></div>
+            <div className="h-6 bg-gray-300 rounded w-96 mx-auto"></div>
+            <div className="max-w-2xl mx-auto">
+              <div className="h-14 bg-gray-300 rounded-xl"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Categories Skeleton */}
+      <section className="border-b border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-2 overflow-x-auto py-4">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="w-32 h-10 bg-gray-200 rounded-full"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Posts Skeleton */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="h-10 bg-gray-300 rounded w-48 mb-8"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {[...Array(2)].map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div className="h-64 bg-gray-300"></div>
+              <div className="p-6 space-y-4">
+                <div className="flex gap-4">
+                  <div className="h-4 bg-gray-200 rounded w-24"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20"></div>
+                </div>
+                <div className="h-8 bg-gray-300 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-gray-200 rounded w-20"></div>
+                      <div className="h-2 bg-gray-200 rounded w-16"></div>
+                    </div>
+                  </div>
+                  <div className="w-6 h-6 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* All Posts Grid Skeleton */}
+      <section className="bg-gray-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center mb-8">
+            <div className="h-10 bg-gray-300 rounded w-48"></div>
+            <div className="h-6 bg-gray-200 rounded w-32"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-md overflow-hidden">
+                <div className="h-48 bg-gray-300"></div>
+                <div className="p-5 space-y-4">
+                  <div className="flex gap-3">
+                    <div className="h-3 bg-gray-200 rounded w-20"></div>
+                    <div className="h-3 bg-gray-200 rounded w-16"></div>
+                  </div>
+                  <div className="h-6 bg-gray-300 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                    <div className="h-3 bg-gray-200 rounded w-24"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Tags Skeleton */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="h-8 bg-gray-300 rounded w-48 mb-6"></div>
+        <div className="flex flex-wrap gap-3">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="w-24 h-10 bg-gray-200 rounded-lg"></div>
+          ))}
+        </div>
+      </section>
+
+      {/* Newsletter CTA Skeleton */}
+      <section className="bg-gradient-to-r from-gray-600 to-gray-700 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <div className="h-10 bg-gray-400 rounded w-96 mx-auto"></div>
+          <div className="h-6 bg-gray-400 rounded w-[500px] mx-auto"></div>
+          <div className="max-w-md mx-auto flex gap-3">
+            <div className="flex-1 h-12 bg-gray-400 rounded-lg"></div>
+            <div className="w-32 h-12 bg-gray-400 rounded-lg"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
 
 // Categories from the blog posts
 const getCategories = () => {
@@ -58,6 +173,16 @@ export default function BlogPage() {
   const popularTags = getPopularTags();
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Filter posts based on category and search
   const filteredPosts = blogPosts.filter(post => {
@@ -73,6 +198,11 @@ export default function BlogPage() {
   });
 
   const featuredPosts = blogPosts.filter(post => post.id <= 2); // First 2 posts as featured
+
+  // Show skeleton loading
+  if (isLoading) {
+    return <BlogPageSkeleton />;
+  }
 
   return (
     <div className="min-h-screen bg-white">

@@ -1,12 +1,66 @@
 // app/shop/ShopContent.tsx
 'use client';
 
-import { useState, memo } from 'react';
+import { useState, memo, lazy, Suspense } from 'react';
 import { FilterOptions, Product } from "../../utils/filterProducts";
 import SearchFilterBar from "../../components/SearchFilterBar";
 import CategoryMenuButton from "../../components/categoriesmenubutton";
-import ProductGrid from "./ProductGrid";
 import Pagination from "./Pagination";
+
+// Lazy load ProductGrid to avoid circular dependencies
+const ProductGrid = lazy(() => import('./ProductGrid'));
+
+// Loading component for ProductGrid
+function ProductGridLoading() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6">
+      {[...Array(12)].map((_, i) => (
+        <div key={i} className="bg-white rounded-lg border border-gray-200 animate-pulse">
+          <div className="aspect-square bg-gray-200 rounded-t-lg"></div>
+          <div className="p-4 space-y-3">
+            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Skeletal loading for the entire ShopContent
+function ShopContentLoading() {
+  return (
+    <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-6">
+      {/* Search and Filter Bar Skeleton */}
+      <div className="mb-6">
+        <div className="h-12 bg-gray-200 rounded-lg animate-pulse"></div>
+      </div>
+
+      {/* Category Menu Button Skeleton */}
+      <div className="mb-6">
+        <div className="h-10 bg-gray-200 rounded-lg animate-pulse w-48"></div>
+      </div>
+
+      {/* Results Info Skeleton */}
+      <div className="my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-2">
+          <div className="h-6 bg-gray-200 rounded animate-pulse w-64"></div>
+          <div className="h-4 bg-gray-200 rounded animate-pulse w-48"></div>
+        </div>
+        <div className="h-5 bg-gray-200 rounded animate-pulse w-40"></div>
+      </div>
+
+      {/* Product Grid Skeleton */}
+      <ProductGridLoading />
+
+      {/* Pagination Skeleton */}
+      <div className="mt-8 flex justify-center">
+        <div className="h-10 bg-gray-200 rounded-lg animate-pulse w-64"></div>
+      </div>
+    </div>
+  );
+}
 
 interface ShopContentProps {
   categories: string[];
@@ -21,7 +75,8 @@ interface ShopContentProps {
   productsPerPage: number;
   onPageChange: (page: number) => void;
   initialSearchQuery?: string;
-  allProducts: Product[]; // Add this to get product counts
+  allProducts: Product[];
+  isLoading?: boolean; // Add loading prop
 }
 
 function ShopContent({
@@ -37,9 +92,15 @@ function ShopContent({
   productsPerPage,
   onPageChange,
   initialSearchQuery = '',
-  allProducts
+  allProducts,
+  isLoading = false // Default to false
 }: ShopContentProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+
+  // Show loading skeleton if isLoading is true
+  if (isLoading) {
+    return <ShopContentLoading />;
+  }
 
   const handleViewModeChange = (mode: 'grid' | 'list') => {
     setViewMode(mode);
@@ -71,6 +132,22 @@ function ShopContent({
       slug: category
     };
   });
+
+  // Get sort label
+  const getSortLabel = () => {
+    switch (filters.sortBy) {
+      case 'price-low':
+        return 'Price: Low to High';
+      case 'price-high':
+        return 'Price: High to Low';
+      case 'rating':
+        return 'Highest Rated';
+      case 'name':
+        return 'Name (A-Z)';
+      default:
+        return 'Default';
+    }
+  };
 
   return (
     <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-6">
@@ -110,16 +187,16 @@ function ShopContent({
         {filters.sortBy !== 'default' && (
           <div className="text-sm text-gray-600">
             Sorted by: <span className="font-medium">
-              {filters.sortBy === 'price-low-high' ? 'Price: Low to High' :
-               filters.sortBy === 'price-high-low' ? 'Price: High to Low' :
-               filters.sortBy === 'rating' ? 'Highest Rated' : 'Name (A-Z)'}
+              {getSortLabel()}
             </span>
           </div>
         )}
       </div>
 
-      {/* Product Grid */}
-      <MemoizedProductGrid products={currentProducts} viewMode={viewMode} />
+      {/* Product Grid with Suspense */}
+      <Suspense fallback={<ProductGridLoading />}>
+        <ProductGrid products={currentProducts} viewMode={viewMode} />
+      </Suspense>
 
       {/* No Results State */}
       {filteredProducts.length === 0 && (
@@ -151,15 +228,5 @@ function ShopContent({
     </div>
   );
 }
-
-const MemoizedProductGrid = memo(ProductGrid, (prevProps, nextProps) => {
-  return (
-    prevProps.products.length === nextProps.products.length &&
-    prevProps.viewMode === nextProps.viewMode &&
-    prevProps.products.every((product, index) => 
-      product.id === nextProps.products[index]?.id
-    )
-  );
-});
 
 export default ShopContent;

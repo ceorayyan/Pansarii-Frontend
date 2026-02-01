@@ -1,16 +1,19 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { FaLock, FaCreditCard, FaCheckCircle, FaPhone, FaChevronDown } from 'react-icons/fa';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import { FaLock, FaCreditCard, FaCheckCircle, FaChevronDown } from 'react-icons/fa';
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [sameAsShipping, setSameAsShipping] = useState(true);
-  const [phoneNumber, setPhoneNumber] = useState('+92');
+  const [phoneValue, setPhoneValue] = useState<string>('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Pakistani cities data - can be fetched from API in real application
+  // Pakistani cities data
   const pakistaniCities = [
     // Punjab
     { value: 'lahore', label: 'Lahore', province: 'Punjab' },
@@ -70,32 +73,115 @@ export default function CheckoutPage() {
   const shipping = 200;
   const total = subtotal + shipping;
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-    
-    // Ensure it starts with +92
-    if (!value.startsWith('+92')) {
-      value = '+92 ' + value.replace(/^\+92\s?/, '');
-    }
-    
-    // Format: +92 XXX XXXXXXX
-    const cleaned = value.replace(/\D/g, '').substring(1); // Remove + and non-digits
-    if (cleaned.length > 0) {
-      const formatted = cleaned.replace(/(\d{2})(\d{3})(\d{7})/, '+$1 $2 $3');
-      setPhoneNumber(formatted);
-    } else {
-      setPhoneNumber('+92 ');
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle order placement
-    console.log('Order placed!');
+    setIsSubmitting(true);
+
+    // Generate order ID
+    const orderId = `ORD-${Date.now().toString().slice(-8)}`;
+    
+    // Prepare order data
+    const orderData = {
+      orderId,
+      orderDate: new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }),
+      estimatedDelivery: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }),
+      items: cartItems,
+      subtotal,
+      shipping,
+      total,
+      shippingAddress: {
+        name: (e.target as any).name.value,
+        phone: phoneValue,
+        email: (e.target as any).email.value,
+        address: (e.target as any).address.value,
+        city: selectedCity,
+        postalCode: (e.target as any).postalCode.value,
+      },
+      paymentMethod: paymentMethod === 'cod' ? 'Cash on Delivery' : 
+                     paymentMethod === 'online' ? 'Online Payment' : 'Bank Transfer'
+    };
+
+    // Save order to localStorage
+    localStorage.setItem(`order-${orderId}`, JSON.stringify(orderData));
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Redirect to order confirmation page
+    router.push(`/order-confirmation?orderId=${orderId}`);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Custom CSS for phone input styling */}
+      <style jsx global>{`
+        .PhoneInput {
+          width: 100%;
+        }
+        
+        .PhoneInputInput {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
+          font-size: 1rem;
+          outline: none;
+          transition: all 0.2s;
+        }
+        
+        .PhoneInputInput:focus {
+          border-color: #15803d;
+          ring: 2px;
+          ring-color: #15803d;
+          box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.1);
+        }
+        
+        .PhoneInputCountry {
+          margin-right: 0.5rem;
+          padding: 0.75rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
+          background: white;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        
+        .PhoneInputCountry:hover {
+          border-color: #9ca3af;
+        }
+        
+        .PhoneInputCountrySelect {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          cursor: pointer;
+        }
+        
+        .PhoneInputCountryIcon {
+          width: 1.5rem;
+          height: 1.5rem;
+          margin-right: 0.5rem;
+        }
+        
+        .PhoneInputCountrySelectArrow {
+          margin-left: 0.25rem;
+          opacity: 0.6;
+          width: 0.5rem;
+          height: 0.5rem;
+        }
+      `}</style>
+
       {/* Header */}
       <div className="bg-white border-b">
         <div className="mx-[4%] py-6">
@@ -147,6 +233,7 @@ export default function CheckoutPage() {
                       Full Name *
                     </label>
                     <input
+                      name="name"
                       type="text"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
@@ -158,6 +245,7 @@ export default function CheckoutPage() {
                       Email Address *
                     </label>
                     <input
+                      name="email"
                       type="email"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
@@ -168,27 +256,17 @@ export default function CheckoutPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone Number *
                     </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <FaPhone className="text-gray-400" />
-                        <span className="ml-2 text-gray-600">PK</span>
-                      </div>
-                      <input
-                        type="tel"
-                        value={phoneNumber}
-                        onChange={handlePhoneChange}
-                        required
-                        className="w-full pl-20 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
-                        placeholder="300 1234567"
-                        pattern="\+92\s\d{3}\s\d{7}"
-                        title="Format: +92 XXX XXXXXXX"
-                      />
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                        <span className="text-xs text-gray-500">🇵🇰</span>
-                      </div>
-                    </div>
+                    <PhoneInput
+                      international
+                      defaultCountry="PK"
+                      value={phoneValue}
+                      onChange={(value) => setPhoneValue(value || '')}
+                      required
+                      placeholder="Enter phone number"
+                      className="phone-input-wrapper"
+                    />
                     <p className="text-xs text-gray-500 mt-1">
-                      Format: +92 XXX XXXXXXX (Pakistani number)
+                      Select your country and enter your phone number
                     </p>
                   </div>
                 </div>
@@ -203,6 +281,7 @@ export default function CheckoutPage() {
                       Street Address *
                     </label>
                     <input
+                      name="address"
                       type="text"
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
@@ -216,6 +295,7 @@ export default function CheckoutPage() {
                       </label>
                       <div className="relative">
                         <select
+                          name="city"
                           value={selectedCity}
                           onChange={(e) => setSelectedCity(e.target.value)}
                           required
@@ -271,6 +351,7 @@ export default function CheckoutPage() {
                         Area/Sector
                       </label>
                       <input
+                        name="area"
                         type="text"
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                         placeholder="Gulshan, DHA, etc."
@@ -282,11 +363,10 @@ export default function CheckoutPage() {
                       Postal Code
                     </label>
                     <input
+                      name="postalCode"
                       type="text"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                       placeholder="75500"
-                      pattern="\d{5}"
-                      title="5-digit postal code"
                     />
                   </div>
                   <div>
@@ -294,6 +374,7 @@ export default function CheckoutPage() {
                       Delivery Instructions (Optional)
                     </label>
                     <textarea
+                      name="instructions"
                       rows={3}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-700"
                       placeholder="e.g., Call before delivery, Leave at reception, etc."
@@ -436,9 +517,22 @@ export default function CheckoutPage() {
                   {/* Place Order Button */}
                   <button 
                     type="submit"
-                    className="w-full bg-green-700 text-white py-4 rounded-full font-bold text-lg hover:bg-green-600 transition shadow-lg hover:shadow-xl transform hover:scale-105"
+                    disabled={isSubmitting}
+                    className={`w-full bg-green-700 text-white py-4 rounded-full font-bold text-lg transition shadow-lg hover:shadow-xl transform ${
+                      isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105 hover:bg-green-600'
+                    }`}
                   >
-                    Place Order
+                    {isSubmitting ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                      </span>
+                    ) : (
+                      'Place Order'
+                    )}
                   </button>
 
                   <p className="text-xs text-gray-500 text-center mt-4">

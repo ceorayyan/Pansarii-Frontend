@@ -4,6 +4,7 @@ import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishList";
 import Navbar from "./Desktop/components/navbar";
 import Footer from "./Desktop/components/footer";
+// import PansariinnSidebar from "./Desktop/components/sidebar/index";
 
 export const metadata = {
   title: "Pansari Inn - Premium Ayurvedic & Herbal Products",
@@ -43,10 +44,11 @@ export default function RootLayout({
         <CartProvider>
           <WishlistProvider>
             <Navbar />
-            <main className="min-h-screen bg-white">
+            <main className="min-h-screen bg-white pt-44">
               {children}
             </main>
             <Footer />
+            {/* <PansariinnSidebar /> */}
           </WishlistProvider>
         </CartProvider>
       </body>

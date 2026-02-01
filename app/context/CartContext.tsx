@@ -8,6 +8,7 @@ interface CartItem {
   nameEn: string;
   nameUr: string;
   price: number;
+  oldPrice?: number;
   quantity: number;
   size: string;
   category?: string;
@@ -20,6 +21,7 @@ interface WishlistItem {
   nameEn: string;
   nameUr: string;
   price: number;
+  oldPrice?: number;
   size: string;
   category?: string;
   rating?: number;
@@ -29,7 +31,7 @@ interface CartContextType {
   cartItems: CartItem[];
   wishlistItems: WishlistItem[];
   addToCart: (item: Omit<CartItem, 'quantity'>) => void;
-  updateQuantity: (id: string | number, size: string, change: number) => void;
+  updateQuantity: (id: string | number, size: string, newQuantity: number) => void;
   removeFromCart: (id: string | number, size: string) => void;
   addToWishlist: (item: WishlistItem) => void;
   removeFromWishlist: (id: string | number) => void;
@@ -120,13 +122,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const updateQuantity = (id: string | number, size: string, change: number) => {
-    console.log('🔄 Updating quantity for:', { id, size, change });
+  const updateQuantity = (id: string | number, size: string, newQuantity: number) => {
+    console.log('🔄 Updating quantity for:', { id, size, newQuantity });
     
     setCartItems(prev => {
       const newCart = prev.map(item =>
         String(item.id) === String(id) && item.size === size
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          ? { ...item, quantity: Math.max(1, newQuantity) }
           : item
       );
       console.log('✅ Quantity updated, new cart:', newCart);
@@ -186,6 +188,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       nameEn: item.nameEn,
       nameUr: item.nameUr,
       price: item.price,
+      oldPrice: item.oldPrice,
       size: item.size,
       category: item.category,
       rating: item.rating

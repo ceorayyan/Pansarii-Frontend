@@ -6,7 +6,7 @@ export const reviews = [
     text: "This apricot oil has transformed my skin completely. I've been using it for a month and my skin feels so hydrated and glowing.",
     name: "Sarah Khan",
     designation: "Beauty Blogger",
-    img: "/images/reviewer1.jpg",
+    img: "/images/product.png",
     rating: 5.0
   },
   {
@@ -15,7 +15,7 @@ export const reviews = [
     text: "The quality is outstanding. It's pure and natural just as described. Will definitely repurchase and recommend to friends.",
     name: "Ali Ahmed",
     designation: "Regular Customer",
-    img: "/images/reviewer2.jpg",
+    img: "/images/product.png",
     rating: 5.0
   },
   {
@@ -24,7 +24,7 @@ export const reviews = [
     text: "Compared to other brands, this one is much better in quality and price. My hair has become so smooth and shiny.",
     name: "Fatima Noor",
     designation: "Salon Owner",
-    img: "/images/reviewer3.jpg",
+    img: "/images/product.png",
     rating: 4.8
   },
   {
@@ -33,7 +33,7 @@ export const reviews = [
     text: "I had dry skin issues which are completely resolved now. The oil absorbs quickly without feeling greasy.",
     name: "Hamza Riaz",
     designation: "Fitness Trainer",
-    img: "/images/reviewer4.jpg",
+    img: "/images/product.png",
     rating: 5.0
   },
   {
@@ -42,7 +42,7 @@ export const reviews = [
     text: "My skin is very sensitive but this oil didn't cause any irritation. It's gentle and effective.",
     name: "Zainab Ali",
     designation: "Dermatologist",
-    img: "/images/reviewer5.jpg",
+    img: "/images/product.png",
     rating: 4.9
   },
   {
@@ -51,7 +51,7 @@ export const reviews = [
     text: "You can feel the purity in this product. No artificial smell, just pure apricot goodness.",
     name: "Omar Hassan",
     designation: "Natural Products Enthusiast",
-    img: "/images/reviewer6.jpg",
+    img: "/images/product.png",
     rating: 5.0
   },
   {
@@ -60,7 +60,7 @@ export const reviews = [
     text: "Applied it to my dry hair ends and they're now soft and manageable. Excellent product!",
     name: "Laila Ahmed",
     designation: "Hair Stylist",
-    img: "/images/reviewer7.jpg",
+    img: "/images/product.png",
     rating: 4.7
   },
   {
@@ -69,7 +69,7 @@ export const reviews = [
     text: "Product arrived quickly and was well packaged. Quality exceeded my expectations.",
     name: "Raza Shah",
     designation: "Online Shopper",
-    img: "/images/reviewer8.jpg",
+    img: "/images/product.png",
     rating: 4.8
   },
   {
@@ -78,7 +78,7 @@ export const reviews = [
     text: "After 2 weeks of regular use, my skin texture has improved significantly. Definitely worth it!",
     name: "Ayesha Malik",
     designation: "Skin Care Expert",
-    img: "/images/reviewer9.jpg",
+    img: "/images/product.png",
     rating: 5.0
   },
   {
@@ -87,7 +87,7 @@ export const reviews = [
     text: "I use it for my face, hair, and even cuticles. One product, multiple benefits!",
     name: "Bilal Ashraf",
     designation: "Beauty Influencer",
-    img: "/images/reviewer10.jpg",
+    img: "/images/product.png",
     rating: 4.9
   },
   {
@@ -96,7 +96,7 @@ export const reviews = [
     text: "Finally found a brand that sells authentic apricot oil. The consistency and smell are perfect.",
     name: "Nadia Javed",
     designation: "Homemaker",
-    img: "/images/reviewer11.jpg",
+    img: "/images/product.png",
     rating: 5.0
   },
   {
@@ -105,7 +105,7 @@ export const reviews = [
     text: "A little goes a long way. The effects last all day and night. My new skincare essential.",
     name: "Kamran Ali",
     designation: "Model",
-    img: "/images/reviewer12.jpg",
+    img: "/images/product.png",
     rating: 4.8
   },
   {
@@ -114,7 +114,7 @@ export const reviews = [
     text: "I have acne-prone skin and was worried about breakouts, but this oil is non-comedogenic. Perfect!",
     name: "Sana Tariq",
     designation: "Student",
-    img: "/images/reviewer13.jpg",
+    img: "/images/product.png",
     rating: 5.0
   },
   {
@@ -123,7 +123,7 @@ export const reviews = [
     text: "This saved my skin during harsh winters. No more flaky skin or dryness. Highly recommended!",
     name: "Farhan Sheikh",
     designation: "Corporate Employee",
-    img: "/images/reviewer14.jpg",
+    img: "/images/product.png",
     rating: 4.9
   },
   {
@@ -132,7 +132,7 @@ export const reviews = [
     text: "My skin tone has become more even and bright. Friends have started asking about my skincare routine.",
     name: "Mehak Rizvi",
     designation: "Makeup Artist",
-    img: "/images/reviewer15.jpg",
+    img: "/images/product.png",
     rating: 5.0
   },
   {
@@ -141,7 +141,7 @@ export const reviews = [
     text: "Love that the packaging is recyclable. Great product with environmental consciousness.",
     name: "Arslan Ahmed",
     designation: "Environmentalist",
-    img: "/images/reviewer16.jpg",
+    img: "/images/product.png",
     rating: 4.7
   }
 ];

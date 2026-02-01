@@ -1,4 +1,5 @@
 "use client";
+
 import { useRef, MouseEvent } from 'react';
 import VideoProductCard from '@components/VideoProductCard';
 
@@ -10,7 +11,7 @@ interface VideoProduct {
   video: string;
   nameEn: string;
   nameUr: string;
-  views?: string; // Changed from number | string to string (optional)
+  views?: string;
   sale?: string;
   price: number | string;
   oldPrice?: number | string;
@@ -22,7 +23,7 @@ export default function VideoProducts() {
   // Define image and video constants
   const skincareImg = '/images/Skincare.png';
   const productImg = '/images/product.png';
-  const productVideo = '/videos/product-video.mp4';
+  const productVideo = '/images/review.mp4';
 
   const videoProducts: VideoProduct[] = [
     { 
@@ -32,7 +33,7 @@ export default function VideoProducts() {
       video: productVideo,
       nameEn: 'Orange Oil', 
       nameUr: 'نارنجی کا تیل', 
-      views: '860', // Convert to string
+      views: '860',
       sale: '20% OFF', 
       price: 1149, 
       oldPrice: 1299 
@@ -44,7 +45,7 @@ export default function VideoProducts() {
       video: productVideo,
       nameEn: 'Green Oil', 
       nameUr: 'سبز تیل', 
-      views: '920', // Convert to string
+      views: '920',
       sale: '15% OFF', 
       price: 999, 
       oldPrice: 1200 
@@ -56,7 +57,7 @@ export default function VideoProducts() {
       video: productVideo,
       nameEn: 'Black Oil', 
       nameUr: 'کالی تیل', 
-      views: '780', // Convert to string
+      views: '780',
       sale: '10% OFF', 
       price: 1099, 
       oldPrice: 1299 
@@ -68,7 +69,7 @@ export default function VideoProducts() {
       video: productVideo,
       nameEn: 'Chamomile Oil', 
       nameUr: 'کملی تیل', 
-      views: '650', // Convert to string
+      views: '650',
       sale: '25% OFF', 
       price: 899, 
       oldPrice: 1199 
@@ -80,7 +81,7 @@ export default function VideoProducts() {
       video: productVideo,
       nameEn: 'Lavender Oil', 
       nameUr: 'لیونڈر تیل', 
-      views: '500', // Convert to string
+      views: '500',
       sale: '30% OFF', 
       price: 1249, 
       oldPrice: 1499 

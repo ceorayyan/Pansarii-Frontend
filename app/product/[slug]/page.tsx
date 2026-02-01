@@ -1,4 +1,3 @@
-// app/product/[slug]/page.tsx
 "use client";
 
 import { useParams, useRouter } from 'next/navigation';
@@ -6,7 +5,7 @@ import { useEffect, useState } from 'react';
 import ProductDetails from '@/app/Desktop/components/ProductDetails';
 import ProductDetailsSection from '@/app/Desktop/Sections/ProductDetailsSection';
 import { allProducts } from '@/app/Desktop/data/products';
-import { FaArrowLeft, FaHome, FaShop } from 'react-icons/fa';
+import { FaArrowLeft, FaHome, FaStore } from 'react-icons/fa'; // Changed FaShop to FaStore
 
 export default function ProductPage() {
   const params = useParams();
@@ -254,7 +253,7 @@ export default function ProductPage() {
               onClick={() => router.push('/shop')}
               className="px-6 py-3 border-2 border-green-700 text-green-700 rounded-full hover:bg-green-50 transition flex items-center justify-center gap-2"
             >
-              <FaShop className="w-4 h-4" />
+              <FaStore className="w-4 h-4" /> {/* Changed FaShop to FaStore */}
               Browse Products
             </button>
           </div>
@@ -285,47 +284,7 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-white">
-      {/* Header with breadcrumb */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-          <button 
-            onClick={() => router.push('/')}
-            className="hover:text-green-700 transition-colors"
-          >
-            Home
-          </button>
-          <span>/</span>
-          <button 
-            onClick={() => router.push('/shop')}
-            className="hover:text-green-700 transition-colors"
-          >
-            Shop
-          </button>
-          <span>/</span>
-          <button 
-            onClick={() => router.push(`/shop?category=${product.category?.toLowerCase().replace(/\s+/g, '-')}`)}
-            className="hover:text-green-700 transition-colors"
-          >
-            {product.category || 'Products'}
-          </button>
-          <span>/</span>
-          <span className="text-gray-900 font-medium truncate">{product.nameEn}</span>
-        </div>
-
-        {/* Main action buttons */}
-        <div className="flex items-center justify-between gap-4 mb-6">
-          <button 
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-green-700 hover:text-green-800 font-medium group"
-          >
-            <FaArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Shop
-          </button>
-          
-        
-        </div>
-      </div>
-      
+    
       {/* Product Details Component - Dynamic with icons */}
       <ProductDetails product={product} />
 

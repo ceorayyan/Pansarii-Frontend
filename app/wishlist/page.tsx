@@ -90,8 +90,8 @@ export default function WishlistPage() {
       nameUr: item.nameUr || item.nameEn,
       price: item.price,
       size: '15ml',
-      category: item.category || 'Wishlist',
-      quantity: 1
+      category: item.category || 'Wishlist'
+      // quantity is likely handled automatically in addToCart
     });
     removeFromWishlist(item.id);
   };
@@ -110,8 +110,8 @@ export default function WishlistPage() {
       nameUr: product.nameEn,
       price: product.price,
       size: '15ml',
-      category: product.category || 'Suggested',
-      quantity: 1
+      category: product.category || 'Suggested'
+      // quantity is likely handled automatically in addToCart
     });
   };
 
@@ -140,6 +140,7 @@ export default function WishlistPage() {
 
   // Check if user is logged in (same logic as sidebar)
   const isLoggedIn = () => {
+    if (typeof window === 'undefined') return false;
     const token = localStorage.getItem('authToken');
     const user = localStorage.getItem('user');
     return !!(token && user);
